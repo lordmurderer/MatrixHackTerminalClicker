@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Hacker Clicker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+
+<div id="scanlines"></div>
+
+<div id="gameContainer">
+  <header id="header">
+    <span class="glitch" data-i18n="title">MATRIX HACK TERMINAL v1.0</span>
+    <div id="cursor-line">
+      <span class="prompt" data-i18n="headerPrompt">root@matrix:~$</span>
+      <span class="blink">_</span>
+    </div>
+  </header>
+
+  <main id="gameArea">
+    <div id="profile">
+      <span id="playerHandle" class="handle">>> NEO_001</span>
+      <span id="playerLevel" class="level">LEVEL: 1</span>
+    </div>
+
+    <div id="dataDisplay">
+      <span id="dataAmount">0</span>
+      <span class="dataLabel" data-i18n="mb">MB</span>
+      <div id="dataBarOuter">
+        <div id="dataBarInner"></div>
+      </div>
+    </div>
+
+    <button id="hackBtn">
+      <span class="btnPrompt" data-i18n="btnPrompt">[root@matrix]~$</span>
+      <span class="btnText" data-i18n="btnText">./hack.exe</span>
+      <span class="btnCursor">_</span>
+    </button>
+
+    <div id="floatingDamage"></div>
+
+    <div id="stats">
+      <div class="stat">
+        <span class="statLabel" data-i18n="statClick">CLICK</span>
+        <span id="clickPower" class="statValue">1</span>
+        <span class="statUnit" data-i18n="mb">MB</span>
+      </div>
+      <div class="stat">
+        <span class="statLabel" data-i18n="statDps">DPS</span>
+        <span id="dpsValue" class="statValue">0</span>
+        <span class="statUnit">MB/s</span>
+      </div>
+      <div class="stat">
+        <span class="statLabel" data-i18n="statCrit">CRIT</span>
+        <span id="critDisplay" class="statValue">0</span>
+        <span class="statUnit" data-i18n="unitPercent">%</span>
+      </div>
+      <div class="stat">
+        <span class="statLabel" data-i18n="statDiscount">DISCOUNT</span>
+        <span id="discountDisplay" class="statValue">0</span>
+        <span class="statUnit" data-i18n="unitPercent">%</span>
+      </div>
+    </div>
+    <div id="synergyDisplay"></div>
+    <div id="prestigeSection">
+      <span id="prestigeInfo"></span>
+      <button id="prestigeBtn" data-i18n="prestigeBtn">PURGE & BOOT</button>
+      <span id="prestigeReq"></span>
+    </div>
+    <button id="achBtn">ACHIEVEMENTS</button>
+    <button id="statsBtn">STATS</button>
+    <button id="skinBtn">SKINS</button>
+    <div id="comboDisplay"></div>
+  </main>
+
+  <section id="upgradesPanel">
+    <div class="panelHeader">
+      <span data-i18n="panelTitle">> UPGRADES_</span>
+    </div>
+    <div id="upgradesGrid"></div>
+  </section>
+
+  <footer id="footer">
+    <span class="prompt" data-i18n="secure">[CONNECTION SECURE]</span>
+    <span id="saveStatus" data-i18n="autoSave">AUTO-SAVE ACTIVE</span>
+    <button id="soundBtn">♪</button>
+    <button id="langToggle">EN</button>
+  </footer>
+</div>
+
+<div id="achOverlay">
+  <div id="achPanel">
+    <div id="achHeader">
+      <span id="achTitle">ACHIEVEMENTS</span>
+      <button id="achClose">X</button>
+    </div>
+    <div id="achGrid"></div>
+  </div>
+</div>
+
+<div id="skinOverlay">
+  <div id="skinPanel">
+    <div id="skinHeader">
+      <span data-i18n="skinTitle">SKINS</span>
+      <button id="skinClose">X</button>
+    </div>
+    <div id="skinGrid"></div>
+  </div>
+</div>
+
+<div id="statsOverlay">
+  <div id="statsPanel">
+    <div id="statsHeader">
+      <span data-i18n="statsTitle">STATISTICS</span>
+      <button id="statsClose">X</button>
+    </div>
+    <div id="statsBody"></div>
+  </div>
+</div>
+
+<div id="fwOverlay">
+  <div id="fwPanel">
+    <div id="fwHeader">
+      <span data-i18n="fwTitle">⚠ FIREWALL DETECTED</span>
+      <span id="fwTimeLimit"></span>
+    </div>
+    <div id="fwTimerBarContainer"><div id="fwTimerBar"></div></div>
+    <div id="fwNodes"></div>
+    <div id="fwFooter">
+      <span id="fwStep"></span>
+      <button id="fwIgnore" data-i18n="fwIgnore">IGNORE</button>
+    </div>
+    <div id="fwResult"></div>
+  </div>
+</div>
+
+<div id="glitchOverlay"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
