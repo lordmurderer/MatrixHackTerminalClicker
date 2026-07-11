@@ -1319,6 +1319,16 @@ body {
   margin-top: 0;
 }
 
+.upgradeCard.maxed {
+  border-color: #ffcc00;
+  background: rgba(40, 30, 0, 0.4);
+}
+
+.upgradeCard.maxed .upgradeCost {
+  color: #ffcc00;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.3);
+}
+
 #upgradesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -1891,6 +1901,34 @@ body {
   color: #ff4466;
   background: rgba(255, 68, 102, 0.08);
   box-shadow: 0 0 4px rgba(255, 68, 102, 0.15);
+}
+
+.upgradeIcon.effect-clickDps {
+  border-color: #ffaa00;
+  color: #ffcc44;
+  background: rgba(255, 170, 0, 0.1);
+  box-shadow: 0 0 4px rgba(255, 170, 0, 0.2);
+}
+
+.upgradeIcon.effect-critDmg {
+  border-color: #ff44ff;
+  color: #ff66ff;
+  background: rgba(255, 68, 255, 0.08);
+  box-shadow: 0 0 4px rgba(255, 68, 255, 0.15);
+}
+
+.upgradeIcon.effect-autoSpeed {
+  border-color: #44aaff;
+  color: #66ccff;
+  background: rgba(68, 170, 255, 0.08);
+  box-shadow: 0 0 4px rgba(68, 170, 255, 0.15);
+}
+
+.upgradeIcon.effect-comboBoost {
+  border-color: #ff8800;
+  color: #ffaa33;
+  background: rgba(255, 136, 0, 0.1);
+  box-shadow: 0 0 4px rgba(255, 136, 0, 0.2);
 }
 
 .upgradeNameText {

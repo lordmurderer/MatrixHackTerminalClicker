@@ -45,6 +45,12 @@
       effectMultClick: 'CLICK x{n}',
       effectMultDps: 'DPS x{n}',
       effectOffline: '{n}% OFFLINE',
+      effectClickDps: 'CLICK/DPS +{n}',
+      effectCritDmg: 'CRIT x{n}',
+      effectAutoSpeed: '-{n}ms AUTO',
+      effectComboBoost: '+{n} COMBO',
+      groupCombo: '> COMBO_',
+      groupMeta: '> META_',
       statClick: 'CLICK',
       statDps: 'DPS',
       statCrit: 'CRIT',
@@ -146,6 +152,34 @@
         prime: { name: 'Programa Primario', desc: 'Código fuente de la Matrix' },
         cipher: { name: 'Cifrador', desc: 'Encriptación de nivel cuántico' },
         keymaker: { name: 'Creador de Llaves', desc: 'Acceso a todas las puertas' },
+
+        // V2 — COMBO group
+        rhythm: { name: 'Ritmo de Hackeo', desc: 'Clickea al ritmo de la Matrix' },
+        flow: { name: 'Flujo Continuo', desc: 'Datos fluyendo sin interrupción' },
+        momentum: { name: 'Impulso', desc: 'Aceleración bidireccional de datos' },
+        adrenaline: { name: 'Adrenalina', desc: 'Reflejos sobrecargados' },
+
+        // V2 — META group
+        backdoor: { name: 'Backdoor Persistente', desc: 'Puerta trasera siempre abierta' },
+        wormhole: { name: 'Wormhole', desc: 'Distorsión del multiplicador crítico' },
+        turbo: { name: 'Turbo', desc: 'Auto-click a velocidad extrema' },
+        nexus: { name: 'Nexo de Datos', desc: 'Convergencia de click y DPS' },
+
+        // V2 — CLICK group
+        overdrive: { name: 'Overdrive', desc: 'Ataque de máxima potencia' },
+        singularity: { name: 'Singularidad', desc: 'Colapso de datos en un punto' },
+        omega: { name: 'Protocolo Omega', desc: 'Multiplicador de click definitivo' },
+
+        // V2 — DPS group
+        grid: { name: 'Grid Distribuido', desc: 'Procesamiento paralelo masivo' },
+        infinite: { name: 'Bucle Infinito', desc: 'Cómputo sin fin' },
+        genesis: { name: 'Protocolo Génesis', desc: 'Fundamento de la Matrix' },
+
+        // V2 — SPECIAL expansion
+        cortex: { name: 'Corteza Neural', desc: 'Capa de procesamiento neuronal' },
+        leech: { name: 'Drenaje de Datos', desc: 'Succiona datos automáticamente' },
+        parasite: { name: 'Parásito', desc: 'Acelera el auto-click' },
+        proxy: { name: 'Proxy Anónimo', desc: 'Conexiones encriptadas' },
       },
       shopAutoBuy: 'Compra automática de la mejora más barata',
       prestigePreviewTitle: '⚠ PURGE & BOOT',
@@ -245,6 +279,12 @@
       effectMultClick: 'CLICK x{n}',
       effectMultDps: 'DPS x{n}',
       effectOffline: '{n}% OFFLINE',
+      effectClickDps: 'CLICK/DPS +{n}',
+      effectCritDmg: 'CRIT x{n}',
+      effectAutoSpeed: '-{n}ms AUTO',
+      effectComboBoost: '+{n} COMBO',
+      groupCombo: '> COMBO_',
+      groupMeta: '> META_',
       statClick: 'CLICK',
       statDps: 'DPS',
       statCrit: 'CRIT',
@@ -346,6 +386,34 @@
         prime: { name: 'Prime Program', desc: 'Source code of the Matrix' },
         cipher: { name: 'Cipher', desc: 'Quantum-level encryption' },
         keymaker: { name: 'Keymaker', desc: 'Access to all doors' },
+
+        // V2 — COMBO group
+        rhythm: { name: 'Hack Rhythm', desc: 'Click to the rhythm of the Matrix' },
+        flow: { name: 'Continuous Flow', desc: 'Uninterrupted data stream' },
+        momentum: { name: 'Momentum', desc: 'Bidirectional data boost' },
+        adrenaline: { name: 'Adrenaline Rush', desc: 'Overclocked reflexes' },
+
+        // V2 — META group
+        backdoor: { name: 'Persistent Backdoor', desc: 'Always open backdoor' },
+        wormhole: { name: 'Wormhole', desc: 'Critical multiplier distortion' },
+        turbo: { name: 'Turbo', desc: 'Extreme auto-click speed' },
+        nexus: { name: 'Data Nexus', desc: 'Click and DPS convergence' },
+
+        // V2 — CLICK group
+        overdrive: { name: 'Overdrive', desc: 'Maximum power attack' },
+        singularity: { name: 'Singularity', desc: 'Data collapse into a point' },
+        omega: { name: 'Omega Protocol', desc: 'Ultimate click multiplier' },
+
+        // V2 — DPS group
+        grid: { name: 'Distributed Grid', desc: 'Massive parallel processing' },
+        infinite: { name: 'Infinite Loop', desc: 'Endless computation' },
+        genesis: { name: 'Genesis Protocol', desc: 'Foundation of the Matrix' },
+
+        // V2 — SPECIAL expansion
+        cortex: { name: 'Neural Cortex', desc: 'Neural processing layer' },
+        leech: { name: 'Data Leech', desc: 'Siphons data automatically' },
+        parasite: { name: 'Parasite', desc: 'Accelerates auto-click' },
+        proxy: { name: 'Anonymous Proxy', desc: 'Encrypted connections' },
       },
       shopAutoBuy: 'Auto-buy the cheapest upgrade',
       prestigePreviewTitle: '⚠ PURGE & BOOT',
@@ -456,13 +524,43 @@
     { id: 'prime', cost: 1000000000000, effect: 'mult_dps', value: 1.5, icon: '$', unlockAt: 500000000000 },
     { id: 'cipher', cost: 10000000000000, effect: 'mult_click', value: 2, icon: '?', unlockAt: 5000000000000 },
     { id: 'keymaker', cost: 100000000000000, effect: 'mult_dps', value: 2, icon: '$', unlockAt: 50000000000000 },
+
+    // V2 — CLICK group
+    { id: 'overdrive', cost: 50000000000, effect: 'click', value: 50000, icon: '!', unlockAt: 20000000000 },
+    { id: 'singularity', cost: 50000000000000, effect: 'click', value: 10000000, icon: '@', unlockAt: 20000000000000 },
+    { id: 'omega', cost: 1000000000000000, effect: 'mult_click', value: 3, icon: '?', unlockAt: 500000000000000 },
+
+    // V2 — DPS group
+    { id: 'grid', cost: 50000000000, effect: 'dps', value: 25000, icon: '#', unlockAt: 20000000000 },
+    { id: 'infinite', cost: 50000000000000, effect: 'dps', value: 5000000, icon: '%', unlockAt: 20000000000000 },
+    { id: 'genesis', cost: 1000000000000000, effect: 'mult_dps', value: 3, icon: '$', unlockAt: 500000000000000 },
+
+    // V2 — COMBO group
+    { id: 'rhythm', cost: 5000, effect: 'click', value: 20, icon: '♫', unlockAt: 2500, maxLevel: 10 },
+    { id: 'flow', cost: 20000, effect: 'dps', value: 20, icon: '≈', unlockAt: 10000, maxLevel: 10 },
+    { id: 'momentum', cost: 100000, effect: 'clickDps', value: 10, icon: '↯', unlockAt: 50000, maxLevel: 10 },
+    { id: 'adrenaline', cost: 500000, effect: 'comboBoost', value: 0.02, icon: '⚡', unlockAt: 250000, maxLevel: 10 },
+
+    // V2 — META group
+    { id: 'backdoor', cost: 50000, effect: 'discount', value: 1, icon: '◄', unlockAt: 20000, maxLevel: 5 },
+    { id: 'wormhole', cost: 2000000, effect: 'critDmg', value: 0.5, icon: '◎', unlockAt: 1000000, maxLevel: 5 },
+    { id: 'turbo', cost: 10000000, effect: 'autoSpeed', value: 500, icon: '»', unlockAt: 5000000, maxLevel: 5 },
+    { id: 'nexus', cost: 100000000, effect: 'clickDps', value: 2000, icon: '◆', unlockAt: 50000000, maxLevel: 5 },
+
+    // V2 — SPECIAL expansion
+    { id: 'cortex', cost: 5000000, effect: 'critDmg', value: 0.3, icon: '◈', unlockAt: 2500000, maxLevel: 5 },
+    { id: 'leech', cost: 50000000, effect: 'autoclick', value: 1, icon: '¤', unlockAt: 25000000 },
+    { id: 'parasite', cost: 500000000, effect: 'autoSpeed', value: 300, icon: '◀', unlockAt: 200000000, maxLevel: 5 },
+    { id: 'proxy', cost: 5000000000, effect: 'discount', value: 2, icon: '▣', unlockAt: 2000000000, maxLevel: 5 },
   ];
 
   const UPGRADE_GROUPS = [
-    { id: 'click', labelKey: 'groupClick', ids: ['terminal', 'scanner', 'ai', 'zeroday', 'smith', 'bruteforce', 'ghost', 'phantom', 'codered', 'worm', 'apocalypse'] },
-    { id: 'dps', labelKey: 'groupDps', ids: ['cpu', 'firewall', 'botnet', 'quantum', 'source', 'sniffer', 'overmind', 'ddos', 'neural', 'sentinel', 'collective'] },
-    { id: 'special', labelKey: 'groupSpecial', ids: ['critical', 'sqlinjection', 'trojan'] },
+    { id: 'click', labelKey: 'groupClick', ids: ['terminal', 'scanner', 'ai', 'zeroday', 'smith', 'bruteforce', 'ghost', 'phantom', 'codered', 'worm', 'apocalypse', 'overdrive', 'singularity', 'omega'] },
+    { id: 'dps', labelKey: 'groupDps', ids: ['cpu', 'firewall', 'botnet', 'quantum', 'source', 'sniffer', 'overmind', 'ddos', 'neural', 'sentinel', 'collective', 'grid', 'infinite', 'genesis'] },
+    { id: 'special', labelKey: 'groupSpecial', ids: ['critical', 'sqlinjection', 'trojan', 'cortex', 'leech', 'parasite', 'proxy'] },
     { id: 'mult', labelKey: 'groupMult', ids: ['kernel', 'zion', 'rootkit', 'evolution', 'transcend', 'oracle', 'prime', 'cipher', 'keymaker'] },
+    { id: 'combo', labelKey: 'groupCombo', ids: ['rhythm', 'flow', 'momentum', 'adrenaline'] },
+    { id: 'meta', labelKey: 'groupMeta', ids: ['backdoor', 'wormhole', 'turbo', 'nexus'] },
   ];
 
   const MILESTONES = [100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 100000000000, 10000000000000];
@@ -542,6 +640,10 @@
     prestigeShop: {},
     buyMode: 1,
     autoBuyEnabled: false,
+    prestigeProgress: 0,
+    critMultiplier: 3,
+    autoInterval: 8000,
+    maxComboMult: 5,
     eventActive: null,
     eventTimer: null,
     bossActive: false,
@@ -687,8 +789,15 @@
   }
 
   /* --- GAME LOGIC --- */
+  function addData(amount) {
+    if (amount <= 0) return;
+    state.data += amount;
+    state.totalDataEarned += amount;
+    state.prestigeProgress += amount;
+  }
+
   function isUpgradeUnlocked(def) {
-    return state.totalDataEarned >= def.unlockAt;
+    return state.prestigeProgress >= def.unlockAt;
   }
 
   function initUpgrades() {
@@ -698,7 +807,9 @@
   }
 
   function getUpgradeCost(def, level) {
-    var base = def.cost * Math.pow(1.15, level);
+    if (def.maxLevel && level >= def.maxLevel) return Infinity;
+    var exponent = def.maxLevel > 0 ? 1.25 : 1.15;
+    var base = def.cost * Math.pow(exponent, level);
     var discountMult = Math.max(0.1, 1 - (state.discount || 0) / 100);
     var costMult = discountMult * getEventMultiplier().cost;
     return Math.max(1, Math.floor(base * costMult));
@@ -722,17 +833,29 @@
     var disc = 0;
     var multClick = 1;
     var multDps = 1;
+    var critDmgBonus = 0;
+    var comboBoostBonus = 0;
+    var autoSpeedMs = 8000;
     UPGRADE_DEFS.forEach(function (u) {
       var owned = state.upgrades[u.id] || 0;
+      if (owned === 0) return;
       switch (u.effect) {
         case 'click': click += u.value * owned; break;
         case 'dps': dpsVal += u.value * owned; break;
+        case 'clickDps': click += u.value * owned; dpsVal += u.value * owned; break;
         case 'crit': crit += u.value * owned; break;
+        case 'critDmg': critDmgBonus += u.value * owned; break;
         case 'discount': disc += u.value * owned; break;
         case 'mult_click': multClick *= Math.pow(u.value, owned); break;
         case 'mult_dps': multDps *= Math.pow(u.value, owned); break;
+        case 'comboBoost': comboBoostBonus += u.value * owned; break;
+        case 'autoSpeed': autoSpeedMs = Math.min(autoSpeedMs, 8000 - u.value * owned); break;
       }
     });
+
+    state.critMultiplier = 3 + critDmgBonus;
+    state.autoInterval = Math.max(2000, autoSpeedMs);
+    state.maxComboMult = Math.min(50, 5 + comboBoostBonus);
 
     var scannerLvl = state.upgrades['scanner'] || 0;
     var cpuLvl = state.upgrades['cpu'] || 0;
@@ -789,6 +912,10 @@
       showToast(t('level', { n: state.level }), 'info');
     }
     lastLevel = state.level;
+    if (state._lastAutoInterval !== state.autoInterval) {
+      state._lastAutoInterval = state.autoInterval;
+      state._autoDirty = true;
+    }
   }
 
   function flashUpgradeCard(id) {
@@ -806,6 +933,7 @@
     var bought = 0;
     for (var i = 0; i < count; i++) {
       var currentLevel = state.upgrades[id] || 0;
+      if (def.maxLevel && currentLevel >= def.maxLevel) break;
       var cost = getUpgradeCost(def, currentLevel);
       if (state.data < cost) break;
       state.data -= cost;
@@ -878,7 +1006,7 @@
     }
 
     if (!isAuto && state.critChance > 0 && Math.random() * 100 < state.critChance) {
-      gained *= 3;
+      gained *= state.critMultiplier || 3;
       state.totalCrits++;
       playSound('crit');
       spawnFloatingCrit(x, y - 30, t('critText'));
@@ -900,8 +1028,7 @@
       ], { duration: 150, easing: 'ease' });
     }
 
-    state.data += gained;
-    state.totalDataEarned += gained;
+    addData(gained);
     state.totalClicks++;
     calculateStats();
     renderAll();
@@ -1100,13 +1227,13 @@
     }
     if (dom.prestigeReq) {
       var req = getPrestigeReq();
-      var progress = Math.min(100, Math.floor(state.totalDataEarned / req * 100));
+      var progress = Math.min(100, Math.floor(state.prestigeProgress / req * 100));
       dom.prestigeReq.textContent = t('prestigeReq', { n: formatNum(req), p: progress });
       if (dom.prestigeBtn) {
-        var ready = state.totalDataEarned >= req;
+        var ready = state.prestigeProgress >= req;
         dom.prestigeBtn.disabled = !ready;
         dom.prestigeBtn.classList.toggle('ready', ready);
-        dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.totalDataEarned >= req * 0.3 ? 'inline-flex' : 'none';
+        dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.prestigeProgress >= req * 0.3 ? 'inline-flex' : 'none';
         var btnSpan = dom.prestigeBtn.querySelector('span');
         if (btnSpan) btnSpan.textContent = ready ? t('prestigeReady') : t('prestigeBtn');
       }
@@ -1150,9 +1277,13 @@
     switch (u.effect) {
       case 'click': return t('effectClick', { n: u.value * owned });
       case 'dps': return t('effectDps', { n: u.value * owned });
+      case 'clickDps': return t('effectClickDps', { n: u.value * owned });
       case 'crit': return t('effectCrit', { n: u.value * owned });
+      case 'critDmg': return t('effectCritDmg', { n: Number(u.value * owned).toFixed(1) });
       case 'discount': return t('effectDiscount', { n: u.value * owned });
       case 'autoclick': return t('effectAutoclick', { n: owned });
+      case 'autoSpeed': return t('effectAutoSpeed', { n: u.value * owned });
+      case 'comboBoost': return t('effectComboBoost', { n: Number(u.value * owned).toFixed(2) });
       case 'mult_click': return t('effectMultClick', { n: Number(Math.pow(u.value, owned)).toFixed(2) });
       case 'mult_dps': return t('effectMultDps', { n: Number(Math.pow(u.value, owned)).toFixed(2) });
       case 'offline': return t('effectOffline', { n: u.value * owned });
@@ -1190,13 +1321,15 @@
       groupDefs.forEach(function (u) {
         var owned = state.upgrades[u.id] || 0;
         totalOwned += owned;
-        var cost = getUpgradeCost(u, owned);
+        var isMaxed = u.maxLevel > 0 && owned >= u.maxLevel;
+        var cost = isMaxed ? Infinity : getUpgradeCost(u, owned);
         var card = document.createElement('div');
         card.className = 'upgradeCard';
         card.dataset.upgradeId = u.id;
         if (owned === 0) card.classList.add('unowned');
         if (owned > 0) card.classList.add('bought');
         if (state.data < cost) card.classList.add('locked');
+        if (isMaxed) card.classList.add('maxed');
 
         var headerRow = document.createElement('div');
         headerRow.className = 'upgradeHeader';
@@ -1218,12 +1351,18 @@
 
         var costRow = document.createElement('div');
         costRow.className = 'upgradeCost';
-        costRow.textContent = formatNum(cost) + ' ' + t('mb');
+        costRow.textContent = isMaxed ? 'MAX' : formatNum(cost) + ' ' + t('mb');
 
         var ownedRow = document.createElement('div');
         ownedRow.className = 'upgradeOwned';
-        var nextText = (u.maxLevel > 1 && owned < u.maxLevel) ? ' → ' + getEffectText(u, owned + 1) : '';
-        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')' + nextText;
+        if (isMaxed) {
+          ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')';
+          ownedRow.style.color = 'var(--amber-bright)';
+        } else {
+          var nextText = (u.maxLevel > 1 && owned < u.maxLevel) ? ' → ' + getEffectText(u, owned + 1) : '';
+          ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')' + nextText;
+          ownedRow.style.color = '';
+        }
 
         card.appendChild(headerRow);
         card.appendChild(descRow);
@@ -1269,7 +1408,7 @@
     if (nextLocked && dom.upgradesGrid.children.length > 0) {
       var hint = document.createElement('div');
       hint.className = 'nextUpgradeHint';
-      var remaining = Math.max(0, nextLocked.unlockAt - state.totalDataEarned);
+      var remaining = Math.max(0, nextLocked.unlockAt - state.prestigeProgress);
       hint.textContent = '🔒 ' + t('upgrade.' + nextLocked.id + '.name') + ' — ' + formatNum(remaining) + ' ' + t('mb');
       dom.upgradesGrid.appendChild(hint);
     }
@@ -1284,16 +1423,24 @@
       var def = UPGRADE_DEFS.find(function (u) { return u.id === id; });
       if (!def) continue;
       var owned = state.upgrades[id] || 0;
-      var cost = getUpgradeCost(def, owned);
+      var isMaxed = def.maxLevel > 0 && owned >= def.maxLevel;
+      var cost = isMaxed ? Infinity : getUpgradeCost(def, owned);
       var costEl = card.querySelector('.upgradeCost');
-      if (costEl) costEl.textContent = formatNum(cost) + ' ' + t('mb');
-      card.classList.toggle('locked', state.data < cost);
+      if (costEl) costEl.textContent = isMaxed ? 'MAX' : formatNum(cost) + ' ' + t('mb');
+      card.classList.toggle('locked', !isMaxed && state.data < cost);
       card.classList.toggle('bought', owned > 0);
       card.classList.toggle('unowned', owned === 0);
+      card.classList.toggle('maxed', isMaxed);
       var ownedRow = card.querySelector('.upgradeOwned');
       if (ownedRow) {
-        var nextText = (def.maxLevel > 1 && owned < def.maxLevel) ? ' → ' + getEffectText(def, owned + 1) : '';
-        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')' + nextText;
+        if (isMaxed) {
+          ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')';
+          ownedRow.style.color = 'var(--amber-bright)';
+        } else {
+          var nextText = (def.maxLevel > 1 && owned < def.maxLevel) ? ' → ' + getEffectText(def, owned + 1) : '';
+          ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')' + nextText;
+          ownedRow.style.color = '';
+        }
       }
     }
   }
@@ -1305,7 +1452,7 @@
 
   function showPrestigePreview() {
     var req = getPrestigeReq();
-    if (state.totalDataEarned < req) return;
+    if (state.prestigeProgress < req) return;
     var overlay = document.getElementById('prestigePreviewOverlay');
     if (!overlay) return;
     document.getElementById('previewMultCurrent').textContent = 'x' + Number(state.prestigeMultiplier).toFixed(1);
@@ -1329,6 +1476,7 @@
       state.prestigeCount++;
       state.prestigePoints = (state.prestigePoints || 0) + 1;
       state.data = Math.floor(getShopBonus('startData'));
+      state.prestigeProgress = 0;
       state.upgrades = {};
       initUpgrades();
       if (autoClickInterval) clearInterval(autoClickInterval);
@@ -1732,8 +1880,7 @@
     if (evt.id === 'windfall') {
       var bonus = Math.floor(state.data * 0.1);
       if (bonus < 1) return;
-      state.data += bonus;
-      state.totalDataEarned += bonus;
+      addData(bonus);
       playSound('event');
       showToast(t('eventWindfall') + ' +' + formatNum(bonus), 'info');
       document.getElementById('eventIcon').textContent = evt.icon;
@@ -1832,8 +1979,7 @@
     var reward = document.getElementById('bossReward');
     if (success) {
       var bonus = Math.floor(state.bossThreshold * 0.5);
-      state.data += bonus;
-      state.totalDataEarned += bonus;
+      addData(bonus);
       reward.textContent = t('bossSuccess', { n: formatNum(bonus) });
       reward.style.color = '#00ff00';
       playSound('levelup');
@@ -2076,8 +2222,7 @@
     result.style.display = 'block';
     if (success) {
       var bonus = Math.floor(state.dps * 10 * (1 + state.level * 0.1));
-      state.data += bonus;
-      state.totalDataEarned += bonus;
+      addData(bonus);
       result.textContent = t('fwSuccess', { n: formatNum(bonus) });
       result.className = 'fwResult success';
       playSound('levelup');
@@ -2108,6 +2253,7 @@
   /* --- AUTO CLICK --- */
   function setupAutoClick() {
     if (autoClickInterval) clearInterval(autoClickInterval);
+    var ms = Math.max(2000, state.autoInterval || 8000);
     autoClickInterval = setInterval(function () {
       var level = state.upgrades['trojan'] || 0;
       var extra = 0;
@@ -2156,8 +2302,7 @@
   function gameLoop() {
     if (state.dps > 0) {
       var gain = state.dps / 10;
-      state.data += gain;
-      state.totalDataEarned += gain;
+      addData(gain);
       if (state.bossActive) {
         state.bossData += gain;
         var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
@@ -2169,6 +2314,7 @@
       calculateStats();
       checkAchievements();
       renderAll();
+      if (state._autoDirty) { state._autoDirty = false; setupAutoClick(); }
     }
   }
 
@@ -2200,6 +2346,7 @@
         if (state.prestigePoints == null) state.prestigePoints = 0;
         if (state.autoBuyEnabled == null) state.autoBuyEnabled = false;
         if (state.buyMode == null) state.buyMode = 1;
+        if (state.prestigeProgress == null) state.prestigeProgress = state.totalDataEarned || 0;
         calculateStats();
 
         var rootkitLevel = state.upgrades['rootkit'] || 0;
@@ -2208,7 +2355,7 @@
           var offlineData = Math.floor(state.dps * elapsed * rootkitLevel * 0.15);
           if (offlineData > 0) {
             playSound('offline');
-            state.data += offlineData;
+            addData(offlineData);
             showToast(t('offline', { n: formatNum(offlineData) }) + t('offlineExtra'), 'info');
           }
         }
@@ -2236,6 +2383,7 @@
     var savedActiveSkin = state.activeSkin;
     var savedPrestigeShop = Object.assign({}, state.prestigeShop);
     var savedPrestigePoints = state.prestigePoints || 0;
+    var savedPrestigeProgress = state.prestigeProgress;
     state = {
       data: 0,
       clickPower: 1,
@@ -2262,6 +2410,7 @@
       playTime: 0,
       firewallEnabled: true,
       prestigePoints: savedPrestigePoints,
+      prestigeProgress: savedPrestigeProgress,
       prestigeShop: savedPrestigeShop,
       buyMode: 1,
       autoBuyEnabled: state.autoBuyEnabled,
@@ -2335,6 +2484,7 @@
       playTime: 0,
       firewallEnabled: true,
       prestigePoints: 0,
+      prestigeProgress: 0,
       prestigeShop: {},
       buyMode: 1,
       autoBuyEnabled: false,

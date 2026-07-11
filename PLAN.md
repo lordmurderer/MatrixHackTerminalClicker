@@ -283,7 +283,15 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 - [x] **Barra de progreso de prestigio** — Indicador visual con barra y texto "LISTO → PURGAR" cuando está disponible
 - [ ] **Resumen offline** — Overlay al volver mostrando datos ganados, eventos ocurridos, bosses vencidos
 - [ ] **Tutorial / Onboarding** — Primera vez: tooltips iniciales que desaparecen al completarlos
-- [ ] **Panel de ajustes** — Unificar sonido, idioma, reset, export/import en un overlay
+- [x] **Panel de ajustes** — Unificar sonido, idioma, reset, export/import en un overlay (⚙ OPTIONS en toolbar)
+
+### P1b — Prestige Progress System ✅
+
+- [x] **`prestigeProgress` counter** — Nuevo campo que se resetea a 0 en cada prestige. Mide el progreso para requisitos de prestige y desbloqueo de mejoras.
+  - `state.prestigeProgress` default 0, se incrementa con cada ganancia de datos
+  - `isUpgradeUnlocked()` usa `prestigeProgress` en vez de `totalDataEarned`
+  - `showPrestigePreview()` y barra de progreso usan `prestigeProgress`
+  - Helper `addData(amount)` reemplaza todos los `state.data +=` y `state.totalDataEarned +=`
 
 ### P2 — Contenido
 
@@ -291,6 +299,45 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 - [ ] **Más eventos** — 3-4 nuevos (botnet_recruit, backdoor, ransomware, etc.)
 - [ ] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
 - [ ] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
+
+### P2b — V2 Upgrade Expansion (~20 nuevas mejoras)
+
+#### Nuevos tipos de efecto ✅
+- [x] **`clickDps`** — Otorga +X a click y DPS por nivel (híbrido). Lógica en `calculateStats()` y `getEffectText()`
+- [x] **`critDmg`** — Aumenta multiplicador de crítico (base 3x → 3x + value × level). Nuevo `state.critMultiplier`, lógica en `doClick()`
+- [x] **`autoSpeed`** — Reduce intervalo de auto-click (base 8000ms, min 2000ms). Nuevo `state.autoInterval`, lógica en `setupAutoClick()`
+- [x] **`comboBoost`** — Aumenta multiplicador máximo de combo (base ×5, +0.02 por nivel). Lógica en `doClick()`
+
+#### maxLevel system ✅
+- [x] **Sistema de nivel máximo** — Agregar campo `maxLevel` a UPGRADE_DEFS. `buyUpgrade()` checkea límite, render muestra "MAX", cost formula escala con ^1.25 para mejoras limitadas
+
+#### Nuevo grupo COMBO (mejoras con tope) ✅
+- [x] **rhythm** (5K, +20 click, maxLevel: 10)
+- [x] **flow** (20K, +20 DPS, maxLevel: 10)
+- [x] **momentum** (100K, +10 clickDps, maxLevel: 10)
+- [x] **adrenaline** (500K, +0.02 comboBoost, maxLevel: 10)
+
+#### Nuevo grupo META (mejoras con tope) ✅
+- [x] **backdoor** (50K, -1% discount, maxLevel: 5)
+- [x] **wormhole** (2M, +0.5 critDmg, maxLevel: 5)
+- [x] **turbo** (10M, -500ms autoSpeed, maxLevel: 5)
+- [x] **nexus** (100M, +2K clickDps, maxLevel: 5)
+
+#### CLICK group — llenar gaps ✅
+- [x] **overdrive** (50B, +50K click)
+- [x] **singularity** (50T, +10M click)
+- [x] **omega** (1Qa, ×3 mult_click)
+
+#### DPS group — llenar gaps ✅
+- [x] **grid** (50B, +25K DPS)
+- [x] **infinite** (50T, +5M DPS)
+- [x] **genesis** (1Qa, ×3 mult_dps)
+
+#### SPECIAL group — expandir ✅
+- [x] **cortex** (5M, +0.3 critDmg, maxLevel: 5)
+- [x] **leech** (50M, +1 autoclick)
+- [x] **parasite** (500M, -300ms autoSpeed, maxLevel: 5)
+- [x] **proxy** (5B, -2% discount, maxLevel: 5)
 
 ### P3 — Profundidad
 
