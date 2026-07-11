@@ -287,6 +287,7 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 
 ### P2 — Contenido
 
+- [x] **8 nuevas mejoras** — phantom, overmind, evolution, transcend, apocalypse, collective, cipher, keymaker (rellenan huecos de progresión y extienden endgame)
 - [ ] **Más eventos** — 3-4 nuevos (botnet_recruit, backdoor, ransomware, etc.)
 - [ ] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
 - [ ] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
