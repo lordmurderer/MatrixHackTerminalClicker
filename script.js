@@ -763,6 +763,14 @@
     lastLevel = state.level;
   }
 
+  function flashUpgradeCard(id) {
+    var card = dom.upgradesGrid.querySelector('.upgradeCard[data-upgrade-id="' + id + '"]');
+    if (card) {
+      card.classList.add('bought-anim');
+      setTimeout(function () { card.classList.remove('bought-anim'); }, 400);
+    }
+  }
+
   function buyUpgrade(id, count) {
     var def = UPGRADE_DEFS.find(function (u) { return u.id === id; });
     if (!def) return;
@@ -781,6 +789,9 @@
     calculateStats();
     state._upgradesDirty = true;
     renderAll();
+
+    // Flash animation on the purchased card (after DOM rebuild)
+    flashUpgradeCard(id);
   }
 
   function tryBuyCheapest() {
@@ -801,6 +812,7 @@
         state.data -= cost;
         state.upgrades[best.id] = lvl + 1;
         calculateStats();
+        flashUpgradeCard(best.id);
       }
     }
   }
