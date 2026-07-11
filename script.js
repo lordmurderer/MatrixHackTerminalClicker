@@ -517,6 +517,7 @@
     prestigePoints: 0,
     prestigeShop: {},
     buyMode: 1,
+    autoBuyEnabled: false,
     eventActive: null,
     eventTimer: null,
     bossActive: false,
@@ -793,7 +794,15 @@
         bestCost = cost;
       }
     });
-    if (best) buyUpgrade(best.id, 1);
+    if (best) {
+      var lvl = state.upgrades[best.id] || 0;
+      var cost = getUpgradeCost(best, lvl);
+      if (state.data >= cost) {
+        state.data -= cost;
+        state.upgrades[best.id] = lvl + 1;
+        calculateStats();
+      }
+    }
   }
 
   function doClick(e, isAuto) {
@@ -1076,8 +1085,14 @@
       }
     }
 
-    var autoIndicator = document.getElementById('autoBuyIndicator');
-    if (autoIndicator) autoIndicator.classList.toggle('active', (state.prestigeShop['autoBuy'] || 0) >= 1);
+    var autoBtn = document.getElementById('autoBuyToggle');
+    if (autoBtn) {
+      var owned = (state.prestigeShop['autoBuy'] || 0) >= 1;
+      var enabled = state.autoBuyEnabled && owned;
+      autoBtn.style.display = owned ? 'inline-block' : 'none';
+      autoBtn.classList.toggle('active', enabled);
+      autoBtn.textContent = enabled ? t('autoBuyOn') : t('autoBuyOff');
+    }
 
     if (state._upgradesDirty) {
       renderUpgrades();
@@ -1213,6 +1228,13 @@
       var costEl = card.querySelector('.upgradeCost');
       if (costEl) costEl.textContent = formatNum(cost) + ' ' + t('mb');
       card.classList.toggle('locked', state.data < cost);
+      card.classList.toggle('bought', owned > 0);
+      card.classList.toggle('unowned', owned === 0);
+      var ownedRow = card.querySelector('.upgradeOwned');
+      if (ownedRow) {
+        var nextText = (def.maxLevel > 1 && owned < def.maxLevel) ? ' → ' + getEffectText(def, owned + 1) : '';
+        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')' + nextText;
+      }
     }
   }
 
@@ -1784,7 +1806,7 @@
     if ((state.prestigePoints || 0) < cost) return;
     state.prestigePoints -= cost;
     state.prestigeShop[id] = lvl + 1;
-    if (id === 'autoBuy') setupAutoBuy();
+    if (id === 'autoBuy') { state.autoBuyEnabled = true; setupAutoBuy(); }
     saveGame();
     renderPrestigeShop();
   }
@@ -2049,14 +2071,25 @@
 
   function setupAutoBuy() {
     if (autoBuyInterval) clearInterval(autoBuyInterval);
-    var active = (state.prestigeShop['autoBuy'] || 0) >= 1;
-    var indicator = document.getElementById('autoBuyIndicator');
-    if (indicator) indicator.classList.toggle('active', active);
-    if (active) {
+    var owned = (state.prestigeShop['autoBuy'] || 0) >= 1;
+    var enabled = state.autoBuyEnabled && owned;
+    var btn = document.getElementById('autoBuyToggle');
+    if (btn) {
+      btn.style.display = owned ? 'inline-block' : 'none';
+      btn.classList.toggle('active', enabled);
+      btn.textContent = enabled ? t('autoBuyOn') : t('autoBuyOff');
+    }
+    if (enabled) {
       autoBuyInterval = setInterval(function () {
         tryBuyCheapest();
       }, 500);
     }
+  }
+
+  function toggleAutoBuy() {
+    state.autoBuyEnabled = !state.autoBuyEnabled;
+    setupAutoBuy();
+    saveGame();
   }
 
   /* --- GAME LOOP --- */
@@ -2105,7 +2138,7 @@
         if (!state.activeSkin) state.activeSkin = 'default';
         if (!state.prestigeShop) state.prestigeShop = {};
         if (state.prestigePoints == null) state.prestigePoints = 0;
-        if (state.autoBuy == null) state.autoBuy = false;
+        if (state.autoBuyEnabled == null) state.autoBuyEnabled = false;
         if (state.buyMode == null) state.buyMode = 1;
         calculateStats();
 
@@ -2171,6 +2204,7 @@
       prestigePoints: savedPrestigePoints,
       prestigeShop: savedPrestigeShop,
       buyMode: 1,
+      autoBuyEnabled: state.autoBuyEnabled,
     };
     initUpgrades();
     calculateStats();
@@ -2358,6 +2392,10 @@
     // Prestige shop
     if (dom.prestigeShopBtn) {
       dom.prestigeShopBtn.addEventListener('click', togglePrestigeShop);
+    }
+    var autoBuyToggle = document.getElementById('autoBuyToggle');
+    if (autoBuyToggle) {
+      autoBuyToggle.addEventListener('click', toggleAutoBuy);
     }
     var prestigeShopClose = document.getElementById('prestigeShopClose');
     if (prestigeShopClose) {

@@ -1234,14 +1234,28 @@ body {
   color: var(--amber-bright);
 }
 
-.autoBuyIndicator {
+.autoBuyToggle {
   display: none;
+  background: transparent;
+  border: 1px solid var(--amber-dark);
+  color: var(--amber-dim);
+  font-family: 'Courier New', monospace;
   font-size: 0.5rem;
-  color: var(--amber);
+  padding: 1px 5px;
+  cursor: pointer;
+  transition: all 0.15s;
   letter-spacing: 0.5px;
-  animation: prestigePulse 2s ease-in-out infinite;
 }
-.autoBuyIndicator.active { display: inline; }
+.autoBuyToggle.active {
+  display: inline-block;
+  border-color: var(--amber);
+  color: var(--amber);
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.15);
+}
+.autoBuyToggle.active:hover {
+  border-color: var(--amber-bright);
+  color: var(--amber-bright);
+}
 
 /* EVENT DISPLAY */
 #eventDisplay {
@@ -1912,4 +1926,5 @@ body.shake {
   #prestigeBtn { font-size: 0.55rem; padding: 2px 8px; }
   #prestigeProgressOuter { height: 5px; }
   #prestigeReq { font-size: 0.45rem; }
+  .autoBuyToggle { font-size: 0.45rem; padding: 1px 4px; }
 }
