@@ -189,6 +189,18 @@
       exportOk: 'SAVE COPIADO AL PORTAPAPELES',
       importOk: 'SAVE IMPORTADO',
       importFail: 'SAVE INVÁLIDO',
+      settingsBtn: 'OPCIONES',
+      settingsTitle: '> OPCIONES_',
+      settingsLang: 'IDIOMA',
+      settingsAudio: 'SONIDO',
+      settingsData: 'DATOS',
+      settingsReset: 'REINICIAR',
+      settingsResetDesc: 'Borra todo el progreso, logros, skins, prestige y empieza de cero.',
+      settingsResetBtn: '☠ BORRAR TODOS LOS DATOS',
+      settingsResetConfirmMsg: '¿Estás seguro? Esto no se puede deshacer.',
+      resetCancel: 'CANCELAR',
+      resetExecute: '☠ ELIMINAR TODO',
+      resetDone: 'TODO EL PROGRESO HA SIDO ELIMINADO',
     },
     en: {
       title: 'MATRIX HACK TERMINAL v1.0',
@@ -377,6 +389,18 @@
       exportOk: 'SAVE COPIED TO CLIPBOARD',
       importOk: 'SAVE IMPORTED',
       importFail: 'INVALID SAVE',
+      settingsBtn: 'OPTIONS',
+      settingsTitle: '> OPTIONS_',
+      settingsLang: 'LANGUAGE',
+      settingsAudio: 'AUDIO',
+      settingsData: 'DATA',
+      settingsReset: 'RESET',
+      settingsResetDesc: 'Wipe all progress, achievements, skins, prestige &amp; start from zero.',
+      settingsResetBtn: '☠ DELETE ALL DATA',
+      settingsResetConfirmMsg: 'Are you sure? This cannot be undone.',
+      resetCancel: 'CANCEL',
+      resetExecute: '☠ ERASE EVERYTHING',
+      resetDone: 'ALL PROGRESS HAS BEEN WIPED',
     },
   };
 
@@ -398,40 +422,40 @@
   }
 
   const UPGRADE_DEFS = [
-    { id: 'terminal', cost: 10, effect: 'click', value: 1, icon: '>' },
-    { id: 'cpu', cost: 25, effect: 'dps', value: 0.5, icon: '[]' },
-    { id: 'scanner', cost: 50, effect: 'click', value: 2, icon: '@' },
-    { id: 'firewall', cost: 100, effect: 'dps', value: 2, icon: '#' },
-    { id: 'ai', cost: 250, effect: 'click', value: 5, icon: '&' },
-    { id: 'botnet', cost: 500, effect: 'dps', value: 5, icon: '*' },
-    { id: 'zeroday', cost: 1000, effect: 'click', value: 15, icon: '!' },
-    { id: 'quantum', cost: 2500, effect: 'dps', value: 15, icon: '?' },
-    { id: 'smith', cost: 5000, effect: 'click', value: 50, icon: '$' },
-    { id: 'source', cost: 10000, effect: 'dps', value: 50, icon: '%' },
-    { id: 'critical', cost: 15000, effect: 'crit', value: 4, icon: '!' },
-    { id: 'sqlinjection', cost: 25000, effect: 'discount', value: 2, icon: '$' },
-    { id: 'trojan', cost: 40000, effect: 'autoclick', value: 1, icon: '@' },
-    { id: 'kernel', cost: 80000, effect: 'mult_click', value: 1.15, icon: '*' },
-    { id: 'zion', cost: 150000, effect: 'mult_dps', value: 1.15, icon: '#' },
-    { id: 'rootkit', cost: 300000, effect: 'offline', value: 15, icon: '&' },
-    { id: 'evolution', cost: 5000000, effect: 'mult_click', value: 1.2, icon: '+' },
-    { id: 'transcend', cost: 10000000, effect: 'mult_dps', value: 1.2, icon: '=' },
-    { id: 'phantom', cost: 50000000, effect: 'click', value: 1000, icon: '~' },
-    { id: 'overmind', cost: 100000000, effect: 'dps', value: 500, icon: '@' },
-    { id: 'sniffer', cost: 100000, effect: 'dps', value: 75, icon: '~' },
-    { id: 'bruteforce', cost: 250000, effect: 'click', value: 150, icon: '!' },
-    { id: 'ddos', cost: 750000, effect: 'dps', value: 500, icon: '*' },
-    { id: 'ghost', cost: 2000000, effect: 'click', value: 400, icon: '?' },
-    { id: 'codered', cost: 10000000, effect: 'click', value: 5000, icon: '#' },
-    { id: 'neural', cost: 25000000, effect: 'dps', value: 10000, icon: '@' },
-    { id: 'worm', cost: 500000000, effect: 'click', value: 500000, icon: '~' },
-    { id: 'sentinel', cost: 5000000000, effect: 'dps', value: 500000, icon: '%' },
-    { id: 'oracle', cost: 50000000000, effect: 'mult_click', value: 1.5, icon: '?' },
-    { id: 'apocalypse', cost: 100000000000, effect: 'click', value: 100000, icon: '!' },
-    { id: 'collective', cost: 500000000000, effect: 'dps', value: 50000, icon: '#' },
-    { id: 'prime', cost: 1000000000000, effect: 'mult_dps', value: 1.5, icon: '$' },
-    { id: 'cipher', cost: 10000000000000, effect: 'mult_click', value: 2, icon: '?' },
-    { id: 'keymaker', cost: 100000000000000, effect: 'mult_dps', value: 2, icon: '$' },
+    { id: 'terminal', cost: 10, effect: 'click', value: 1, icon: '>', unlockAt: 0 },
+    { id: 'cpu', cost: 25, effect: 'dps', value: 0.5, icon: '[]', unlockAt: 0 },
+    { id: 'scanner', cost: 50, effect: 'click', value: 2, icon: '@', unlockAt: 0 },
+    { id: 'firewall', cost: 100, effect: 'dps', value: 2, icon: '#', unlockAt: 0 },
+    { id: 'ai', cost: 250, effect: 'click', value: 5, icon: '&', unlockAt: 0 },
+    { id: 'botnet', cost: 500, effect: 'dps', value: 5, icon: '*', unlockAt: 0 },
+    { id: 'zeroday', cost: 1000, effect: 'click', value: 15, icon: '!', unlockAt: 500 },
+    { id: 'quantum', cost: 2500, effect: 'dps', value: 15, icon: '?', unlockAt: 1000 },
+    { id: 'smith', cost: 5000, effect: 'click', value: 50, icon: '$', unlockAt: 2500 },
+    { id: 'source', cost: 10000, effect: 'dps', value: 50, icon: '%', unlockAt: 5000 },
+    { id: 'critical', cost: 15000, effect: 'crit', value: 4, icon: '!', unlockAt: 10000 },
+    { id: 'sqlinjection', cost: 25000, effect: 'discount', value: 2, icon: '$', unlockAt: 10000 },
+    { id: 'trojan', cost: 40000, effect: 'autoclick', value: 1, icon: '@', unlockAt: 20000 },
+    { id: 'kernel', cost: 80000, effect: 'mult_click', value: 1.15, icon: '*', unlockAt: 40000 },
+    { id: 'zion', cost: 150000, effect: 'mult_dps', value: 1.15, icon: '#', unlockAt: 75000 },
+    { id: 'rootkit', cost: 300000, effect: 'offline', value: 15, icon: '&', unlockAt: 150000 },
+    { id: 'sniffer', cost: 100000, effect: 'dps', value: 75, icon: '~', unlockAt: 75000 },
+    { id: 'bruteforce', cost: 250000, effect: 'click', value: 150, icon: '!', unlockAt: 150000 },
+    { id: 'ddos', cost: 750000, effect: 'dps', value: 500, icon: '*', unlockAt: 400000 },
+    { id: 'ghost', cost: 2000000, effect: 'click', value: 400, icon: '?', unlockAt: 1000000 },
+    { id: 'evolution', cost: 5000000, effect: 'mult_click', value: 1.2, icon: '+', unlockAt: 3000000 },
+    { id: 'transcend', cost: 10000000, effect: 'mult_dps', value: 1.2, icon: '=', unlockAt: 5000000 },
+    { id: 'codered', cost: 10000000, effect: 'click', value: 5000, icon: '#', unlockAt: 5000000 },
+    { id: 'neural', cost: 25000000, effect: 'dps', value: 10000, icon: '@', unlockAt: 12000000 },
+    { id: 'phantom', cost: 50000000, effect: 'click', value: 1000, icon: '~', unlockAt: 25000000 },
+    { id: 'overmind', cost: 100000000, effect: 'dps', value: 500, icon: '@', unlockAt: 25000000 },
+    { id: 'worm', cost: 500000000, effect: 'click', value: 500000, icon: '~', unlockAt: 200000000 },
+    { id: 'sentinel', cost: 5000000000, effect: 'dps', value: 500000, icon: '%', unlockAt: 2000000000 },
+    { id: 'oracle', cost: 50000000000, effect: 'mult_click', value: 1.5, icon: '?', unlockAt: 20000000000 },
+    { id: 'apocalypse', cost: 100000000000, effect: 'click', value: 100000, icon: '!', unlockAt: 50000000000 },
+    { id: 'collective', cost: 500000000000, effect: 'dps', value: 50000, icon: '#', unlockAt: 200000000000 },
+    { id: 'prime', cost: 1000000000000, effect: 'mult_dps', value: 1.5, icon: '$', unlockAt: 500000000000 },
+    { id: 'cipher', cost: 10000000000000, effect: 'mult_click', value: 2, icon: '?', unlockAt: 5000000000000 },
+    { id: 'keymaker', cost: 100000000000000, effect: 'mult_dps', value: 2, icon: '$', unlockAt: 50000000000000 },
   ];
 
   const UPGRADE_GROUPS = [
@@ -663,6 +687,10 @@
   }
 
   /* --- GAME LOGIC --- */
+  function isUpgradeUnlocked(def) {
+    return state.totalDataEarned >= def.unlockAt;
+  }
+
   function initUpgrades() {
     UPGRADE_DEFS.forEach(function (u) {
       if (!state.upgrades[u.id]) state.upgrades[u.id] = 0;
@@ -798,6 +826,7 @@
     var best = null;
     var bestCost = Infinity;
     UPGRADE_DEFS.forEach(function (u) {
+      if (!isUpgradeUnlocked(u)) return;
       var lvl = state.upgrades[u.id] || 0;
       var cost = getUpgradeCost(u, lvl);
       if (state.data >= cost && cost < bestCost) {
@@ -1148,10 +1177,9 @@
   function renderUpgrades() {
     dom.upgradesGrid.innerHTML = '';
     var totalOwned = 0;
-    var totalDefs = UPGRADE_DEFS.length;
 
     UPGRADE_GROUPS.forEach(function (group) {
-      var groupDefs = UPGRADE_DEFS.filter(function (u) { return group.ids.indexOf(u.id) !== -1; });
+      var groupDefs = UPGRADE_DEFS.filter(function (u) { return group.ids.indexOf(u.id) !== -1 && isUpgradeUnlocked(u); });
       if (groupDefs.length === 0) return;
 
       var header = document.createElement('div');
@@ -1223,7 +1251,27 @@
     });
 
     if (dom.upgradeCount) {
-      dom.upgradeCount.textContent = t('upgradeCount', { n: totalOwned, m: totalDefs });
+      var visibleDefs = UPGRADE_DEFS.filter(function (u) { return isUpgradeUnlocked(u); });
+      dom.upgradeCount.textContent = t('upgradeCount', { n: totalOwned, m: visibleDefs.length });
+    }
+
+    // Hint: next locked upgrade
+    var nextLocked = null;
+    var minUnlock = Infinity;
+    UPGRADE_DEFS.forEach(function (u) {
+      if (!isUpgradeUnlocked(u) && u.unlockAt < minUnlock) {
+        minUnlock = u.unlockAt;
+        nextLocked = u;
+      }
+    });
+    var existingHint = dom.upgradesGrid.querySelector('.nextUpgradeHint');
+    if (existingHint) existingHint.remove();
+    if (nextLocked && dom.upgradesGrid.children.length > 0) {
+      var hint = document.createElement('div');
+      hint.className = 'nextUpgradeHint';
+      var remaining = Math.max(0, nextLocked.unlockAt - state.totalDataEarned);
+      hint.textContent = '🔒 ' + t('upgrade.' + nextLocked.id + '.name') + ' — ' + formatNum(remaining) + ' ' + t('mb');
+      dom.upgradesGrid.appendChild(hint);
     }
   }
 
@@ -2236,6 +2284,76 @@
     saveGame();
   }
 
+  /* --- SETTINGS --- */
+  function toggleSettings() {
+    var overlay = document.getElementById('settingsOverlay');
+    if (!overlay) return;
+    var isOpen = overlay.classList.toggle('open');
+    if (isOpen) {
+      var langBtn = document.getElementById('settingsLangToggle');
+      if (langBtn) langBtn.textContent = state.lang === 'es' ? 'EN' : 'ES';
+      var soundBtn = document.getElementById('settingsSoundToggle');
+      if (soundBtn) soundBtn.textContent = state.soundEnabled ? '♪' : '♪̸';
+      var confirmEl = document.getElementById('settingsResetConfirm');
+      if (confirmEl) confirmEl.style.display = 'none';
+    }
+  }
+
+  function hardReset() {
+    localStorage.removeItem(SAVE_KEY);
+    if (autoClickInterval) clearInterval(autoClickInterval);
+    if (firewallTimeout) clearTimeout(firewallTimeout);
+    if (firewallTimerInterval) clearTimeout(firewallTimerInterval);
+    if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
+    if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
+    state.firewallActive = false;
+    state.bossActive = false;
+    state.eventActive = null;
+    state = {
+      data: 0,
+      clickPower: 1,
+      dps: 0,
+      level: 1,
+      upgrades: {},
+      totalClicks: 0,
+      critChance: 0,
+      discount: 0,
+      lastSaveTime: null,
+      synergy: false,
+      architect: false,
+      architectCount: 0,
+      lang: 'es',
+      prestigeMultiplier: 1,
+      prestigeCount: 0,
+      totalDataEarned: 0,
+      achievements: {},
+      totalCrits: 0,
+      combo: 0,
+      activeSkin: 'default',
+      ownedSkins: [],
+      soundEnabled: true,
+      playTime: 0,
+      firewallEnabled: true,
+      prestigePoints: 0,
+      prestigeShop: {},
+      buyMode: 1,
+      autoBuyEnabled: false,
+    };
+    initUpgrades();
+    calculateStats();
+    state._upgradesDirty = true;
+    renderAll();
+    setupAutoClick();
+    setupAutoBuy();
+    scheduleFirewall();
+    scheduleEvent();
+    scheduleBoss();
+    localStorage.removeItem(SAVE_KEY);
+    saveGame();
+    toggleSettings();
+    showToast(t('resetDone'), 'warn');
+  }
+
   /* --- DOM CACHE --- */
   function cacheDom() {
     dom.dataAmount = document.getElementById('dataAmount');
@@ -2347,6 +2465,46 @@
     }
     document.getElementById('achOverlay').addEventListener('click', function (e) {
       if (e.target === this) toggleAchievements();
+    });
+
+    // Settings
+    var settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', toggleSettings);
+    }
+    var settingsClose = document.getElementById('settingsClose');
+    if (settingsClose) {
+      settingsClose.addEventListener('click', toggleSettings);
+    }
+    document.getElementById('settingsOverlay').addEventListener('click', function (e) {
+      if (e.target === this) toggleSettings();
+    });
+    // Settings - language
+    document.getElementById('settingsLangToggle').addEventListener('click', function () {
+      toggleLang();
+      var btn = document.getElementById('settingsLangToggle');
+      if (btn) btn.textContent = state.lang === 'es' ? 'EN' : 'ES';
+    });
+    // Settings - sound
+    document.getElementById('settingsSoundToggle').addEventListener('click', function () {
+      toggleSound();
+      var btn = document.getElementById('settingsSoundToggle');
+      if (btn) btn.textContent = state.soundEnabled ? '♪' : '♪̸';
+    });
+    // Settings - export/import
+    document.getElementById('settingsExportBtn').addEventListener('click', exportSave);
+    document.getElementById('settingsImportBtn').addEventListener('click', importSave);
+    // Settings - reset
+    document.getElementById('settingsResetBtn').addEventListener('click', function () {
+      document.getElementById('settingsResetConfirm').style.display = 'block';
+    });
+    document.getElementById('settingsResetCancel').addEventListener('click', function () {
+      document.getElementById('settingsResetConfirm').style.display = 'none';
+    });
+    document.getElementById('settingsResetExecute').addEventListener('click', function () {
+      if (confirm(t('resetConfirm'))) {
+        hardReset();
+      }
     });
 
     window.addEventListener('resize', function () {

@@ -661,6 +661,164 @@ body {
   display: flex;
 }
 
+#settingsOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 100;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#settingsOverlay.open {
+  display: flex;
+}
+
+#settingsPanel {
+  background: #000;
+  border: 2px solid var(--amber);
+  border-style: double;
+  padding: 15px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(255, 136, 0, 0.2);
+}
+
+#settingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--amber-dark);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: var(--amber-bright);
+}
+
+#settingsClose {
+  background: transparent;
+  border: 1px solid var(--amber-dark);
+  color: var(--amber-dim);
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  padding: 1px 8px;
+  cursor: pointer;
+}
+
+#settingsClose:hover {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+#settingsBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settingsSection {
+  border: 1px solid var(--amber-bg);
+  padding: 10px;
+  background: rgba(10, 5, 0, 0.5);
+}
+
+.settingsSection.settingsDanger {
+  border-color: rgba(255, 0, 0, 0.3);
+  background: rgba(20, 0, 0, 0.3);
+}
+
+.settingsSectionTitle {
+  color: var(--amber-bright);
+  font-size: 0.7rem;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.settingsToggleBtn {
+  background: transparent;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  padding: 4px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.settingsToggleBtn:hover {
+  background: rgba(255, 136, 0, 0.1);
+  box-shadow: 0 0 8px rgba(255, 136, 0, 0.3);
+}
+
+.settingsBtnRow {
+  display: flex;
+  gap: 8px;
+}
+
+.settingsActionBtn {
+  background: transparent;
+  border: 1px solid var(--amber-dark);
+  color: var(--amber-dim);
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.settingsActionBtn:hover {
+  border-color: var(--amber);
+  color: var(--amber-bright);
+}
+
+.settingsDangerDesc {
+  color: rgba(255, 80, 80, 0.6);
+  font-size: 0.6rem;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.settingsDangerBtn {
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+}
+
+.settingsDangerBtn:hover {
+  background: rgba(255, 0, 0, 0.15) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3) !important;
+}
+
+#settingsResetBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 0, 0, 0.4);
+  color: rgba(255, 80, 80, 0.8);
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+#settingsResetBtn:hover {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: #ff0000;
+  color: #ff0000;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.25);
+}
+
+#settingsResetConfirm {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 0, 0, 0.2);
+}
+
 #statsPanel {
   background: #000;
   border: 2px solid var(--amber);
@@ -1129,6 +1287,22 @@ body {
 #upgradeCount {
   font-size: 0.55rem;
   color: var(--amber-dim);
+}
+
+.nextUpgradeHint {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--amber-dim);
+  font-size: 11px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 136, 0, 0.15);
+  margin-top: 4px;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .upgradeGroupHeader {

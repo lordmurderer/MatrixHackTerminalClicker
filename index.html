@@ -88,6 +88,7 @@
       <button id="achBtn">🏆 <span data-i18n="achBtn">ACHIEVEMENTS</span></button>
       <button id="statsBtn">📊 <span data-i18n="statsBtn">STATS</span></button>
       <button id="skinBtn">🎨 <span data-i18n="skinBtn">SKINS</span></button>
+      <button id="settingsBtn">⚙ <span data-i18n="settingsBtn">OPTIONS</span></button>
     </div>
     <div id="comboDisplay"></div>
     <div id="eventDisplay">
@@ -235,6 +236,44 @@
       <button id="prestigeShopClose">X</button>
     </div>
     <div id="prestigeShopGrid"></div>
+  </div>
+</div>
+
+<div id="settingsOverlay">
+  <div id="settingsPanel">
+    <div id="settingsHeader">
+      <span data-i18n="settingsTitle">> OPTIONS_</span>
+      <button id="settingsClose">X</button>
+    </div>
+    <div id="settingsBody">
+      <div class="settingsSection">
+        <div class="settingsSectionTitle" data-i18n="settingsLang">LANGUAGE</div>
+        <button id="settingsLangToggle" class="settingsToggleBtn">EN</button>
+      </div>
+      <div class="settingsSection">
+        <div class="settingsSectionTitle" data-i18n="settingsAudio">AUDIO</div>
+        <button id="settingsSoundToggle" class="settingsToggleBtn">♪</button>
+      </div>
+      <div class="settingsSection">
+        <div class="settingsSectionTitle" data-i18n="settingsData">DATA</div>
+        <div class="settingsBtnRow">
+          <button id="settingsExportBtn" class="settingsActionBtn" data-i18n="exportBtn">↑ EXPORT</button>
+          <button id="settingsImportBtn" class="settingsActionBtn" data-i18n="importBtn">↓ IMPORT</button>
+        </div>
+      </div>
+      <div class="settingsSection settingsDanger">
+        <div class="settingsSectionTitle" data-i18n="settingsReset">RESET</div>
+        <p class="settingsDangerDesc" data-i18n="settingsResetDesc">Wipe all progress, achievements, skins, prestige &amp; start from zero.</p>
+        <button id="settingsResetBtn" data-i18n="settingsResetBtn">☠ DELETE ALL DATA</button>
+        <div id="settingsResetConfirm" style="display:none;">
+          <p class="settingsDangerDesc" data-i18n="settingsResetConfirmMsg">Are you sure? This cannot be undone.</p>
+          <div class="settingsBtnRow">
+            <button id="settingsResetCancel" class="settingsActionBtn" data-i18n="resetCancel">CANCEL</button>
+            <button id="settingsResetExecute" class="settingsActionBtn settingsDangerBtn" data-i18n="resetExecute">☠ ERASE EVERYTHING</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
