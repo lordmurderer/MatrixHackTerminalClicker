@@ -275,21 +275,59 @@ body {
   color: var(--amber-dark);
 }
 
+/* TOOLBAR — Ach, Stats, Skins */
+#toolbar {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+}
+
+#toolbar button {
+  background: transparent;
+  border: 1px solid var(--amber-dark);
+  color: var(--amber-dim);
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+#toolbar button:hover {
+  border-color: var(--amber);
+  color: var(--amber-bright);
+  background: rgba(255, 136, 0, 0.06);
+  box-shadow: 0 0 10px rgba(255, 136, 0, 0.2), inset 0 0 8px rgba(255, 136, 0, 0.05);
+}
+
+#toolbar button:active {
+  background: rgba(255, 136, 0, 0.12);
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.3);
+}
+
+/* PRESTIGE button — extra prominence */
 #prestigeBtn {
   background: transparent;
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
   font-size: 0.6rem;
-  padding: 2px 8px;
+  padding: 3px 12px;
   cursor: pointer;
   transition: all 0.15s;
+  letter-spacing: 0.5px;
 }
 
 #prestigeBtn:hover:not(:disabled) {
   border-color: #ff4400;
   color: #ff4400;
-  box-shadow: 0 0 10px rgba(255, 68, 0, 0.3);
+  background: rgba(255, 68, 0, 0.06);
+  box-shadow: 0 0 12px rgba(255, 68, 0, 0.3), inset 0 0 8px rgba(255, 68, 0, 0.05);
 }
 
 #prestigeBtn:disabled {
@@ -297,20 +335,28 @@ body {
   cursor: not-allowed;
 }
 
-#achBtn, #skinBtn, #statsBtn {
+/* PRESTIGE SHOP button */
+#prestigeShopBtn {
   background: transparent;
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
   font-size: 0.55rem;
-  padding: 1px 8px;
+  padding: 2px 8px;
   cursor: pointer;
   transition: all 0.15s;
+  letter-spacing: 0.5px;
 }
 
-#achBtn:hover, #skinBtn:hover, #statsBtn:hover {
+#prestigeShopBtn:hover {
   border-color: var(--amber);
   color: var(--amber-bright);
+  background: rgba(255, 136, 0, 0.06);
+  box-shadow: 0 0 8px rgba(255, 136, 0, 0.2);
+}
+
+#prestigeShopBtn:active {
+  background: rgba(255, 136, 0, 0.12);
 }
 
 #skinOverlay {
@@ -1792,4 +1838,6 @@ body.shake {
   #prestigeShopPanel { padding: 10px; }
   .shopCard { flex-wrap: wrap; gap: 2px; }
   .shopCardCost { font-size: 0.55rem; }
+  #toolbar { gap: 3px; }
+  #toolbar button { font-size: 0.55rem; padding: 2px 7px; }
 }

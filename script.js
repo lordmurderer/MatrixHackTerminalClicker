@@ -24,6 +24,9 @@
       buyMax: 'MAX',
       autoBuyOn: 'AUTO: ON',
       autoBuyOff: 'AUTO: OFF',
+      achBtn: 'LOGROS',
+      statsBtn: 'ESTADÍSTICAS',
+      skinBtn: 'PIELES',
       prestigeShopBtn: '◆ TIENDA',
       exportBtn: '↑ EXPORT',
       importBtn: '↓ IMPORT',
@@ -200,6 +203,9 @@
       buyMax: 'MAX',
       autoBuyOn: 'AUTO: ON',
       autoBuyOff: 'AUTO: OFF',
+      achBtn: 'ACHIEVEMENTS',
+      statsBtn: 'STATS',
+      skinBtn: 'SKINS',
       prestigeShopBtn: '◆ SHOP',
       exportBtn: '↑ EXPORT',
       importBtn: '↓ IMPORT',
@@ -625,6 +631,7 @@
     if (dom.langToggle) {
       dom.langToggle.textContent = state.lang === 'es' ? 'EN' : 'ES';
     }
+    state._upgradesDirty = true;
     renderAll();
   }
 
@@ -745,6 +752,7 @@
     if (bought === 0) return;
     playSound('buy');
     calculateStats();
+    state._upgradesDirty = true;
     renderAll();
   }
 
@@ -1033,7 +1041,12 @@
       }
     }
 
-    renderUpgrades();
+    if (state._upgradesDirty) {
+      renderUpgrades();
+      state._upgradesDirty = false;
+    } else {
+      refreshUpgradeState();
+    }
     if (document.getElementById('achOverlay').classList.contains('open')) {
       renderAchievements();
     }
@@ -1087,6 +1100,7 @@
         var cost = getUpgradeCost(u, owned);
         var card = document.createElement('div');
         card.className = 'upgradeCard';
+        card.dataset.upgradeId = u.id;
         if (owned === 0) card.classList.add('unowned');
         if (owned > 0) card.classList.add('bought');
         if (state.data < cost) card.classList.add('locked');
@@ -1148,6 +1162,22 @@
     }
   }
 
+  function refreshUpgradeState() {
+    var cards = dom.upgradesGrid.querySelectorAll('.upgradeCard');
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var id = card.dataset.upgradeId;
+      if (!id) continue;
+      var def = UPGRADE_DEFS.find(function (u) { return u.id === id; });
+      if (!def) continue;
+      var owned = state.upgrades[id] || 0;
+      var cost = getUpgradeCost(def, owned);
+      var costEl = card.querySelector('.upgradeCost');
+      if (costEl) costEl.textContent = formatNum(cost) + ' ' + t('mb');
+      card.classList.toggle('locked', state.data < cost);
+    }
+  }
+
   /* --- PRESTIGE --- */
   function getPrestigeReq() {
     return 500000 * (state.prestigeCount + 1);
@@ -1183,6 +1213,7 @@
       initUpgrades();
       if (autoClickInterval) clearInterval(autoClickInterval);
       calculateStats();
+      state._upgradesDirty = true;
       renderAll();
       setupAutoClick();
       saveGame();
@@ -1239,7 +1270,9 @@
     var title = document.getElementById('achTitle');
     if (title) title.textContent = t('achTitle', { n: count });
     if (dom.achBtn) {
-      dom.achBtn.textContent = t('achTitle', { n: count });
+      var achSpan = dom.achBtn.querySelector('span');
+      if (achSpan) achSpan.textContent = t('achTitle', { n: count });
+      else dom.achBtn.textContent = t('achTitle', { n: count });
     }
   }
 
@@ -1815,6 +1848,7 @@
       state.firewallActive = false;
       state.eventActive = null;
       calculateStats();
+      state._upgradesDirty = true;
       renderAll();
       saveGame();
       showToast(t('importOk'), 'info');
@@ -2086,6 +2120,7 @@
     };
     initUpgrades();
     calculateStats();
+    state._upgradesDirty = true;
     renderAll();
     setupAutoClick();
     scheduleFirewall();

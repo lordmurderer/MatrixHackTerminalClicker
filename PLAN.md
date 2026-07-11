@@ -46,8 +46,6 @@
 
 ---
 
----
-
 ### 8. UI Improvements ✅
 
 - [x] **Data bar with milestones** — Next milestone text + vertical markers on progress bar
@@ -278,4 +276,28 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 
 ---
 
+## Próximas mejoras (por prioridad)
 
+### P1 — Core UX
+
+- [ ] **Resumen offline** — Overlay al volver mostrando datos ganados, eventos ocurridos, bosses vencidos
+- [ ] **Tutorial / Onboarding** — Primera vez: tooltips iniciales que desaparecen al completarlos
+- [ ] **Panel de ajustes** — Unificar sonido, idioma, reset, export/import en un overlay
+
+### P2 — Contenido
+
+- [ ] **Más eventos** — 3-4 nuevos (botnet_recruit, backdoor, ransomware, etc.)
+- [ ] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
+- [ ] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
+
+### P3 — Profundidad
+
+- [ ] **Árbol de mejoras** — Prerrequisitos entre upgrades
+- [ ] **Perks de prestige** — Elegir bonus temporal al resetear
+- [ ] **Boss final** — Jefe que aparece tras X bosses vencidos
+
+### P4 — Polish
+
+- [ ] **Atajos de teclado visibles** — Mostrar [SPACE], [1/2/3], [B] en los botones
+- [ ] **Partículas al hacer clic** — Chispas/glitches visuales
+- [ ] **Gráfico de data/min** — Mini barra ASCII en estadísticas
