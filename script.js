@@ -20,6 +20,19 @@
       critText: '¡CRÍTICO! x3',
       autoPrefix: '[AUTO]',
       panelTitle: '> MEJORAS_',
+      buyModeLabel: 'COMPRAR:',
+      buyMax: 'MAX',
+      autoBuyOn: 'AUTO: ON',
+      autoBuyOff: 'AUTO: OFF',
+      prestigeShopBtn: '◆ TIENDA',
+      exportBtn: '↑ EXPORT',
+      importBtn: '↓ IMPORT',
+      groupClick: '> CLICK_',
+      groupDps: '> DPS_',
+      groupSpecial: '> ESPECIAL_',
+      groupMult: '> MULTIPLICADORES_',
+      milestoneLabel: '{n} MB',
+      upgradeCount: '{n}/{m}',
       cardLvl: 'NVL',
       effectClick: 'CLICK +{n}',
       effectDps: 'DPS +{n}',
@@ -117,7 +130,53 @@
         ghost: { name: 'Protocolo Fantasma', desc: 'Intrusión invisible' },
         codered: { name: 'Código Rojo', desc: 'Propagación de gusano' },
         neural: { name: 'Interfaz Neural', desc: 'Enlace cerebral directo' },
+        worm: { name: 'Gusano Morris', desc: 'Gusano auto-replicante' },
+        sentinel: { name: 'Centinela', desc: 'Vigilancia de red global' },
+        oracle: { name: 'Oráculo', desc: 'Predicción de vectores de ataque' },
+        prime: { name: 'Programa Primario', desc: 'Código fuente de la Matrix' },
       },
+      shopAutoBuy: 'Compra automática de la mejora más barata',
+      prestigePreviewTitle: '⚠ PURGE & BOOT',
+      prestigePreviewMult: 'MULTIPLICADOR',
+      prestigePreviewCurrent: 'ACTUAL',
+      prestigePreviewNext: 'SIGUIENTE',
+      prestigePreviewRewards: 'RECOMPENSAS',
+      prestigePreviewPoints: 'PUNTOS PRESTIGE',
+      prestigePreviewStart: 'DATOS INICIALES',
+      prestigePreviewReset: 'SE REINICIA',
+      prestigePreviewData: 'Datos actuales',
+      prestigePreviewUpgrades: 'Mejoras',
+      prestigePreviewKept: 'SE CONSERVA',
+      prestigePreviewAch: 'Logros',
+      prestigePreviewSkins: 'Skins',
+      prestigePreviewShop: 'Mejoras de tienda',
+      prestigePreviewCancel: 'CANCELAR',
+      prestigePreviewConfirm: 'PURGAR',
+      shopClickBoost: '+25% Poder de click por nivel',
+      shopDpsBoost: '+25% DPS por nivel',
+      shopStartData: '1K datos iniciales por nivel',
+      shopComboBoost: '+0.05 multiplicador de combo por nivel',
+      shopCritBoost: '+5% probabilidad crítica por nivel',
+      eventLeak: '⚠ FUGA: -5% datos, +50% DPS {dur}s — ¡HAKEA para recuperar!',
+      eventCrash: '📉 CRYPTO CRASH: -20% costo {dur}s',
+      eventOverclock: '⚡ OVERCLOCK: Click x3 durante {dur}s',
+      eventWindfall: '💰 GANANCIA INESPERADA: +10% datos',
+      eventDdos: '🔥 DDoS: +100% DPS durante {dur}s',
+      bossTitle: '⚠ INTRUSIÓN DE BOSS',
+      bossInfo: 'GENERA {n} MB EN {t}s',
+      bossFail: 'INTRUSIÓN FALLIDA',
+      bossSuccess: '¡INTRUSIÓN EXITOSA! +{n} MB',
+      prestigeShopTitle: 'TIENDA DE PRESTIGE',
+      prestigePoints: 'PUNTOS: {n}',
+      shopLevel: 'NVL {n}/{m}',
+      shopCost: '{n} PP',
+      shopBtnBuy: 'COMPRAR',
+      shopBtnMax: 'MÁX',
+      autoBuyOn: 'AUTO: ON',
+      autoBuyOff: 'AUTO: OFF',
+      exportOk: 'SAVE COPIADO AL PORTAPAPELES',
+      importOk: 'SAVE IMPORTADO',
+      importFail: 'SAVE INVÁLIDO',
     },
     en: {
       title: 'MATRIX HACK TERMINAL v1.0',
@@ -137,6 +196,19 @@
       critText: 'CRIT! x3',
       autoPrefix: '[AUTO]',
       panelTitle: '> UPGRADES_',
+      buyModeLabel: 'BUY:',
+      buyMax: 'MAX',
+      autoBuyOn: 'AUTO: ON',
+      autoBuyOff: 'AUTO: OFF',
+      prestigeShopBtn: '◆ SHOP',
+      exportBtn: '↑ EXPORT',
+      importBtn: '↓ IMPORT',
+      groupClick: '> CLICK_',
+      groupDps: '> DPS_',
+      groupSpecial: '> SPECIAL_',
+      groupMult: '> MULTIPLIERS_',
+      milestoneLabel: '{n} MB',
+      upgradeCount: '{n}/{m}',
       cardLvl: 'LVL',
       effectClick: 'CLICK +{n}',
       effectDps: 'DPS +{n}',
@@ -234,7 +306,53 @@
         ghost: { name: 'Ghost Protocol', desc: 'Invisible intrusion' },
         codered: { name: 'Code Red', desc: 'Worm propagation' },
         neural: { name: 'Neural Interface', desc: 'Direct brain link' },
+        worm: { name: 'Morris Worm', desc: 'Self-replicating worm' },
+        sentinel: { name: 'Sentinel', desc: 'Global network surveillance' },
+        oracle: { name: 'Oracle', desc: 'Attack vector prediction' },
+        prime: { name: 'Prime Program', desc: 'Source code of the Matrix' },
       },
+      shopAutoBuy: 'Auto-buy the cheapest upgrade',
+      prestigePreviewTitle: '⚠ PURGE & BOOT',
+      prestigePreviewMult: 'MULTIPLIER',
+      prestigePreviewCurrent: 'CURRENT',
+      prestigePreviewNext: 'NEXT',
+      prestigePreviewRewards: 'REWARDS',
+      prestigePreviewPoints: 'PRESTIGE POINTS',
+      prestigePreviewStart: 'STARTING DATA',
+      prestigePreviewReset: 'RESETS',
+      prestigePreviewData: 'Current data',
+      prestigePreviewUpgrades: 'Upgrades',
+      prestigePreviewKept: 'PRESERVED',
+      prestigePreviewAch: 'Achievements',
+      prestigePreviewSkins: 'Skins',
+      prestigePreviewShop: 'Shop upgrades',
+      prestigePreviewCancel: 'CANCEL',
+      prestigePreviewConfirm: 'PURGE',
+      shopClickBoost: '+25% Click power per level',
+      shopDpsBoost: '+25% DPS per level',
+      shopStartData: '1K starting data per level',
+      shopComboBoost: '+0.05 combo multiplier per level',
+      shopCritBoost: '+5% crit chance per level',
+      eventLeak: '⚠ LEAK: -5% data, +50% DPS {dur}s — HACK to recover!',
+      eventCrash: '📉 CRYPTO CRASH: -20% cost {dur}s',
+      eventOverclock: '⚡ OVERCLOCK: Click x3 for {dur}s',
+      eventWindfall: '💰 WINDFALL: +10% data',
+      eventDdos: '🔥 DDoS: +100% DPS for {dur}s',
+      bossTitle: '⚠ BOSS INTRUSION',
+      bossInfo: 'GENERATE {n} MB IN {t}s',
+      bossFail: 'INTRUSION FAILED',
+      bossSuccess: 'INTRUSION SUCCESS! +{n} MB',
+      prestigeShopTitle: 'PRESTIGE SHOP',
+      prestigePoints: 'POINTS: {n}',
+      shopLevel: 'LVL {n}/{m}',
+      shopCost: '{n} PP',
+      shopBtnBuy: 'BUY',
+      shopBtnMax: 'MAX',
+      autoBuyOn: 'AUTO: ON',
+      autoBuyOff: 'AUTO: OFF',
+      exportOk: 'SAVE COPIED TO CLIPBOARD',
+      importOk: 'SAVE IMPORTED',
+      importFail: 'INVALID SAVE',
     },
   };
 
@@ -278,9 +396,22 @@
     { id: 'ghost', cost: 2000000, effect: 'click', value: 400, icon: '?' },
     { id: 'codered', cost: 10000000, effect: 'click', value: 5000, icon: '#' },
     { id: 'neural', cost: 25000000, effect: 'dps', value: 10000, icon: '@' },
+    { id: 'worm', cost: 500000000, effect: 'click', value: 500000, icon: '~' },
+    { id: 'sentinel', cost: 5000000000, effect: 'dps', value: 500000, icon: '%' },
+    { id: 'oracle', cost: 50000000000, effect: 'mult_click', value: 1.5, icon: '?' },
+    { id: 'prime', cost: 1000000000000, effect: 'mult_dps', value: 1.5, icon: '$' },
   ];
 
-  const LEVEL_THRESHOLDS = [0, 100, 500, 2000, 5000, 15000, 50000, 150000, 500000, 1500000, 5000000];
+  const UPGRADE_GROUPS = [
+    { id: 'click', labelKey: 'groupClick', ids: ['terminal', 'scanner', 'ai', 'zeroday', 'smith', 'bruteforce', 'ghost', 'codered', 'worm'] },
+    { id: 'dps', labelKey: 'groupDps', ids: ['cpu', 'firewall', 'botnet', 'quantum', 'source', 'sniffer', 'ddos', 'neural', 'sentinel'] },
+    { id: 'special', labelKey: 'groupSpecial', ids: ['critical', 'sqlinjection', 'trojan'] },
+    { id: 'mult', labelKey: 'groupMult', ids: ['kernel', 'zion', 'rootkit', 'oracle', 'prime'] },
+  ];
+
+  const MILESTONES = [100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 100000000000, 10000000000000];
+
+  const LEVEL_THRESHOLDS = [0, 100, 500, 2000, 5000, 15000, 50000, 150000, 500000, 1500000, 5000000, 50000000, 500000000];
 
   const ACHIEVEMENT_DEFS = [
     { id: 'first_click', bonus: { clickPercent: 10 } },
@@ -305,6 +436,23 @@
     { id: 'neon', nameKey: 'skinNeon', cost: 500000, colors: { head: '255, 100, 255', body: '200, 0, 255', alpha: 0.35, shadow: '#cc00ff', scanline: 'rgba(200, 0, 255, 0.04)' }, speedMult: 1 },
     { id: 'golden', nameKey: 'skinGolden', cost: 1000000, colors: { head: '255, 220, 100', body: '255, 200, 0', alpha: 0.4, shadow: '#ffcc00', scanline: 'rgba(255, 200, 0, 0.05)' }, speedMult: 1 },
     { id: 'glitch', nameKey: 'skinGlitch', cost: 5000000, colors: { head: '0, 255, 0', body: '255, 0, 0', alpha: 0.5, shadow: '#ff0000', scanline: 'rgba(255, 0, 0, 0.06)' }, speedMult: 2 },
+  ];
+
+  const PRESTIGE_SHOP_DEFS = [
+    { id: 'autoBuy', costBase: 5, maxLevel: 1, effectLabel: '⟳ AUTO-BUY', descKey: 'shopAutoBuy' },
+    { id: 'clickBoost', costBase: 2, maxLevel: 10, effectLabel: '+25% CLICK/lvl', descKey: 'shopClickBoost' },
+    { id: 'dpsBoost', costBase: 2, maxLevel: 10, effectLabel: '+25% DPS/lvl', descKey: 'shopDpsBoost' },
+    { id: 'startData', costBase: 3, maxLevel: 5, effectLabel: '+1K DATA START/lvl', descKey: 'shopStartData' },
+    { id: 'comboBoost', costBase: 3, maxLevel: 5, effectLabel: '+0.05 COMBO/lvl', descKey: 'shopComboBoost' },
+    { id: 'critBoost', costBase: 4, maxLevel: 5, effectLabel: '+5% CRIT/lvl', descKey: 'shopCritBoost' },
+  ];
+
+  const EVENT_DEFS = [
+    { id: 'data_leak', dur: 30, chance: 0.25, descKey: 'eventLeak', icon: '⚠' },
+    { id: 'crypto_crash', dur: 60, chance: 0.25, descKey: 'eventCrash', icon: '📉' },
+    { id: 'overclock', dur: 15, chance: 0.2, descKey: 'eventOverclock', icon: '⚡' },
+    { id: 'windfall', dur: 0, chance: 0.15, descKey: 'eventWindfall', icon: '💰' },
+    { id: 'ddos_attack', dur: 30, chance: 0.15, descKey: 'eventDdos', icon: '🔥' },
   ];
 
   const SAVE_KEY = 'matrixHackerClicker';
@@ -334,7 +482,24 @@
     ownedSkins: [],
     soundEnabled: true,
     playTime: 0,
+    prestigePoints: 0,
+    prestigeShop: {},
+    buyMode: 1,
+    eventActive: null,
+    eventTimer: null,
+    bossActive: false,
+    bossData: 0,
+    bossThreshold: 0,
   };
+
+  function formatNum(n) {
+    if (n < 1000) return Math.floor(n) + '';
+    var s = Math.floor(n);
+    var units = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi'];
+    var u = 0;
+    while (s >= 1000 && u < units.length - 1) { s /= 1000; u++; }
+    return (s < 10 ? s.toFixed(2) : s < 100 ? s.toFixed(1) : s.toFixed(0)) + units[u];
+  }
 
   const dom = {};
   const floatingContainer = document.getElementById('floatingDamage');
@@ -349,6 +514,10 @@
   let lastLevel = 1;
   let firewallTimeout = null;
   let firewallTimerInterval = null;
+
+  // Floating text pool
+  var textPool = [];
+  var textPoolMax = 20;
 
   /* --- MATRIX RAIN --- */
   function initMatrixRain() {
@@ -390,21 +559,27 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.font = '14px monospace';
 
+    // Draw all head characters in one pass
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = c.shadow;
     for (let i = 0; i < dropChars.length; i++) {
       const drop = dropChars[i];
       if (drop.chars.length === 0) drop.chars = getMatrixChars();
-      for (let j = 0; j < drop.chars.length; j++) {
+      const headY = drop.y;
+      if (headY >= 0) {
+        ctx.fillStyle = 'rgba(' + c.head + ', 1)';
+        ctx.fillText(drop.chars[0], drop.x, headY);
+      }
+    }
+    // Draw all body characters in a second pass
+    ctx.shadowBlur = 0;
+    for (let i = 0; i < dropChars.length; i++) {
+      const drop = dropChars[i];
+      for (let j = 1; j < drop.chars.length; j++) {
         const alpha = 1 - (j / drop.chars.length);
         const y = drop.y - j * 14;
-        if (y < 0) continue;
-        if (j === 0) {
-          ctx.fillStyle = 'rgba(' + c.head + ', ' + alpha + ')';
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = c.shadow;
-        } else {
-          ctx.fillStyle = 'rgba(' + c.body + ', ' + (alpha * 0.6) + ')';
-          ctx.shadowBlur = 0;
-        }
+        if (y < 0) break;
+        ctx.fillStyle = 'rgba(' + c.body + ', ' + (alpha * 0.6) + ')';
         ctx.fillText(drop.chars[j], drop.x, y);
       }
       ctx.shadowBlur = 0;
@@ -429,6 +604,17 @@
     if (sl) {
       sl.style.background = 'repeating-linear-gradient(0deg, transparent, transparent 2px, ' + skin.colors.scanline + ' 2px, ' + skin.colors.scanline + ' 4px)';
     }
+    var style = document.getElementById('skinVars');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'skinVars';
+      document.head.appendChild(style);
+    }
+    var bodyRGB = skin.colors.body;
+    var shadowHex = skin.colors.shadow;
+    style.textContent =
+      '.floatingText { color: rgb(' + bodyRGB + '); text-shadow: 0 0 10px ' + shadowHex + ', 0 0 20px rgba(' + bodyRGB + ', 0.5); }' +
+      '.blink, .btnCursor { color: ' + shadowHex + '; }';
   }
 
   function applyLanguage() {
@@ -451,7 +637,9 @@
 
   function getUpgradeCost(def, level) {
     var base = def.cost * Math.pow(1.15, level);
-    return Math.floor(base * (1 - (state.discount || 0) / 100));
+    var discountMult = Math.max(0.1, 1 - (state.discount || 0) / 100);
+    var costMult = discountMult * getEventMultiplier().cost;
+    return Math.max(1, Math.floor(base * costMult));
   }
 
   function getLevel() {
@@ -520,26 +708,58 @@
     });
     state.clickPower = Math.floor(state.clickPower * achClickMult);
     state.dps = Math.floor(state.dps * achDpsMult * 10) / 10;
+
+    // Prestige shop bonuses
+    state.clickPower = Math.floor(state.clickPower * getShopBonus('clickBoost'));
+    state.dps = Math.floor(state.dps * getShopBonus('dpsBoost') * 10) / 10;
+    crit += getShopBonus('critBoost');
+
+    // Event multipliers
+    var evtMult = getEventMultiplier();
+    state.clickPower = Math.floor(state.clickPower * evtMult.click);
+    state.dps = Math.floor(state.dps * evtMult.dps * 10) / 10;
+
     state.critChance = crit + achCrit;
     state.discount = disc + achDiscount;
     state.level = getLevel();
     if (state.level > lastLevel) {
       playSound('levelup');
+      showToast(t('level', { n: state.level }), 'info');
     }
     lastLevel = state.level;
   }
 
-  function buyUpgrade(id) {
+  function buyUpgrade(id, count) {
     var def = UPGRADE_DEFS.find(function (u) { return u.id === id; });
     if (!def) return;
-    var currentLevel = state.upgrades[id] || 0;
-    var cost = getUpgradeCost(def, currentLevel);
-    if (state.data < cost) return;
-    state.data -= cost;
-    state.upgrades[id] = currentLevel + 1;
+    if (count == null) count = state.buyMode === 'max' ? 999 : state.buyMode;
+    var bought = 0;
+    for (var i = 0; i < count; i++) {
+      var currentLevel = state.upgrades[id] || 0;
+      var cost = getUpgradeCost(def, currentLevel);
+      if (state.data < cost) break;
+      state.data -= cost;
+      state.upgrades[id] = currentLevel + 1;
+      bought++;
+    }
+    if (bought === 0) return;
     playSound('buy');
     calculateStats();
     renderAll();
+  }
+
+  function tryBuyCheapest() {
+    var best = null;
+    var bestCost = Infinity;
+    UPGRADE_DEFS.forEach(function (u) {
+      var lvl = state.upgrades[u.id] || 0;
+      var cost = getUpgradeCost(u, lvl);
+      if (state.data >= cost && cost < bestCost) {
+        best = u;
+        bestCost = cost;
+      }
+    });
+    if (best) buyUpgrade(best.id, 1);
   }
 
   function doClick(e, isAuto) {
@@ -560,9 +780,16 @@
       if (comboTimeout) clearTimeout(comboTimeout);
       comboTimeout = setTimeout(function () {
         state.combo = 0;
-        if (dom.comboDisplay) dom.comboDisplay.style.display = 'none';
+        if (dom.comboDisplay) {
+          dom.comboDisplay.classList.add('comboBreak');
+          setTimeout(function () {
+            dom.comboDisplay.style.display = 'none';
+            dom.comboDisplay.classList.remove('comboBreak');
+          }, 300);
+        }
       }, 1000);
-      var comboMult = 1 + state.combo * 0.1;
+      var comboAdd = getShopBonus('comboBoost');
+      var comboMult = 1 + state.combo * (0.1 + comboAdd);
       gained = Math.floor(gained * comboMult);
     }
 
@@ -571,14 +798,22 @@
       state.totalCrits++;
       playSound('crit');
       spawnFloatingCrit(x, y - 30, t('critText'));
-      dom.hackBtn.classList.remove('flicker');
-      void dom.hackBtn.offsetWidth;
-      dom.hackBtn.classList.add('flicker');
+      dom.hackBtn.animate([
+        { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)' },
+        { opacity: 0.2, boxShadow: '0 0 30px rgba(0,255,0,0.6)', offset: 0.25 },
+        { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)', offset: 0.5 },
+        { opacity: 0.3, boxShadow: '0 0 20px rgba(0,255,0,0.4)', offset: 0.75 },
+        { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)' }
+      ], { duration: 150, easing: 'ease' });
     } else if (!isAuto) {
       playSound('click');
-      dom.hackBtn.classList.remove('flicker');
-      void dom.hackBtn.offsetWidth;
-      dom.hackBtn.classList.add('flicker');
+      dom.hackBtn.animate([
+        { opacity: 1 },
+        { opacity: 0.2, offset: 0.25 },
+        { opacity: 1, offset: 0.5 },
+        { opacity: 0.3, offset: 0.75 },
+        { opacity: 1 }
+      ], { duration: 150, easing: 'ease' });
     }
 
     state.data += gained;
@@ -588,46 +823,185 @@
     renderAll();
 
     var prefix = isAuto ? t('autoPrefix') + ' ' : '';
-    spawnFloatingText(x, y, prefix + '+' + gained + ' ' + t('mb'));
+    spawnFloatingText(x, y, prefix + '+' + formatNum(gained) + ' ' + t('mb'));
   }
 
   function handleClick(e) {
     doClick(e, false);
   }
 
+  function getPooledElement(className) {
+    for (var i = 0; i < textPool.length; i++) {
+      if (!textPool[i].parentNode && textPool[i].className === className) {
+        textPool[i].style.opacity = '';
+        textPool[i].style.transform = '';
+        return textPool[i];
+      }
+    }
+    if (textPool.length < textPoolMax) {
+      var el = document.createElement('div');
+      textPool.push(el);
+      return el;
+    }
+    return null;
+  }
+
   function spawnFloatingText(x, y, text) {
-    var el = document.createElement('div');
+    var el = getPooledElement('floatingText');
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'floatingText';
+    }
     el.className = 'floatingText';
     el.textContent = text;
     el.style.left = (x - 30) + 'px';
     el.style.top = (y - 10) + 'px';
+    el.classList.remove('floatingCrit');
     floatingContainer.appendChild(el);
-    setTimeout(function () { el.remove(); }, 800);
+    el.addEventListener('animationend', function () { el.remove(); });
   }
 
   function spawnFloatingCrit(x, y, text) {
-    var el = document.createElement('div');
+    var el = getPooledElement('floatingCrit');
+    if (!el) {
+      el = document.createElement('div');
+    }
     el.className = 'floatingCrit';
     el.textContent = text;
     el.style.left = (x - 50) + 'px';
     el.style.top = (y - 20) + 'px';
     floatingContainer.appendChild(el);
-    setTimeout(function () { el.remove(); }, 1000);
+    el.addEventListener('animationend', function () { el.remove(); });
+  }
+
+  /* --- TOAST --- */
+  function showToast(message, type) {
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+    var el = document.createElement('div');
+    el.className = 'toast' + (type ? ' toast-' + type : '');
+    el.textContent = message;
+    container.appendChild(el);
+    setTimeout(function () {
+      el.classList.add('toast-out');
+      setTimeout(function () { el.remove(); }, 300);
+    }, 3000);
+  }
+
+  /* --- TOOLTIP --- */
+  var tooltipEl = null;
+  var tooltipTimeout = null;
+
+  function showTooltip(e, content) {
+    var tt = document.getElementById('tooltip');
+    if (!tt) return;
+    tooltipEl = tt;
+    if (tooltipTimeout) clearTimeout(tooltipTimeout);
+    tt.innerHTML = content;
+    tt.style.display = 'block';
+    positionTooltip(e, tt);
+    requestAnimationFrame(function () { tt.classList.add('visible'); });
+  }
+
+  function positionTooltip(e, tt) {
+    var pad = 10;
+    var x = e.clientX + pad;
+    var y = e.clientY + pad;
+    var w = tt.offsetWidth;
+    var h = tt.offsetHeight;
+    if (x + w > window.innerWidth - pad) x = e.clientX - w - pad;
+    if (y + h > window.innerHeight - pad) y = e.clientY - h - pad;
+    if (x < pad) x = pad;
+    if (y < pad) y = pad;
+    tt.style.left = x + 'px';
+    tt.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    if (tooltipTimeout) clearTimeout(tooltipTimeout);
+    tooltipTimeout = setTimeout(function () {
+      var tt = document.getElementById('tooltip');
+      if (tt) {
+        tt.classList.remove('visible');
+        tt.style.display = 'none';
+      }
+    }, 50);
   }
 
   /* --- RENDER --- */
   function renderAll() {
-    dom.dataAmount.textContent = Math.floor(state.data).toLocaleString();
-    dom.clickPower.textContent = state.clickPower;
-    dom.dpsValue.textContent = state.dps;
+    var dataFloor = Math.floor(state.data);
+    dom.dataAmount.textContent = formatNum(dataFloor);
+    dom.clickPower.textContent = formatNum(state.clickPower);
+    dom.dpsValue.textContent = formatNum(state.dps);
     dom.critDisplay.textContent = state.critChance;
     dom.discountDisplay.textContent = state.discount;
     dom.playerLevel.textContent = t('level', { n: state.level });
+
+    // Event buff glow on relevant stats
+    var evtMult = getEventMultiplier();
+    var statEls = document.querySelectorAll('#stats .stat');
+    if (statEls.length >= 2) {
+      statEls[0].classList.toggle('event-active', evtMult.click > 1);
+      statEls[1].classList.toggle('event-active', evtMult.dps > 1);
+      statEls[3].classList.toggle('event-active', evtMult.cost < 1);
+    }
 
     var nextThreshold = LEVEL_THRESHOLDS[state.level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
     var prevThreshold = LEVEL_THRESHOLDS[state.level - 1] || 0;
     var progress = (state.data - prevThreshold) / (nextThreshold - prevThreshold);
     dom.dataBarInner.style.width = Math.min(100, Math.max(0, progress * 100)) + '%';
+
+    // Milestones
+    var nextMilestone = null;
+    for (var i = 0; i < MILESTONES.length; i++) {
+      if (dataFloor < MILESTONES[i]) {
+        nextMilestone = MILESTONES[i];
+        break;
+      }
+    }
+    var milestoneText = '';
+    if (nextMilestone) {
+      milestoneText = t('milestoneLabel', { n: formatNum(nextMilestone) });
+    } else {
+      milestoneText = '∞';
+    }
+    if (dom.milestoneInfo) dom.milestoneInfo.textContent = '>> ' + milestoneText;
+
+    // Milestone markers on bar
+    if (dom.milestoneMarkers) {
+      dom.milestoneMarkers.innerHTML = '';
+      var barWidth = dom.dataBarOuter ? dom.dataBarOuter.offsetWidth : 300;
+      for (var i = 0; i < MILESTONES.length; i++) {
+        var m = MILESTONES[i];
+        var prev = 0;
+        var nextM = nextThreshold;
+        for (var j = 0; j < LEVEL_THRESHOLDS.length - 1; j++) {
+          if (m >= LEVEL_THRESHOLDS[j] && m < LEVEL_THRESHOLDS[j + 1]) {
+            prev = LEVEL_THRESHOLDS[j];
+            nextM = LEVEL_THRESHOLDS[j + 1];
+            break;
+          }
+        }
+        if (m < prevThreshold || m > nextThreshold) continue;
+        var pct = ((m - prevThreshold) / (nextThreshold - prevThreshold)) * 100;
+        if (pct < 0 || pct > 100) continue;
+        var marker = document.createElement('div');
+        marker.className = 'milestoneMarker' + (dataFloor >= m ? ' reached' : '');
+        marker.style.left = pct + '%';
+        dom.milestoneMarkers.appendChild(marker);
+      }
+    }
+
+    // Header extras
+    if (dom.headerPrestige) {
+      dom.headerPrestige.textContent = state.prestigeCount > 0
+        ? 'x' + Number(state.prestigeMultiplier).toFixed(1)
+        : '';
+    }
+    if (dom.headerTime) {
+      dom.headerTime.textContent = formatTime(Math.floor(state.playTime));
+    }
 
     if (dom.synergyDisplay) {
       var parts = [];
@@ -643,7 +1017,7 @@
     if (dom.prestigeReq) {
       var req = getPrestigeReq();
       var progress = Math.min(100, Math.floor(state.totalDataEarned / req * 100));
-      dom.prestigeReq.textContent = t('prestigeReq', { n: req.toLocaleString(), p: progress });
+      dom.prestigeReq.textContent = t('prestigeReq', { n: formatNum(req), p: progress });
       if (dom.prestigeBtn) {
         dom.prestigeBtn.disabled = state.totalDataEarned < req;
         dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.totalDataEarned >= req * 0.3 ? 'inline-block' : 'none';
@@ -665,53 +1039,110 @@
     }
   }
 
+  function getEffectText(u, owned) {
+    switch (u.effect) {
+      case 'click': return t('effectClick', { n: u.value * owned });
+      case 'dps': return t('effectDps', { n: u.value * owned });
+      case 'crit': return t('effectCrit', { n: u.value * owned });
+      case 'discount': return t('effectDiscount', { n: u.value * owned });
+      case 'autoclick': return t('effectAutoclick', { n: owned });
+      case 'mult_click': return t('effectMultClick', { n: Number(Math.pow(u.value, owned)).toFixed(2) });
+      case 'mult_dps': return t('effectMultDps', { n: Number(Math.pow(u.value, owned)).toFixed(2) });
+      case 'offline': return t('effectOffline', { n: u.value * owned });
+    }
+    return '';
+  }
+
+  function buildUpgradeTooltipHTML(u, owned, cost) {
+    var nextEffect = getEffectText(u, owned + 1);
+    var curEffect = owned > 0 ? getEffectText(u, owned) : t('upgrade.' + u.id + '.desc');
+    var html = '<div class="tooltipTitle">' + t('upgrade.' + u.id + '.name') + '</div>';
+    html += '<div class="tooltipDesc">' + t('upgrade.' + u.id + '.desc') + '</div>';
+    html += '<div class="tooltipRow"><span>' + t('cardLvl') + '</span><span class="tooltipVal">' + owned + '</span></div>';
+    if (owned > 0) {
+      html += '<div class="tooltipRow"><span>NOW</span><span class="tooltipVal">' + curEffect + '</span></div>';
+    }
+    html += '<div class="tooltipRow"><span>NEXT</span><span class="tooltipVal">' + nextEffect + '</span></div>';
+    html += '<div class="tooltipRow"><span>COST</span><span class="tooltipVal">' + formatNum(cost) + ' ' + t('mb') + '</span></div>';
+    return html;
+  }
+
   function renderUpgrades() {
     dom.upgradesGrid.innerHTML = '';
-    UPGRADE_DEFS.forEach(function (u) {
-      var owned = state.upgrades[u.id] || 0;
-      var cost = getUpgradeCost(u, owned);
-      var card = document.createElement('div');
-      card.className = 'upgradeCard';
-      if (state.data < cost) card.classList.add('locked');
+    var totalOwned = 0;
+    var totalDefs = UPGRADE_DEFS.length;
 
-      var nameRow = document.createElement('div');
-      nameRow.className = 'upgradeName';
-      nameRow.textContent = u.icon + ' ' + t('upgrade.' + u.id + '.name');
+    UPGRADE_GROUPS.forEach(function (group) {
+      var groupDefs = UPGRADE_DEFS.filter(function (u) { return group.ids.indexOf(u.id) !== -1; });
+      if (groupDefs.length === 0) return;
 
-      var descRow = document.createElement('div');
-      descRow.className = 'upgradeDesc';
-      descRow.textContent = t('upgrade.' + u.id + '.desc');
+      var header = document.createElement('div');
+      header.className = 'upgradeGroupHeader';
+      header.textContent = t(group.labelKey);
+      dom.upgradesGrid.appendChild(header);
 
-      var costRow = document.createElement('div');
-      costRow.className = 'upgradeCost';
-      costRow.textContent = cost.toLocaleString() + ' ' + t('mb');
+      groupDefs.forEach(function (u) {
+        var owned = state.upgrades[u.id] || 0;
+        totalOwned += owned;
+        var cost = getUpgradeCost(u, owned);
+        var card = document.createElement('div');
+        card.className = 'upgradeCard';
+        if (owned === 0) card.classList.add('unowned');
+        if (owned > 0) card.classList.add('bought');
+        if (state.data < cost) card.classList.add('locked');
 
-      var ownedRow = document.createElement('div');
-      ownedRow.className = 'upgradeOwned';
-      var effectText = '';
-      switch (u.effect) {
-        case 'click': effectText = t('effectClick', { n: u.value * owned }); break;
-        case 'dps': effectText = t('effectDps', { n: u.value * owned }); break;
-        case 'crit': effectText = t('effectCrit', { n: u.value * owned }); break;
-        case 'discount': effectText = t('effectDiscount', { n: u.value * owned }); break;
-        case 'autoclick': effectText = t('effectAutoclick', { n: owned }); break;
-        case 'mult_click': effectText = t('effectMultClick', { n: Number(Math.pow(u.value, owned)).toFixed(2) }); break;
-        case 'mult_dps': effectText = t('effectMultDps', { n: Number(Math.pow(u.value, owned)).toFixed(2) }); break;
-        case 'offline': effectText = t('effectOffline', { n: u.value * owned }); break;
-      }
-      ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + effectText + ')';
+        var headerRow = document.createElement('div');
+        headerRow.className = 'upgradeHeader';
 
-      card.appendChild(nameRow);
-      card.appendChild(descRow);
-      card.appendChild(costRow);
-      card.appendChild(ownedRow);
+        var iconSpan = document.createElement('span');
+        iconSpan.className = 'upgradeIcon effect-' + u.effect;
+        iconSpan.textContent = u.icon;
 
-      card.addEventListener('click', function () {
-        buyUpgrade(u.id);
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'upgradeNameText';
+        nameSpan.textContent = t('upgrade.' + u.id + '.name');
+
+        headerRow.appendChild(iconSpan);
+        headerRow.appendChild(nameSpan);
+
+        var descRow = document.createElement('div');
+        descRow.className = 'upgradeDesc';
+        descRow.textContent = t('upgrade.' + u.id + '.desc');
+
+        var costRow = document.createElement('div');
+        costRow.className = 'upgradeCost';
+        costRow.textContent = formatNum(cost) + ' ' + t('mb');
+
+        var ownedRow = document.createElement('div');
+        ownedRow.className = 'upgradeOwned';
+        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')';
+
+        card.appendChild(headerRow);
+        card.appendChild(descRow);
+        card.appendChild(costRow);
+        card.appendChild(ownedRow);
+
+        card.addEventListener('click', function () {
+          buyUpgrade(u.id);
+        });
+
+        // Tooltip on hover
+        card.addEventListener('mouseenter', function (e) {
+          showTooltip(e, buildUpgradeTooltipHTML(u, owned, cost));
+        });
+        card.addEventListener('mousemove', function (e) {
+          var tt = document.getElementById('tooltip');
+          if (tt && tt.style.display === 'block') positionTooltip(e, tt);
+        });
+        card.addEventListener('mouseleave', hideTooltip);
+
+        dom.upgradesGrid.appendChild(card);
       });
-
-      dom.upgradesGrid.appendChild(card);
     });
+
+    if (dom.upgradeCount) {
+      dom.upgradeCount.textContent = t('upgradeCount', { n: totalOwned, m: totalDefs });
+    }
   }
 
   /* --- PRESTIGE --- */
@@ -719,20 +1150,32 @@
     return 500000 * (state.prestigeCount + 1);
   }
 
-  function doPrestige() {
+  function showPrestigePreview() {
     var req = getPrestigeReq();
     if (state.totalDataEarned < req) return;
-    if (!confirm(t('prestigeConfirm', { n: Number(state.prestigeMultiplier * 1.5).toFixed(2) }))) return;
+    var overlay = document.getElementById('prestigePreviewOverlay');
+    if (!overlay) return;
+    document.getElementById('previewMultCurrent').textContent = 'x' + Number(state.prestigeMultiplier).toFixed(1);
+    document.getElementById('previewMultNext').textContent = 'x' + Number(state.prestigeMultiplier * 1.5).toFixed(1);
+    document.getElementById('previewPoints').textContent = '+' + 1;
+    var startData = Math.floor(getShopBonus('startData'));
+    document.getElementById('previewStartData').textContent = formatNum(startData) + ' MB';
+    overlay.classList.add('open');
+  }
 
+  function executePrestige() {
+    document.getElementById('prestigePreviewOverlay').classList.remove('open');
     var glitch = document.getElementById('glitchOverlay');
     glitch.classList.add('active');
+    document.body.classList.add('shake');
 
     playSound('crit');
 
     setTimeout(function () {
       state.prestigeMultiplier *= 1.5;
       state.prestigeCount++;
-      state.data = 0;
+      state.prestigePoints = (state.prestigePoints || 0) + 1;
+      state.data = Math.floor(getShopBonus('startData'));
       state.upgrades = {};
       initUpgrades();
       if (autoClickInterval) clearInterval(autoClickInterval);
@@ -742,9 +1185,15 @@
       saveGame();
 
       glitch.classList.remove('active');
+      document.body.classList.remove('shake');
 
       playSound('levelup');
+      showToast(t('prestigeLabel', { n: Number(state.prestigeMultiplier).toFixed(1) }), 'info');
     }, 1600);
+  }
+
+  function doPrestige() {
+    showPrestigePreview();
   }
 
   /* --- ACHIEVEMENTS --- */
@@ -835,12 +1284,7 @@
         state.achievements[ach.id] = true;
         newUnlock = true;
         var nameKey = 'ach' + ach.id.charAt(0).toUpperCase() + ach.id.slice(1);
-        if (dom.saveStatus) {
-          dom.saveStatus.textContent = t('achUnlocked', { name: t(nameKey) });
-          setTimeout(function () {
-            dom.saveStatus.textContent = t('autoSave');
-          }, 3000);
-        }
+        showToast(t('achUnlocked', { name: t(nameKey) }), 'ach');
       }
     });
     return newUnlock;
@@ -880,7 +1324,7 @@
       } else if (owned) {
         statusRow.textContent = '[' + t('skinSelect') + ']';
       } else {
-        statusRow.textContent = s.cost.toLocaleString() + ' ' + t('mb');
+        statusRow.textContent = formatNum(s.cost) + ' ' + t('mb');
       }
 
       card.appendChild(preview);
@@ -984,6 +1428,57 @@
           o.start(actx.currentTime + idx * 0.15);
           o.stop(actx.currentTime + idx * 0.15 + 0.1);
         });
+      } else if (type === 'event') {
+        [440, 554, 440].forEach(function (freq, idx) {
+          var o = actx.createOscillator();
+          var g = actx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.07, actx.currentTime + idx * 0.08);
+          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.08 + 0.1);
+          o.connect(g);
+          g.connect(actx.destination);
+          o.start(actx.currentTime + idx * 0.08);
+          o.stop(actx.currentTime + idx * 0.08 + 0.1);
+        });
+      } else if (type === 'event_bad') {
+        var osc4 = actx.createOscillator();
+        var gain4 = actx.createGain();
+        osc4.type = 'sawtooth';
+        osc4.frequency.setValueAtTime(300, actx.currentTime);
+        osc4.frequency.exponentialRampToValueAtTime(100, actx.currentTime + 0.3);
+        gain4.gain.setValueAtTime(0.1, actx.currentTime);
+        gain4.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.3);
+        osc4.connect(gain4);
+        gain4.connect(actx.destination);
+        osc4.start();
+        osc4.stop(actx.currentTime + 0.3);
+      } else if (type === 'boss_start') {
+        [220, 330, 440, 550].forEach(function (freq, idx) {
+          var o = actx.createOscillator();
+          var g = actx.createGain();
+          o.type = 'square';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.06, actx.currentTime + idx * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.12 + 0.15);
+          o.connect(g);
+          g.connect(actx.destination);
+          o.start(actx.currentTime + idx * 0.12);
+          o.stop(actx.currentTime + idx * 0.12 + 0.15);
+        });
+      } else if (type === 'boss_end') {
+        [550, 440, 330].forEach(function (freq, idx) {
+          var o = actx.createOscillator();
+          var g = actx.createGain();
+          o.type = 'sawtooth';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.05, actx.currentTime + idx * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.12 + 0.15);
+          o.connect(g);
+          g.connect(actx.destination);
+          o.start(actx.currentTime + idx * 0.12);
+          o.stop(actx.currentTime + idx * 0.12 + 0.15);
+        });
       }
       setTimeout(function () { actx.close(); }, 1000);
     } catch (e) {}
@@ -1008,17 +1503,18 @@
   function renderStats() {
     var body = document.getElementById('statsBody');
     if (!body) return;
+    var combAdd = getShopBonus('comboBoost');
     var rows = [
       { label: t('statTime'), value: formatTime(Math.floor(state.playTime)) },
-      { label: t('statClicks'), value: state.totalClicks.toLocaleString() },
-      { label: t('statDataEarned'), value: Math.floor(state.totalDataEarned).toLocaleString() + ' MB' },
-      { label: t('statClickPower'), value: state.clickPower.toLocaleString() + ' MB' },
-      { label: t('statDps'), value: state.dps + ' MB/s' },
+      { label: t('statClicks'), value: formatNum(state.totalClicks) },
+      { label: t('statDataEarned'), value: formatNum(state.totalDataEarned) + ' MB' },
+      { label: t('statClickPower'), value: formatNum(state.clickPower) + ' MB' },
+      { label: t('statDps'), value: formatNum(state.dps) + ' MB/s' },
       { label: t('statCritChance'), value: state.critChance + '%' },
-      { label: t('statCrits'), value: (state.totalCrits || 0).toLocaleString() },
-      { label: t('statUpgrades'), value: getTotalUpgradeLevels().toLocaleString() },
+      { label: t('statCrits'), value: formatNum(state.totalCrits || 0) },
+      { label: t('statUpgrades'), value: formatNum(getTotalUpgradeLevels()) },
       { label: t('statPrestige'), value: state.prestigeCount + ' (x' + Number(state.prestigeMultiplier).toFixed(1) + ')' },
-      { label: t('statCombo'), value: state.combo + ' (' + Number(1 + state.combo * 0.1).toFixed(1) + 'x)' },
+      { label: t('statCombo'), value: state.combo + ' (' + Number(1 + state.combo * (0.1 + combAdd)).toFixed(1) + 'x)' },
     ];
     body.innerHTML = '';
     rows.forEach(function (r) {
@@ -1034,6 +1530,292 @@
     var m = Math.floor((secs % 3600) / 60);
     var s = secs % 60;
     return (h > 0 ? h + 'h ' : '') + (m > 0 ? m + 'm ' : '') + s + 's';
+  }
+
+  /* --- EVENTS --- */
+  var eventScheduleTimeout = null;
+
+  function scheduleEvent() {
+    if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
+    var delay = 45000 + Math.random() * 45000;
+    eventScheduleTimeout = setTimeout(startRandomEvent, delay);
+  }
+
+  function startRandomEvent() {
+    if (state.bossActive || state.firewallActive) { scheduleEvent(); return; }
+    var roll = Math.random();
+    var cum = 0;
+    for (var i = 0; i < EVENT_DEFS.length; i++) {
+      cum += EVENT_DEFS[i].chance;
+      if (roll < cum) { applyEvent(EVENT_DEFS[i]); return; }
+    }
+    scheduleEvent();
+  }
+
+  var eventTickInterval = null;
+
+  function clearEventTick() {
+    if (eventTickInterval) { clearInterval(eventTickInterval); eventTickInterval = null; }
+  }
+
+  function updateEventDisplay() {
+    var el = document.getElementById('eventDisplay');
+    if (!el) return;
+    if (!state.eventActive) { el.classList.remove('open'); clearEventTick(); return; }
+    var dur = state.eventTimer;
+    if (dur != null && dur > 0) {
+      document.getElementById('eventTimer').textContent = dur + 's';
+    }
+  }
+
+  function applyEvent(evt) {
+    var el = document.getElementById('eventDisplay');
+    if (!el) return;
+    clearEventTick();
+    if (evt.id === 'windfall') {
+      var bonus = Math.floor(state.data * 0.1);
+      if (bonus < 1) return;
+      state.data += bonus;
+      state.totalDataEarned += bonus;
+      playSound('event');
+      showToast(t('eventWindfall') + ' +' + formatNum(bonus), 'info');
+      document.getElementById('eventIcon').textContent = evt.icon;
+      document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatNum(bonus);
+      document.getElementById('eventTimer').textContent = '';
+      el.className = 'open event-info';
+      setTimeout(function () { el.classList.remove('open'); }, 3000);
+      renderAll();
+      scheduleEvent();
+      return;
+    }
+    state.eventActive = evt.id;
+    state.eventTimer = evt.dur;
+    if (evt.id === 'data_leak') {
+      var penalty = Math.floor(state.data * 0.05);
+      state.data = Math.max(0, state.data - penalty);
+      showToast('-' + formatNum(penalty) + ' ' + t('mb') + ' | ' + t('eventLeak', { dur: evt.dur }), 'warn');
+    } else {
+      showToast(t(evt.descKey, { dur: evt.dur }), 'info');
+    }
+    playSound(evt.id === 'data_leak' ? 'event_bad' : 'event');
+    document.getElementById('eventIcon').textContent = evt.icon;
+    document.getElementById('eventText').textContent = t(evt.descKey, { dur: evt.dur });
+    document.getElementById('eventTimer').textContent = evt.dur + 's';
+    el.className = 'open ' + (evt.id === 'data_leak' ? 'event-warn' : 'event-buff');
+    calculateStats();
+    renderAll();
+    scheduleEvent();
+    eventTickInterval = setInterval(function () {
+      if (!state.eventActive) { clearEventTick(); return; }
+      if (state.eventTimer != null) {
+        state.eventTimer--;
+        if (state.eventTimer <= 0) {
+          state.eventActive = null;
+          state.eventTimer = null;
+          el.classList.remove('open');
+          clearEventTick();
+          calculateStats();
+          renderAll();
+          return;
+        }
+        document.getElementById('eventTimer').textContent = state.eventTimer + 's';
+      }
+    }, 1000);
+  }
+
+  function getEventMultiplier() {
+    if (!state.eventActive) return { click: 1, dps: 1, cost: 1 };
+    var m = { click: 1, dps: 1, cost: 1 };
+    if (state.eventActive === 'overclock') m.click = 3;
+    if (state.eventActive === 'ddos_attack') m.dps = 2;
+    if (state.eventActive === 'crypto_crash') m.cost = 0.8;
+    if (state.eventActive === 'data_leak') m.dps = 1.5;
+    return m;
+  }
+
+  /* --- BOSS BATTLES --- */
+  var bossScheduleTimeout = null;
+  var bossInterval = null;
+
+  function scheduleBoss() {
+    if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
+    if (state.dps < 1) { bossScheduleTimeout = setTimeout(scheduleBoss, 10000); return; }
+    var delay = 120000 + Math.random() * 60000;
+    bossScheduleTimeout = setTimeout(startBoss, delay);
+  }
+
+  function startBoss() {
+    if (state.bossActive || state.firewallActive || state.eventActive) { scheduleBoss(); return; }
+    state.bossActive = true;
+    state.bossData = 0;
+    var timeLimit = Math.max(5, 15 - Math.floor(state.level / 5));
+    state.bossThreshold = Math.floor(state.dps * timeLimit * (1 + state.level * 0.15));
+    playSound('boss_start');
+    var overlay = document.getElementById('bossOverlay');
+    overlay.classList.add('open');
+    document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatNum(state.bossThreshold), t: timeLimit + 's' });
+    document.getElementById('bossBarInner').style.width = '0%';
+    document.getElementById('bossReward').textContent = '';
+    var remaining = timeLimit;
+    document.getElementById('bossTimer').textContent = remaining + 's';
+    if (bossInterval) clearInterval(bossInterval);
+    bossInterval = setInterval(function () {
+      remaining--;
+      if (remaining <= 0) {
+        endBoss(false);
+        return;
+      }
+      document.getElementById('bossTimer').textContent = remaining + 's';
+    }, 1000);
+  }
+
+  function endBoss(success) {
+    state.bossActive = false;
+    if (bossInterval) { clearInterval(bossInterval); bossInterval = null; }
+    var reward = document.getElementById('bossReward');
+    if (success) {
+      var bonus = Math.floor(state.bossThreshold * 0.5);
+      state.data += bonus;
+      state.totalDataEarned += bonus;
+      reward.textContent = t('bossSuccess', { n: formatNum(bonus) });
+      reward.style.color = '#00ff00';
+      playSound('levelup');
+      showToast(t('bossSuccess', { n: formatNum(bonus) }), 'info');
+    } else {
+      reward.textContent = t('bossFail');
+      reward.style.color = '#ff0044';
+      playSound('boss_end');
+    }
+    calculateStats();
+    renderAll();
+    setTimeout(function () {
+      document.getElementById('bossOverlay').classList.remove('open');
+      scheduleBoss();
+    }, 2000);
+  }
+
+  /* --- PRESTIGE SHOP --- */
+  function getShopCost(def) {
+    var lvl = state.prestigeShop[def.id] || 0;
+    return def.costBase * (lvl + 1);
+  }
+
+  function buyShopItem(id) {
+    var def = PRESTIGE_SHOP_DEFS.find(function (d) { return d.id === id; });
+    if (!def) return;
+    var lvl = state.prestigeShop[id] || 0;
+    if (lvl >= def.maxLevel) return;
+    var cost = getShopCost(def);
+    if ((state.prestigePoints || 0) < cost) return;
+    state.prestigePoints -= cost;
+    state.prestigeShop[id] = lvl + 1;
+    saveGame();
+    renderPrestigeShop();
+  }
+
+  function getShopBonus(id) {
+    var lvl = state.prestigeShop[id] || 0;
+    switch (id) {
+      case 'clickBoost': return 1 + lvl * 0.25;
+      case 'dpsBoost': return 1 + lvl * 0.25;
+      case 'startData': return lvl * 1000;
+      case 'comboBoost': return lvl * 0.05;
+      case 'critBoost': return lvl * 5;
+    }
+    return 0;
+  }
+
+  // apply shop bonuses in calculateStats
+  // clickBoost and dpsBoost are applied multiplicatively
+  // startData is applied on prestige
+  // comboBoost applied in doClick
+  // critBoost applied in calculateStats
+
+  function togglePrestigeShop() {
+    var overlay = document.getElementById('prestigeShopOverlay');
+    overlay.classList.toggle('open');
+    if (overlay.classList.contains('open')) renderPrestigeShop();
+  }
+
+  function renderPrestigeShop() {
+    var grid = document.getElementById('prestigeShopGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    document.getElementById('prestigePointsDisplay').textContent = t('prestigePoints', { n: state.prestigePoints || 0 });
+    PRESTIGE_SHOP_DEFS.forEach(function (def) {
+      var lvl = state.prestigeShop[def.id] || 0;
+      var maxed = lvl >= def.maxLevel;
+      var cost = getShopCost(def);
+      var card = document.createElement('div');
+      card.className = 'shopCard' + (maxed ? ' bought' : '');
+      var info = document.createElement('div');
+      info.className = 'shopCardInfo';
+      var name = document.createElement('div');
+      name.className = 'shopCardName';
+      name.textContent = def.effectLabel;
+      var desc = document.createElement('div');
+      desc.className = 'shopCardDesc';
+      desc.textContent = t(def.descKey);
+      var lvlRow = document.createElement('div');
+      lvlRow.className = 'shopCardLevel';
+      lvlRow.textContent = t('shopLevel', { n: lvl, m: def.maxLevel });
+      info.appendChild(name);
+      info.appendChild(desc);
+      info.appendChild(lvlRow);
+      var costSpan = document.createElement('div');
+      costSpan.className = 'shopCardCost';
+      costSpan.textContent = maxed ? 'MAX' : t('shopCost', { n: cost });
+      card.appendChild(info);
+      card.appendChild(costSpan);
+      if (!maxed) {
+        card.addEventListener('click', function () { buyShopItem(def.id); });
+      }
+      grid.appendChild(card);
+    });
+  }
+
+  /* --- EXPORT / IMPORT --- */
+  function exportSave() {
+    try {
+      state.lastSaveTime = Date.now();
+      var json = JSON.stringify(state);
+      var b64 = btoa(unescape(encodeURIComponent(json)));
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(b64).then(function () {
+          showToast(t('exportOk'), 'info');
+        });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = b64;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(t('exportOk'), 'info');
+      }
+    } catch (e) { showToast(t('importFail'), 'warn'); }
+  }
+
+  function importSave() {
+    try {
+      var code = prompt('Paste save code:');
+      if (!code) return;
+      var json = decodeURIComponent(escape(atob(code.trim())));
+      var saved = JSON.parse(json);
+      if (!saved.upgrades) throw new Error('invalid');
+      state = Object.assign(state, saved);
+      if (!state.upgrades) state.upgrades = {};
+      if (!state.achievements) state.achievements = {};
+      if (!state.ownedSkins) state.ownedSkins = [];
+      if (!state.prestigeShop) state.prestigeShop = {};
+      state.bossActive = false;
+      state.firewallActive = false;
+      state.eventActive = null;
+      calculateStats();
+      renderAll();
+      saveGame();
+      showToast(t('importOk'), 'info');
+    } catch (e) { showToast(t('importFail'), 'warn'); }
   }
 
   /* --- FIREWALL MINIGAME --- */
@@ -1081,8 +1863,10 @@
     });
 
     var timerBar = document.getElementById('fwTimerBar');
-    timerBar.style.width = '100%';
+    timerBar.style.width = '';
     timerBar.style.transition = 'none';
+    timerBar.style.background = '#00ff00';
+    timerBar.style.boxShadow = '0 0 6px #00ff00';
 
     document.getElementById('fwTimeLimit').textContent = timeLimit + 's';
     document.getElementById('fwStep').textContent = '1/' + nodeCount;
@@ -1090,10 +1874,14 @@
 
     overlay.classList.add('open');
 
-    // Force reflow then start transition
-    void timerBar.offsetWidth;
-    timerBar.style.transition = 'width ' + timeLimit + 's linear';
-    timerBar.style.width = '0%';
+    timerBar.animate([
+      { width: '100%', background: '#00ff00', boxShadow: '0 0 6px #00ff00' },
+      { background: '#88ff00', offset: 0.3 },
+      { background: '#ffcc00', offset: 0.6 },
+      { width: '50%', background: '#ff8800', offset: 0.7 },
+      { width: '20%', background: '#ff4400', offset: 0.9 },
+      { width: '0%', background: '#ff0000', boxShadow: '0 0 6px #ff0000' }
+    ], { duration: timeLimit * 1000, easing: 'linear', fill: 'forwards' });
 
     if (firewallTimerInterval) clearInterval(firewallTimerInterval);
 
@@ -1131,14 +1919,16 @@
       var bonus = Math.floor(state.dps * 10 * (1 + state.level * 0.1));
       state.data += bonus;
       state.totalDataEarned += bonus;
-      result.textContent = t('fwSuccess', { n: bonus.toLocaleString() });
+      result.textContent = t('fwSuccess', { n: formatNum(bonus) });
       result.className = 'fwResult success';
       playSound('levelup');
       calculateStats();
       renderAll();
+      showToast(t('fwSuccess', { n: formatNum(bonus) }), 'info');
     } else {
       result.textContent = t('fwFail');
       result.className = 'fwResult fail';
+      showToast(t('fwFail'), 'warn');
     }
 
     setTimeout(function () {
@@ -1183,11 +1973,19 @@
       var gain = state.dps / 10;
       state.data += gain;
       state.totalDataEarned += gain;
+      if (state.bossActive) {
+        state.bossData += gain;
+        var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
+        var bar = document.getElementById('bossBarInner');
+        if (bar) bar.style.width = pct + '%';
+        if (state.bossData >= state.bossThreshold) endBoss(true);
+      }
       state.playTime += 0.1;
       calculateStats();
       checkAchievements();
       renderAll();
     }
+    if ((state.prestigeShop['autoBuy'] || 0) >= 1) tryBuyCheapest();
   }
 
   /* --- SAVE / LOAD --- */
@@ -1214,6 +2012,10 @@
         if (!state.achievements) state.achievements = {};
         if (!state.ownedSkins) state.ownedSkins = [];
         if (!state.activeSkin) state.activeSkin = 'default';
+        if (!state.prestigeShop) state.prestigeShop = {};
+        if (state.prestigePoints == null) state.prestigePoints = 0;
+        if (state.autoBuy == null) state.autoBuy = false;
+        if (state.buyMode == null) state.buyMode = 1;
         calculateStats();
 
         var rootkitLevel = state.upgrades['rootkit'] || 0;
@@ -1223,12 +2025,7 @@
           if (offlineData > 0) {
             playSound('offline');
             state.data += offlineData;
-            if (dom.saveStatus) {
-              dom.saveStatus.textContent = t('offline', { n: offlineData.toLocaleString() }) + t('offlineExtra');
-              setTimeout(function () {
-                dom.saveStatus.textContent = t('autoSave');
-              }, 4000);
-            }
+            showToast(t('offline', { n: formatNum(offlineData) }) + t('offlineExtra'), 'info');
           }
         }
         return true;
@@ -1242,13 +2039,19 @@
     if (autoClickInterval) clearInterval(autoClickInterval);
     if (firewallTimeout) clearTimeout(firewallTimeout);
     if (firewallTimerInterval) clearTimeout(firewallTimerInterval);
+    if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
+    if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
     state.firewallActive = false;
+    state.bossActive = false;
+    state.eventActive = null;
     var savedLang = state.lang;
     var savedPrestigeMult = state.prestigeMultiplier;
     var savedPrestigeCount = state.prestigeCount;
     var savedAchievements = Object.assign({}, state.achievements);
     var savedSkins = state.ownedSkins.slice();
     var savedActiveSkin = state.activeSkin;
+    var savedPrestigeShop = Object.assign({}, state.prestigeShop);
+    var savedPrestigePoints = state.prestigePoints || 0;
     state = {
       data: 0,
       clickPower: 1,
@@ -1274,12 +2077,17 @@
       soundEnabled: state.soundEnabled,
       playTime: 0,
       firewallEnabled: true,
+      prestigePoints: savedPrestigePoints,
+      prestigeShop: savedPrestigeShop,
+      buyMode: 1,
     };
     initUpgrades();
     calculateStats();
     renderAll();
     setupAutoClick();
     scheduleFirewall();
+    scheduleEvent();
+    scheduleBoss();
   }
 
   /* --- LANGUAGE TOGGLE --- */
@@ -1299,6 +2107,9 @@
     dom.hackBtn = document.getElementById('hackBtn');
     dom.upgradesGrid = document.getElementById('upgradesGrid');
     dom.dataBarInner = document.getElementById('dataBarInner');
+    dom.dataBarOuter = document.getElementById('dataBarOuter');
+    dom.milestoneMarkers = document.getElementById('milestoneMarkers');
+    dom.milestoneInfo = document.getElementById('milestoneInfo');
     dom.saveStatus = document.getElementById('saveStatus');
     dom.critDisplay = document.getElementById('critDisplay');
     dom.discountDisplay = document.getElementById('discountDisplay');
@@ -1313,6 +2124,12 @@
     dom.skinBtn = document.getElementById('skinBtn');
     dom.soundBtn = document.getElementById('soundBtn');
     dom.statsBtn = document.getElementById('statsBtn');
+    dom.headerPrestige = document.getElementById('headerPrestige');
+    dom.headerTime = document.getElementById('headerTime');
+    dom.upgradeCount = document.getElementById('upgradeCount');
+    dom.prestigeShopBtn = document.getElementById('prestigeShopBtn');
+    dom.exportBtn = document.getElementById('exportBtn');
+    dom.importBtn = document.getElementById('importBtn');
   }
 
   /* --- HANDLE SHORTCUT KEY --- */
@@ -1421,6 +2238,60 @@
         }
       }
     });
+
+    // Buy mode buttons
+    document.querySelectorAll('.buyModeBtn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.buyModeBtn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        state.buyMode = btn.getAttribute('data-mode');
+        if (state.buyMode === 'max') state.buyMode = 'max';
+        else state.buyMode = parseInt(btn.getAttribute('data-mode'));
+      });
+    });
+
+    // Prestige preview
+    document.getElementById('prestigePreviewConfirm').addEventListener('click', executePrestige);
+    document.getElementById('prestigePreviewCancel').addEventListener('click', function () {
+      document.getElementById('prestigePreviewOverlay').classList.remove('open');
+    });
+    document.getElementById('prestigePreviewClose').addEventListener('click', function () {
+      document.getElementById('prestigePreviewOverlay').classList.remove('open');
+    });
+    document.getElementById('prestigePreviewOverlay').addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
+    // Prestige shop
+    if (dom.prestigeShopBtn) {
+      dom.prestigeShopBtn.addEventListener('click', togglePrestigeShop);
+    }
+    var prestigeShopClose = document.getElementById('prestigeShopClose');
+    if (prestigeShopClose) {
+      prestigeShopClose.addEventListener('click', togglePrestigeShop);
+    }
+    document.getElementById('prestigeShopOverlay').addEventListener('click', function (e) {
+      if (e.target === this) togglePrestigeShop();
+    });
+
+    // Export / Import
+    if (dom.exportBtn) {
+      dom.exportBtn.addEventListener('click', exportSave);
+    }
+    if (dom.importBtn) {
+      dom.importBtn.addEventListener('click', importSave);
+    }
+
+    // Boss overlay click to close (only on fail state)
+    document.getElementById('bossOverlay').addEventListener('click', function (e) {
+      if (e.target === this && !state.bossActive) {
+        this.classList.remove('open');
+        scheduleBoss();
+      }
+    });
+
+    scheduleEvent();
+    scheduleBoss();
   }
 
   if (document.readyState === 'loading') {

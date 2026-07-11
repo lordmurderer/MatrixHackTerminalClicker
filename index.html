@@ -13,9 +13,13 @@
 
 <div id="gameContainer">
   <header id="header">
-    <span class="glitch" data-i18n="title">MATRIX HACK TERMINAL v1.0</span>
-    <div id="cursor-line">
+    <div id="headerTop">
+      <span class="glitch" data-i18n="title">MATRIX HACK TERMINAL v1.0</span>
+      <span id="headerPrestige" class="headerExtra"></span>
+    </div>
+    <div id="headerBottom">
       <span class="prompt" data-i18n="headerPrompt">root@matrix:~$</span>
+      <span id="headerTime" class="headerExtra"></span>
       <span class="blink">_</span>
     </div>
   </header>
@@ -27,10 +31,14 @@
     </div>
 
     <div id="dataDisplay">
-      <span id="dataAmount">0</span>
-      <span class="dataLabel" data-i18n="mb">MB</span>
+      <div id="dataRow">
+        <span id="dataAmount">0</span>
+        <span class="dataLabel" data-i18n="mb">MB</span>
+        <span id="milestoneInfo" class="milestoneText"></span>
+      </div>
       <div id="dataBarOuter">
         <div id="dataBarInner"></div>
+        <div id="milestoneMarkers"></div>
       </div>
     </div>
 
@@ -74,11 +82,25 @@
     <button id="statsBtn">STATS</button>
     <button id="skinBtn">SKINS</button>
     <div id="comboDisplay"></div>
+    <div id="eventDisplay">
+      <span id="eventIcon"></span>
+      <span id="eventText"></span>
+      <span id="eventTimer"></span>
+    </div>
   </main>
 
   <section id="upgradesPanel">
     <div class="panelHeader">
       <span data-i18n="panelTitle">> UPGRADES_</span>
+      <span id="upgradeCount"></span>
+    </div>
+    <div id="buyModeBar">
+      <span class="buyModeLabel" data-i18n="buyModeLabel">BUY:</span>
+      <button class="buyModeBtn active" data-mode="1">1x</button>
+      <button class="buyModeBtn" data-mode="10">10x</button>
+      <button class="buyModeBtn" data-mode="max" data-i18n="buyMax">MAX</button>
+      <span class="buyModeSep">|</span>
+      <button id="prestigeShopBtn" class="toolBtn" data-i18n="prestigeShopBtn">SHOP</button>
     </div>
     <div id="upgradesGrid"></div>
   </section>
@@ -86,6 +108,8 @@
   <footer id="footer">
     <span class="prompt" data-i18n="secure">[CONNECTION SECURE]</span>
     <span id="saveStatus" data-i18n="autoSave">AUTO-SAVE ACTIVE</span>
+    <button id="exportBtn" class="toolBtn" data-i18n="exportBtn">EXPORT</button>
+    <button id="importBtn" class="toolBtn" data-i18n="importBtn">IMPORT</button>
     <button id="soundBtn">♪</button>
     <button id="langToggle">EN</button>
   </footer>
@@ -137,7 +161,74 @@
   </div>
 </div>
 
+<div id="bossOverlay">
+  <div id="bossPanel">
+    <div id="bossHeader">
+      <span data-i18n="bossTitle">⚠ BOSS INTRUSION</span>
+      <span id="bossTimer"></span>
+    </div>
+    <div id="bossBody">
+      <div id="bossInfo"></div>
+      <div id="bossBarContainer"><div id="bossBarInner"></div></div>
+      <div id="bossReward"></div>
+    </div>
+  </div>
+</div>
+
+<div id="prestigePreviewOverlay">
+  <div id="prestigePreviewPanel">
+    <div id="prestigePreviewHeader">
+      <span data-i18n="prestigePreviewTitle">⚠ PURGE & BOOT</span>
+      <span id="prestigePreviewClose">X</span>
+    </div>
+    <div id="prestigePreviewBody">
+      <div class="prestigePreviewSection">
+        <span class="prestigePreviewLabel" data-i18n="prestigePreviewMult">MULTIPLIER</span>
+        <div class="prestigePreviewRow">
+          <span><span class="dim" data-i18n="prestigePreviewCurrent">CURRENT</span>: <span id="previewMultCurrent">x1.0</span></span>
+          <span class="arrow">→</span>
+          <span><span class="dim" data-i18n="prestigePreviewNext">NEXT</span>: <span id="previewMultNext" class="highlight">x1.5</span></span>
+        </div>
+      </div>
+      <div class="prestigePreviewSection">
+        <span class="prestigePreviewLabel" data-i18n="prestigePreviewRewards">REWARDS</span>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewPoints">PRESTIGE POINTS</span><span id="previewPoints" class="highlight">+1</span></div>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewStart">START DATA</span><span id="previewStartData">0 MB</span></div>
+      </div>
+      <div class="prestigePreviewSection">
+        <span class="prestigePreviewLabel" data-i18n="prestigePreviewReset">RESETS</span>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewData">Data</span><span class="warn">→ 0</span></div>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewUpgrades">Upgrades</span><span class="warn">→ 0</span></div>
+      </div>
+      <div class="prestigePreviewSection">
+        <span class="prestigePreviewLabel" data-i18n="prestigePreviewKept">PRESERVED</span>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewAch">Achievements</span><span class="keep">✓</span></div>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewSkins">Skins</span><span class="keep">✓</span></div>
+        <div class="prestigePreviewRow"><span class="dim" data-i18n="prestigePreviewShop">Shop upgrades</span><span class="keep">✓</span></div>
+      </div>
+    </div>
+    <div id="prestigePreviewFooter">
+      <button id="prestigePreviewCancel" data-i18n="prestigePreviewCancel">CANCEL</button>
+      <button id="prestigePreviewConfirm" data-i18n="prestigePreviewConfirm">PURGE</button>
+    </div>
+  </div>
+</div>
+
+<div id="prestigeShopOverlay">
+  <div id="prestigeShopPanel">
+    <div id="prestigeShopHeader">
+      <span data-i18n="prestigeShopTitle">PRESTIGE SHOP</span>
+      <span id="prestigePointsDisplay"></span>
+      <button id="prestigeShopClose">X</button>
+    </div>
+    <div id="prestigeShopGrid"></div>
+  </div>
+</div>
+
 <div id="glitchOverlay"></div>
+
+<div id="toastContainer"></div>
+<div id="tooltip"></div>
 
 <script src="script.js"></script>
 </body>

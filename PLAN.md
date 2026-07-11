@@ -46,6 +46,32 @@
 
 ---
 
+---
+
+### 8. UI Improvements ✅
+
+- [x] **Data bar with milestones** — Next milestone text + vertical markers on progress bar
+- [x] **More informative header** — Two-row header with prestige multiplier and play time
+- [x] **Group upgrades by type** — Click / DPS / Special / Multipliers sections with headers
+- [x] **Toast notifications** — Slide-in toasts for achievements, level-up, prestige, firewall, offline
+- [x] **Tooltips on upgrades** — Hover tooltip showing level, current/next effect, cost
+- [x] **Visual mini-refactor** — Body shake animation, toast system, responsive polish, upgraded scrollbar
+
+---
+
+### 9. Mega Update ✅
+
+- [x] **Endgame upgrades** — 4 new upgrades (Morris Worm 500M, Sentinel 5B, Oracle 50B, Prime 1T)
+- [x] **Number formatting** — All numbers formatted as K/M/B/T/ Qa/Qi
+- [x] **Buy 10x / Buy Max** — Mode selector (1x/10x/Max) in panel header
+- [x] **Auto-buy toggle** — Auto-purchases cheapest affordable upgrade
+- [x] **Prestige shop** — Spend prestige points on permanent bonuses (click, DPS, start data, combo, crit)
+- [x] **Random events** — Data leak, crypto crash, overclock, windfall, DDoS attack (every 45-90s)
+- [x] **Boss battles** — Timed DPS challenge, rewards 50% of threshold
+- [x] **Export/Import** — Base64 save codes via clipboard
+
+---
+
 ## Ideas futuras desarrolladas
 
 ---
