@@ -1052,6 +1052,9 @@
       }
     }
 
+    var autoIndicator = document.getElementById('autoBuyIndicator');
+    if (autoIndicator) autoIndicator.classList.toggle('active', (state.prestigeShop['autoBuy'] || 0) >= 1);
+
     if (state._upgradesDirty) {
       renderUpgrades();
       state._upgradesDirty = false;
@@ -1227,6 +1230,7 @@
       state._upgradesDirty = true;
       renderAll();
       setupAutoClick();
+      setupAutoBuy();
       saveGame();
 
       glitch.classList.remove('active');
@@ -1756,6 +1760,7 @@
     if ((state.prestigePoints || 0) < cost) return;
     state.prestigePoints -= cost;
     state.prestigeShop[id] = lvl + 1;
+    if (id === 'autoBuy') setupAutoBuy();
     saveGame();
     renderPrestigeShop();
   }
@@ -2015,6 +2020,21 @@
     }, 8000);
   }
 
+  /* --- AUTO-BUY (prestige shop) --- */
+  var autoBuyInterval = null;
+
+  function setupAutoBuy() {
+    if (autoBuyInterval) clearInterval(autoBuyInterval);
+    var active = (state.prestigeShop['autoBuy'] || 0) >= 1;
+    var indicator = document.getElementById('autoBuyIndicator');
+    if (indicator) indicator.classList.toggle('active', active);
+    if (active) {
+      autoBuyInterval = setInterval(function () {
+        tryBuyCheapest();
+      }, 500);
+    }
+  }
+
   /* --- GAME LOOP --- */
   function gameLoop() {
     if (state.dps > 0) {
@@ -2033,7 +2053,6 @@
       checkAchievements();
       renderAll();
     }
-    if ((state.prestigeShop['autoBuy'] || 0) >= 1) tryBuyCheapest();
   }
 
   /* --- SAVE / LOAD --- */
@@ -2134,6 +2153,7 @@
     state._upgradesDirty = true;
     renderAll();
     setupAutoClick();
+    setupAutoBuy();
     scheduleFirewall();
     scheduleEvent();
     scheduleBoss();

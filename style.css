@@ -1234,11 +1234,14 @@ body {
   color: var(--amber-bright);
 }
 
-.toolBtn.active {
-  border-color: var(--amber);
-  color: var(--amber-bright);
-  box-shadow: 0 0 6px rgba(255, 136, 0, 0.15);
+.autoBuyIndicator {
+  display: none;
+  font-size: 0.5rem;
+  color: var(--amber);
+  letter-spacing: 0.5px;
+  animation: prestigePulse 2s ease-in-out infinite;
 }
+.autoBuyIndicator.active { display: inline; }
 
 /* EVENT DISPLAY */
 #eventDisplay {
