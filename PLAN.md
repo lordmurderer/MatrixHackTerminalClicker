@@ -280,6 +280,7 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 
 ### P1 — Core UX
 
+- [x] **Barra de progreso de prestigio** — Indicador visual con barra y texto "LISTO → PURGAR" cuando está disponible
 - [ ] **Resumen offline** — Overlay al volver mostrando datos ganados, eventos ocurridos, bosses vencidos
 - [ ] **Tutorial / Onboarding** — Primera vez: tooltips iniciales que desaparecen al completarlos
 - [ ] **Panel de ajustes** — Unificar sonido, idioma, reset, export/import en un overlay

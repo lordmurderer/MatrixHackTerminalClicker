@@ -259,20 +259,24 @@ body {
 
 #prestigeSection {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   width: 100%;
-  justify-content: center;
   font-size: 0.6rem;
   margin-top: 2px;
 }
 
-#prestigeInfo {
-  color: var(--amber-dim);
+#prestigeTopRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
 }
 
-#prestigeReq {
-  color: var(--amber-dark);
+#prestigeInfo {
+  color: var(--amber-dim);
 }
 
 /* TOOLBAR — Ach, Stats, Skins */
@@ -321,6 +325,9 @@ body {
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 #prestigeBtn:hover:not(:disabled) {
@@ -333,6 +340,64 @@ body {
 #prestigeBtn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+#prestigeBtn.ready {
+  border-color: #ff4400;
+  color: #ff4400;
+  text-shadow: 0 0 8px rgba(255, 68, 0, 0.4);
+  animation: prestigePulse 1.5s ease-in-out infinite;
+}
+
+#prestigeBtn.ready:hover {
+  border-color: #ff0000;
+  color: #ff0000;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 0, 0, 0.1);
+}
+
+/* PRESTIGE PROGRESS BAR */
+#prestigeProgressOuter {
+  width: 100%;
+  height: 6px;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+#prestigeProgressInner {
+  height: 100%;
+  width: 0%;
+  background: var(--amber-dark);
+  transition: width 0.2s ease;
+}
+
+#prestigeProgressInner.ready {
+  background: #ff4400;
+  box-shadow: 0 0 8px #ff4400;
+  animation: prestigeBarPulse 1s ease-in-out infinite;
+}
+
+#prestigeReq {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.5rem;
+  color: var(--amber-dim);
+  white-space: nowrap;
+  line-height: 1;
+  z-index: 1;
+}
+
+@keyframes prestigePulse {
+  0%, 100% { text-shadow: 0 0 8px rgba(255, 68, 0, 0.4); }
+  50% { text-shadow: 0 0 16px rgba(255, 68, 0, 0.8); }
+}
+
+@keyframes prestigeBarPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
 }
 
 /* PRESTIGE SHOP button */
@@ -1840,4 +1905,8 @@ body.shake {
   .shopCardCost { font-size: 0.55rem; }
   #toolbar { gap: 3px; }
   #toolbar button { font-size: 0.55rem; padding: 2px 7px; }
+  #prestigeTopRow { gap: 4px; }
+  #prestigeBtn { font-size: 0.55rem; padding: 2px 8px; }
+  #prestigeProgressOuter { height: 5px; }
+  #prestigeReq { font-size: 0.45rem; }
 }

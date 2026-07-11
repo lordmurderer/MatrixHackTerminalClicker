@@ -55,6 +55,7 @@
       prestigeLabel: 'PRESTIGE x{n}',
       prestigeReq: 'SIGUIENTE: {n} MB ({p}%)',
       prestigeBtn: 'PURGE & BOOT',
+      prestigeReady: 'LISTO → PURGAR',
       prestigeConfirm: '¿PURGE & BOOT? El progreso se reiniciará. Multiplicador: x{n}',
       achTitle: 'LOGROS ({n}/12)',
       achFirstClick: 'First Click',
@@ -234,6 +235,7 @@
       prestigeLabel: 'PRESTIGE x{n}',
       prestigeReq: 'NEXT: {n} MB ({p}%)',
       prestigeBtn: 'PURGE & BOOT',
+      prestigeReady: 'READY → PURGE',
       prestigeConfirm: 'PURGE & BOOT? Progress will reset. Multiplier: x{n}',
       achTitle: 'ACHIEVEMENTS ({n}/12)',
       achFirstClick: 'First Click',
@@ -1027,8 +1029,17 @@
       var progress = Math.min(100, Math.floor(state.totalDataEarned / req * 100));
       dom.prestigeReq.textContent = t('prestigeReq', { n: formatNum(req), p: progress });
       if (dom.prestigeBtn) {
-        dom.prestigeBtn.disabled = state.totalDataEarned < req;
-        dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.totalDataEarned >= req * 0.3 ? 'inline-block' : 'none';
+        var ready = state.totalDataEarned >= req;
+        dom.prestigeBtn.disabled = !ready;
+        dom.prestigeBtn.classList.toggle('ready', ready);
+        dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.totalDataEarned >= req * 0.3 ? 'inline-flex' : 'none';
+        var btnSpan = dom.prestigeBtn.querySelector('span');
+        if (btnSpan) btnSpan.textContent = ready ? t('prestigeReady') : t('prestigeBtn');
+      }
+      var bar = document.getElementById('prestigeProgressInner');
+      if (bar) {
+        bar.style.width = progress + '%';
+        bar.classList.toggle('ready', ready);
       }
     }
 
