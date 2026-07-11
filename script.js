@@ -1115,7 +1115,8 @@
 
         var ownedRow = document.createElement('div');
         ownedRow.className = 'upgradeOwned';
-        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')';
+        var nextText = (u.maxLevel > 1 && owned < u.maxLevel) ? ' → ' + getEffectText(u, owned + 1) : '';
+        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')' + nextText;
 
         card.appendChild(headerRow);
         card.appendChild(descRow);
@@ -1126,15 +1127,17 @@
           buyUpgrade(u.id);
         });
 
-        // Tooltip on hover
-        card.addEventListener('mouseenter', function (e) {
-          showTooltip(e, buildUpgradeTooltipHTML(u, owned, cost));
-        });
-        card.addEventListener('mousemove', function (e) {
-          var tt = document.getElementById('tooltip');
-          if (tt && tt.style.display === 'block') positionTooltip(e, tt);
-        });
-        card.addEventListener('mouseleave', hideTooltip);
+        // Tooltip on hover (skip on touch/hover-less devices — card already shows all info)
+        if (window.matchMedia('(hover: hover)').matches) {
+          card.addEventListener('mouseenter', function (e) {
+            showTooltip(e, buildUpgradeTooltipHTML(u, owned, cost));
+          });
+          card.addEventListener('mousemove', function (e) {
+            var tt = document.getElementById('tooltip');
+            if (tt && tt.style.display === 'block') positionTooltip(e, tt);
+          });
+          card.addEventListener('mouseleave', hideTooltip);
+        }
 
         dom.upgradesGrid.appendChild(card);
       });
