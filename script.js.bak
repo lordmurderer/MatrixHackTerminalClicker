@@ -221,6 +221,7 @@
       autoBuyOn: 'AUTO: ON',
       autoBuyOff: 'AUTO: OFF',
       exportOk: 'SAVE COPIADO AL PORTAPAPELES',
+      exportFail: 'ERROR AL EXPORTAR',
       importOk: 'SAVE IMPORTADO',
       importFail: 'SAVE INVÁLIDO',
       settingsBtn: 'OPCIONES',
@@ -455,6 +456,7 @@
       autoBuyOn: 'AUTO: ON',
       autoBuyOff: 'AUTO: OFF',
       exportOk: 'SAVE COPIED TO CLIPBOARD',
+      exportFail: 'EXPORT ERROR',
       importOk: 'SAVE IMPORTED',
       importFail: 'INVALID SAVE',
       settingsBtn: 'OPTIONS',
@@ -488,6 +490,86 @@
     }
     return val;
   }
+
+  /* --- CONFIG --- */
+  const CONFIG = {
+    // Cost
+    COST_EXP_UNLIMITED: 1.15,
+    COST_EXP_LIMITED: 1.25,
+    COST_DISCOUNT_MIN: 0.1,
+    // Combo
+    COMBO_TIMEOUT_MS: 1000,
+    COMBO_MAX: 50,
+    COMBO_MULT_PER_STACK: 0.1,
+    COMBO_BREAK_ANIM_MS: 300,
+    // Auto
+    AUTO_INTERVAL_DEFAULT: 8000,
+    AUTO_INTERVAL_MIN: 2000,
+    AUTO_INTERVAL_MAX: 8000,
+    AUTO_BUY_INTERVAL_MS: 500,
+    // Crit
+    CRIT_MULTIPLIER_BASE: 3,
+    // Combo boost cap
+    MAX_COMBO_MULT: 5,
+    COMBO_BOOST_LIMIT: 50,
+    // Architect
+    ARCHITECT_BONUS: 0.05,
+    // Prestige
+    PRESTIGE_MULT_FACTOR: 1.5,
+    PRESTIGE_BASE_REQ: 500000,
+    PRESTIGE_GLITCH_DELAY_MS: 1600,
+    // Boss
+    BOSS_TIME_BASE: 15,
+    BOSS_TIME_MIN: 5,
+    BOSS_TIME_DIVISOR: 5,
+    BOSS_LEVEL_SCALE: 0.15,
+    BOSS_REWARD_FRACTION: 0.5,
+    BOSS_SCHEDULE_BASE_MS: 120000,
+    BOSS_SCHEDULE_RANDOM_MS: 60000,
+    BOSS_DISPLAY_DELAY_MS: 2000,
+    // Firewall
+    FW_NODE_BASE: 3,
+    FW_NODE_DIVISOR: 5,
+    FW_NODE_MAX: 8,
+    FW_TIME_BASE: 5,
+    FW_TIME_DIVISOR: 10,
+    FW_TIME_MIN: 2,
+    FW_REWARD_DPS_MULT: 10,
+    FW_REWARD_LEVEL_SCALE: 0.1,
+    FW_SCHEDULE_BASE_MS: 60000,
+    FW_SCHEDULE_RANDOM_MS: 60000,
+    FW_DISPLAY_DELAY_MS: 2000,
+    // Events
+    EVENT_SCHEDULE_BASE_MS: 45000,
+    EVENT_SCHEDULE_RANDOM_MS: 45000,
+    EVENT_WINDFALL_PERCENT: 0.1,
+    EVENT_LEAK_PENALTY: 0.05,
+    EVENT_WINDFALL_DISPLAY_MS: 3000,
+    // Offline
+    OFFLINE_ROOTKIT_MULT: 0.15,
+    // Animations
+    CRIT_ANIM_DURATION_MS: 150,
+    BUY_FLASH_DURATION_MS: 400,
+    SAVE_STATUS_DURATION_MS: 2000,
+    // Game loop
+    GAME_LOOP_TICK_MS: 100,
+    // Prestige shop
+    SHOP_CLICK_BOOST: 0.25,
+    SHOP_DPS_BOOST: 0.25,
+    SHOP_START_DATA: 1000,
+    SHOP_COMBO_BOOST: 0.05,
+    SHOP_CRIT_BOOST: 5,
+    // Event stat multipliers
+    EVENT_OVERCLOCK_CLICK: 3,
+    EVENT_DDOS_DPS: 2,
+    EVENT_CRYPTO_CRASH_COST: 0.8,
+    EVENT_DATA_LEAK_DPS: 1.5,
+    // Buy mode
+    BUY_MAX_THRESHOLD: 999,
+    // Boss scheduling min DPS
+    BOSS_SCHEDULE_MIN_DPS: 1,
+    BOSS_SCHEDULE_RETRY_MS: 10000,
+  };
 
   const UPGRADE_DEFS = [
     { id: 'terminal', cost: 10, effect: 'click', value: 1, icon: '>', unlockAt: 0 },
@@ -682,6 +764,41 @@
   let lastLevel = 1;
   let firewallTimeout = null;
   let firewallTimerInterval = null;
+  let audioCtx = null;
+
+  /* --- RENDER DIRTY FLAGS --- */
+  var RENDER = { hud: true, eventGlow: true, levelBar: true, header: true, synergy: true, prestige: true, combo: true, autoBuy: true, upgradeState: true };
+
+  /* --- EVENT BUS --- */
+  const EVENTS = {
+    DATA_CHANGED: 'data_changed',
+    COMBO_CHANGED: 'combo_changed',
+    UPGRADES_CHANGED: 'upgrades_changed',
+    PRESTIGE_CHANGED: 'prestige_changed',
+    EVENT_CHANGED: 'event_changed',
+    SKIN_CHANGED: 'skin_changed',
+    LANGUAGE_CHANGED: 'language_changed',
+    GAME_RESET: 'game_reset',
+  };
+
+  var bus = {
+    _listeners: {},
+    on: function (evt, fn) { (this._listeners[evt] = this._listeners[evt] || []).push(fn); },
+    off: function (evt, fn) { var arr = this._listeners[evt]; if (arr) this._listeners[evt] = arr.filter(function (f) { return f !== fn; }); },
+    emit: function (evt, data) { (this._listeners[evt] || []).forEach(function (fn) { fn(data); }); },
+  };
+
+  // UI subscriptions map events to RENDER flags
+  function setupBusUI() {
+    bus.on(EVENTS.DATA_CHANGED, function () { RENDER.hud = true; RENDER.levelBar = true; RENDER.header = true; RENDER.upgradeState = true; renderAll(); });
+    bus.on(EVENTS.COMBO_CHANGED, function () { RENDER.combo = true; renderAll(); });
+    bus.on(EVENTS.UPGRADES_CHANGED, function () { state._upgradesDirty = true; RENDER.hud = true; renderAll(); });
+    bus.on(EVENTS.PRESTIGE_CHANGED, function () { state._upgradesDirty = true; RENDER.hud = true; RENDER.prestige = true; renderAll(); });
+    bus.on(EVENTS.EVENT_CHANGED, function () { RENDER.hud = true; RENDER.eventGlow = true; renderAll(); });
+    bus.on(EVENTS.SKIN_CHANGED, function () { RENDER.hud = true; renderAll(); });
+    bus.on(EVENTS.LANGUAGE_CHANGED, function () { state._upgradesDirty = true; RENDER.hud = true; RENDER.eventGlow = true; RENDER.prestige = true; RENDER.combo = true; renderAll(); });
+    bus.on(EVENTS.GAME_RESET, function () { RENDER.hud = RENDER.eventGlow = RENDER.levelBar = RENDER.header = RENDER.synergy = RENDER.prestige = RENDER.combo = RENDER.autoBuy = true; state._upgradesDirty = true; renderAll(); });
+  }
 
   // Floating text pool
   var textPool = [];
@@ -793,8 +910,7 @@
     if (dom.langToggle) {
       dom.langToggle.textContent = state.lang === 'es' ? 'EN' : 'ES';
     }
-    state._upgradesDirty = true;
-    renderAll();
+    bus.emit(EVENTS.LANGUAGE_CHANGED);
   }
 
   /* --- GAME LOGIC --- */
@@ -817,9 +933,9 @@
 
   function getUpgradeCost(def, level) {
     if (def.maxLevel && level >= def.maxLevel) return Infinity;
-    var exponent = def.maxLevel > 0 ? 1.25 : 1.15;
+    var exponent = def.maxLevel > 0 ? CONFIG.COST_EXP_LIMITED : CONFIG.COST_EXP_UNLIMITED;
     var base = def.cost * Math.pow(exponent, level);
-    var discountMult = Math.max(0.1, 1 - (state.discount || 0) / 100);
+    var discountMult = Math.max(CONFIG.COST_DISCOUNT_MIN, 1 - (state.discount || 0) / 100);
     var costMult = discountMult * getEventMultiplier().cost;
     return Math.max(1, Math.floor(base * costMult));
   }
@@ -835,92 +951,97 @@
     return lvl;
   }
 
-  function calculateStats() {
-    var click = 1;
-    var dpsVal = 0;
-    var crit = 0;
-    var disc = 0;
-    var multClick = 1;
-    var multDps = 1;
-    var critDmgBonus = 0;
-    var comboBoostBonus = 0;
-    var autoSpeedMs = 8000;
+  function calcUpgradeEffects() {
+    var r = { click: 1, dps: 0, crit: 0, disc: 0, multClick: 1, multDps: 1, critDmgBonus: 0, comboBoostBonus: 0, autoSpeedMs: CONFIG.AUTO_INTERVAL_DEFAULT };
     UPGRADE_DEFS.forEach(function (u) {
       var owned = state.upgrades[u.id] || 0;
       if (owned === 0) return;
       switch (u.effect) {
-        case 'click': click += u.value * owned; break;
-        case 'dps': dpsVal += u.value * owned; break;
-        case 'clickDps': click += u.value * owned; dpsVal += u.value * owned; break;
-        case 'crit': crit += u.value * owned; break;
-        case 'critDmg': critDmgBonus += u.value * owned; break;
-        case 'discount': disc += u.value * owned; break;
-        case 'mult_click': multClick *= Math.pow(u.value, owned); break;
-        case 'mult_dps': multDps *= Math.pow(u.value, owned); break;
-        case 'comboBoost': comboBoostBonus += u.value * owned; break;
-        case 'autoSpeed': autoSpeedMs = Math.min(autoSpeedMs, 8000 - u.value * owned); break;
+        case 'click': r.click += u.value * owned; break;
+        case 'dps': r.dps += u.value * owned; break;
+        case 'clickDps': r.click += u.value * owned; r.dps += u.value * owned; break;
+        case 'crit': r.crit += u.value * owned; break;
+        case 'critDmg': r.critDmgBonus += u.value * owned; break;
+        case 'discount': r.disc += u.value * owned; break;
+        case 'mult_click': r.multClick *= Math.pow(u.value, owned); break;
+        case 'mult_dps': r.multDps *= Math.pow(u.value, owned); break;
+        case 'comboBoost': r.comboBoostBonus += u.value * owned; break;
+        case 'autoSpeed': r.autoSpeedMs = Math.min(r.autoSpeedMs, CONFIG.AUTO_INTERVAL_DEFAULT - u.value * owned); break;
       }
     });
+    return r;
+  }
 
-    state.critMultiplier = 3 + critDmgBonus;
-    state.autoInterval = Math.max(2000, autoSpeedMs);
-    state.maxComboMult = Math.min(50, 5 + comboBoostBonus);
-
-    var scannerLvl = state.upgrades['scanner'] || 0;
-    var cpuLvl = state.upgrades['cpu'] || 0;
-    state.synergy = scannerLvl >= 5 && cpuLvl > 0;
-    if (state.synergy) dpsVal += cpuLvl;
-
-    var archCount = 0;
+  function calcArchitectCount() {
+    var count = 0;
     UPGRADE_DEFS.forEach(function (u) {
-      if ((state.upgrades[u.id] || 0) >= 10) archCount++;
+      if ((state.upgrades[u.id] || 0) >= 10) count++;
     });
-    state.architectCount = archCount;
-    state.architect = archCount > 0;
-    if (state.architect) multDps *= (1 + archCount * 0.05);
+    return count;
+  }
 
-    state.clickPower = Math.floor(click * multClick * state.prestigeMultiplier);
-    state.dps = Math.floor(dpsVal * multDps * state.prestigeMultiplier * 10) / 10;
-
-    var achClickMult = 1;
-    var achDpsMult = 1;
-    var achCrit = 0;
-    var achDiscount = 0;
+  function calcAchievementBonus() {
+    var r = { clickMult: 1, dpsMult: 1, critBonus: 0, discountBonus: 0 };
     ACHIEVEMENT_DEFS.forEach(function (ach) {
       if (state.achievements[ach.id]) {
-        if (ach.bonus.clickPercent) achClickMult *= (1 + ach.bonus.clickPercent / 100);
-        if (ach.bonus.dpsPercent) achDpsMult *= (1 + ach.bonus.dpsPercent / 100);
-        if (ach.bonus.critPercent) achCrit += ach.bonus.critPercent;
-        if (ach.bonus.discountFlat) achDiscount += ach.bonus.discountFlat;
-        if (ach.bonus.autoclickExtra) {
-          // handled in setupAutoClick
-        }
-        if (ach.bonus.prestigeExtra) {
-          // handled in doPrestige
-        }
+        if (ach.bonus.clickPercent) r.clickMult *= (1 + ach.bonus.clickPercent / 100);
+        if (ach.bonus.dpsPercent) r.dpsMult *= (1 + ach.bonus.dpsPercent / 100);
+        if (ach.bonus.critPercent) r.critBonus += ach.bonus.critPercent;
+        if (ach.bonus.discountFlat) r.discountBonus += ach.bonus.discountFlat;
       }
     });
-    state.clickPower = Math.floor(state.clickPower * achClickMult);
-    state.dps = Math.floor(state.dps * achDpsMult * 10) / 10;
+    return r;
+  }
 
-    // Prestige shop bonuses
-    state.clickPower = Math.floor(state.clickPower * getShopBonus('clickBoost'));
-    state.dps = Math.floor(state.dps * getShopBonus('dpsBoost') * 10) / 10;
-    crit += getShopBonus('critBoost');
-
-    // Event multipliers
-    var evtMult = getEventMultiplier();
-    state.clickPower = Math.floor(state.clickPower * evtMult.click);
-    state.dps = Math.floor(state.dps * evtMult.dps * 10) / 10;
-
-    state.critChance = crit + achCrit;
-    state.discount = disc + achDiscount;
+  function checkLevelUp() {
     state.level = getLevel();
     if (state.level > lastLevel) {
       playSound('levelup');
       showToast(t('level', { n: state.level }), 'info');
     }
     lastLevel = state.level;
+  }
+
+  function calculateStats() {
+    var upg = calcUpgradeEffects();
+
+    state.critMultiplier = CONFIG.CRIT_MULTIPLIER_BASE + upg.critDmgBonus;
+    state.autoInterval = Math.max(CONFIG.AUTO_INTERVAL_MIN, upg.autoSpeedMs);
+    state.maxComboMult = Math.min(CONFIG.COMBO_BOOST_LIMIT, CONFIG.MAX_COMBO_MULT + upg.comboBoostBonus);
+
+    // Synergy (scanner + cpu)
+    var scannerLvl = state.upgrades['scanner'] || 0;
+    var cpuLvl = state.upgrades['cpu'] || 0;
+    state.synergy = scannerLvl >= 5 && cpuLvl > 0;
+    if (state.synergy) upg.dps += cpuLvl;
+
+    // Architect
+    var archCount = calcArchitectCount();
+    state.architectCount = archCount;
+    state.architect = archCount > 0;
+    if (state.architect) upg.multDps *= (1 + archCount * CONFIG.ARCHITECT_BONUS);
+
+    state.clickPower = Math.floor(upg.click * upg.multClick * state.prestigeMultiplier);
+    state.dps = Math.floor(upg.dps * upg.multDps * state.prestigeMultiplier * 10) / 10;
+
+    // Achievement bonuses
+    var ach = calcAchievementBonus();
+    state.clickPower = Math.floor(state.clickPower * ach.clickMult);
+    state.dps = Math.floor(state.dps * ach.dpsMult * 10) / 10;
+
+    // Prestige shop bonuses
+    state.clickPower = Math.floor(state.clickPower * getShopBonus('clickBoost'));
+    state.dps = Math.floor(state.dps * getShopBonus('dpsBoost') * 10) / 10;
+    upg.crit += getShopBonus('critBoost');
+
+    // Event multipliers
+    var evtMult = getEventMultiplier();
+    state.clickPower = Math.floor(state.clickPower * evtMult.click);
+    state.dps = Math.floor(state.dps * evtMult.dps * 10) / 10;
+
+    state.critChance = upg.crit + ach.critBonus;
+    state.discount = upg.disc + ach.discountBonus;
+    checkLevelUp();
     if (state._lastAutoInterval !== state.autoInterval) {
       state._lastAutoInterval = state.autoInterval;
       state._autoDirty = true;
@@ -931,14 +1052,14 @@
     var card = dom.upgradesGrid.querySelector('.upgradeCard[data-upgrade-id="' + id + '"]');
     if (card) {
       card.classList.add('bought-anim');
-      setTimeout(function () { card.classList.remove('bought-anim'); }, 400);
+      setTimeout(function () { card.classList.remove('bought-anim'); }, CONFIG.BUY_FLASH_DURATION_MS);
     }
   }
 
   function buyUpgrade(id, count) {
     var def = UPGRADE_DEFS.find(function (u) { return u.id === id; });
     if (!def) return;
-    if (count == null) count = state.buyMode === 'max' ? 999 : state.buyMode;
+    if (count == null) count = state.buyMode === 'max' ? CONFIG.BUY_MAX_THRESHOLD : state.buyMode;
     var bought = 0;
     for (var i = 0; i < count; i++) {
       var currentLevel = state.upgrades[id] || 0;
@@ -952,8 +1073,7 @@
     if (bought === 0) return;
     playSound('buy');
     calculateStats();
-    state._upgradesDirty = true;
-    renderAll();
+    bus.emit(EVENTS.UPGRADES_CHANGED);
 
     // Flash animation on the purchased card (after DOM rebuild)
     flashUpgradeCard(id);
@@ -978,44 +1098,36 @@
         state.data -= cost;
         state.upgrades[best.id] = lvl + 1;
         calculateStats();
+        bus.emit(EVENTS.UPGRADES_CHANGED);
         flashUpgradeCard(best.id);
       }
     }
   }
 
-  function doClick(e, isAuto) {
-    var rect = dom.hackBtn.getBoundingClientRect();
-    var x = e ? e.clientX - rect.left : rect.width / 2;
-    var y = e ? e.clientY - rect.top : (rect.height / 2);
-    var gained = state.clickPower;
-
-    // Combo tracking (manual clicks only)
-    if (!isAuto) {
-      var now = Date.now();
-      if (state.lastClickTime && now - state.lastClickTime < 1000) {
-        state.combo = Math.min(50, state.combo + 1);
-      } else {
-        state.combo = 1;
-      }
-      state.lastClickTime = now;
-      if (comboTimeout) clearTimeout(comboTimeout);
-      comboTimeout = setTimeout(function () {
-        state.combo = 0;
-        if (dom.comboDisplay) {
-          dom.comboDisplay.classList.add('comboBreak');
-          setTimeout(function () {
-            dom.comboDisplay.style.display = 'none';
-            dom.comboDisplay.classList.remove('comboBreak');
-          }, 300);
-        }
-      }, 1000);
-      var comboAdd = getShopBonus('comboBoost');
-      var comboMult = 1 + state.combo * (0.1 + comboAdd);
-      gained = Math.floor(gained * comboMult);
+  function trackCombo() {
+    var now = Date.now();
+    if (state.lastClickTime && now - state.lastClickTime < CONFIG.COMBO_TIMEOUT_MS) {
+      state.combo = Math.min(CONFIG.COMBO_MAX, state.combo + 1);
+    } else {
+      state.combo = 1;
     }
+    state.lastClickTime = now;
+    if (comboTimeout) clearTimeout(comboTimeout);
+    comboTimeout = setTimeout(function () {
+      state.combo = 0;
+      if (dom.comboDisplay) {
+        dom.comboDisplay.classList.add('comboBreak');
+        setTimeout(function () {
+          dom.comboDisplay.style.display = 'none';
+          dom.comboDisplay.classList.remove('comboBreak');
+        }, CONFIG.COMBO_BREAK_ANIM_MS);
+      }
+    }, CONFIG.COMBO_TIMEOUT_MS);
+    return 1 + state.combo * (CONFIG.COMBO_MULT_PER_STACK + getShopBonus('comboBoost'));
+  }
 
-    if (!isAuto && state.critChance > 0 && Math.random() * 100 < state.critChance) {
-      gained *= state.critMultiplier || 3;
+  function applyClickFx(x, y, isCrit) {
+    if (isCrit) {
       state.totalCrits++;
       playSound('crit');
       spawnFloatingCrit(x, y - 30, t('critText'));
@@ -1025,8 +1137,8 @@
         { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)', offset: 0.5 },
         { opacity: 0.3, boxShadow: '0 0 20px rgba(0,255,0,0.4)', offset: 0.75 },
         { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)' }
-      ], { duration: 150, easing: 'ease' });
-    } else if (!isAuto) {
+      ], { duration: CONFIG.CRIT_ANIM_DURATION_MS, easing: 'ease' });
+    } else {
       playSound('click');
       dom.hackBtn.animate([
         { opacity: 1 },
@@ -1034,13 +1146,34 @@
         { opacity: 1, offset: 0.5 },
         { opacity: 0.3, offset: 0.75 },
         { opacity: 1 }
-      ], { duration: 150, easing: 'ease' });
+      ], { duration: CONFIG.CRIT_ANIM_DURATION_MS, easing: 'ease' });
     }
+  }
+
+  function doClick(e, isAuto) {
+    var rect = dom.hackBtn.getBoundingClientRect();
+    var x = e ? e.clientX - rect.left : rect.width / 2;
+    var y = e ? e.clientY - rect.top : (rect.height / 2);
+    var gained = state.clickPower;
+    var isCrit = false;
+
+    if (!isAuto) {
+      var comboMult = trackCombo();
+      gained = Math.floor(gained * comboMult);
+    }
+
+    if (!isAuto && state.critChance > 0 && Math.random() * 100 < state.critChance) {
+      gained *= state.critMultiplier || CONFIG.CRIT_MULTIPLIER_BASE;
+      isCrit = true;
+    }
+
+    applyClickFx(x, y, isCrit);
 
     addData(gained);
     state.totalClicks++;
     calculateStats();
-    renderAll();
+    bus.emit(EVENTS.DATA_CHANGED);
+    if (!isAuto) bus.emit(EVENTS.COMBO_CHANGED);
 
     var prefix = isAuto ? t('autoPrefix') + ' ' : '';
     spawnFloatingText(x, y, prefix + '+' + formatData(gained));
@@ -1148,17 +1281,17 @@
     }, 50);
   }
 
-  /* --- RENDER --- */
-  function renderAll() {
-    var dataFloor = Math.floor(state.data);
-    dom.dataAmount.textContent = formatData(dataFloor);
+  /* --- RENDER SECTIONS --- */
+  function updateHUD() {
+    dom.dataAmount.textContent = formatData(Math.floor(state.data));
     dom.clickPower.textContent = formatData(state.clickPower);
     dom.dpsValue.textContent = formatData(state.dps) + '/s';
     dom.critDisplay.textContent = state.critChance;
     dom.discountDisplay.textContent = state.discount;
     dom.playerLevel.textContent = t('level', { n: state.level });
+  }
 
-    // Event buff glow on relevant stats
+  function updateEventGlow() {
     var evtMult = getEventMultiplier();
     var statEls = document.querySelectorAll('#stats .stat');
     if (statEls.length >= 2) {
@@ -1166,13 +1299,15 @@
       statEls[1].classList.toggle('event-active', evtMult.dps > 1);
       statEls[3].classList.toggle('event-active', evtMult.cost < 1);
     }
+  }
 
+  function updateLevelBar() {
+    var dataFloor = Math.floor(state.data);
     var nextThreshold = LEVEL_THRESHOLDS[state.level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
     var prevThreshold = LEVEL_THRESHOLDS[state.level - 1] || 0;
     var progress = (state.data - prevThreshold) / (nextThreshold - prevThreshold);
     dom.dataBarInner.style.width = Math.min(100, Math.max(0, progress * 100)) + '%';
 
-    // Milestones
     var nextMilestone = null;
     for (var i = 0; i < MILESTONES.length; i++) {
       if (dataFloor < MILESTONES[i]) {
@@ -1180,29 +1315,13 @@
         break;
       }
     }
-    var milestoneText = '';
-    if (nextMilestone) {
-      milestoneText = t('milestoneLabel', { n: formatData(nextMilestone) });
-    } else {
-      milestoneText = '∞';
-    }
+    var milestoneText = nextMilestone ? t('milestoneLabel', { n: formatData(nextMilestone) }) : '\u221E';
     if (dom.milestoneInfo) dom.milestoneInfo.textContent = '>> ' + milestoneText;
 
-    // Milestone markers on bar
     if (dom.milestoneMarkers) {
       dom.milestoneMarkers.innerHTML = '';
-      var barWidth = dom.dataBarOuter ? dom.dataBarOuter.offsetWidth : 300;
       for (var i = 0; i < MILESTONES.length; i++) {
         var m = MILESTONES[i];
-        var prev = 0;
-        var nextM = nextThreshold;
-        for (var j = 0; j < LEVEL_THRESHOLDS.length - 1; j++) {
-          if (m >= LEVEL_THRESHOLDS[j] && m < LEVEL_THRESHOLDS[j + 1]) {
-            prev = LEVEL_THRESHOLDS[j];
-            nextM = LEVEL_THRESHOLDS[j + 1];
-            break;
-          }
-        }
         if (m < prevThreshold || m > nextThreshold) continue;
         var pct = ((m - prevThreshold) / (nextThreshold - prevThreshold)) * 100;
         if (pct < 0 || pct > 100) continue;
@@ -1212,8 +1331,9 @@
         dom.milestoneMarkers.appendChild(marker);
       }
     }
+  }
 
-    // Header extras
+  function updateHeader() {
     if (dom.headerPrestige) {
       dom.headerPrestige.textContent = state.prestigeCount > 0
         ? 'x' + Number(state.prestigeMultiplier).toFixed(1)
@@ -1222,15 +1342,19 @@
     if (dom.headerTime) {
       dom.headerTime.textContent = formatTime(Math.floor(state.playTime));
     }
+  }
 
+  function updateSynergy() {
     if (dom.synergyDisplay) {
       var parts = [];
       if (state.synergy) parts.push(t('synergyScanner', { n: state.upgrades['cpu'] || 0 }));
-      if (state.architect) parts.push(t('synergyArch', { n: Number(1 + state.architectCount * 0.05).toFixed(2) }));
+      if (state.architect) parts.push(t('synergyArch', { n: Number(1 + state.architectCount * CONFIG.ARCHITECT_BONUS).toFixed(2) }));
       dom.synergyDisplay.textContent = parts.length ? '>> ' + parts.join(t('synergyDivider')) : '';
       dom.synergyDisplay.style.display = parts.length ? 'block' : 'none';
     }
+  }
 
+  function updatePrestige() {
     if (dom.prestigeInfo) {
       dom.prestigeInfo.textContent = t('prestigeLabel', { n: Number(state.prestigeMultiplier).toFixed(1) });
     }
@@ -1252,16 +1376,20 @@
         bar.classList.toggle('ready', ready);
       }
     }
+  }
 
+  function updateCombo() {
     if (dom.comboDisplay) {
       if (state.combo > 1) {
-        dom.comboDisplay.textContent = t('comboLabel', { n: state.combo, m: Number(1 + state.combo * 0.1).toFixed(1) });
+        dom.comboDisplay.textContent = t('comboLabel', { n: state.combo, m: Number(1 + state.combo * CONFIG.COMBO_MULT_PER_STACK).toFixed(1) });
         dom.comboDisplay.style.display = 'block';
       } else {
         dom.comboDisplay.style.display = 'none';
       }
     }
+  }
 
+  function updateAutoBuy() {
     var autoBtn = document.getElementById('autoBuyToggle');
     if (autoBtn) {
       var owned = (state.prestigeShop['autoBuy'] || 0) >= 1;
@@ -1270,13 +1398,19 @@
       autoBtn.classList.toggle('active', enabled);
       autoBtn.textContent = enabled ? t('autoBuyOn') : t('autoBuyOff');
     }
+  }
 
-    if (state._upgradesDirty) {
-      renderUpgrades();
-      state._upgradesDirty = false;
-    } else {
-      refreshUpgradeState();
-    }
+  function renderAll() {
+    if (RENDER.hud) { updateHUD(); RENDER.hud = false; }
+    if (RENDER.eventGlow) { updateEventGlow(); RENDER.eventGlow = false; }
+    if (RENDER.levelBar) { updateLevelBar(); RENDER.levelBar = false; }
+    if (RENDER.header) { updateHeader(); RENDER.header = false; }
+    if (RENDER.synergy) { updateSynergy(); RENDER.synergy = false; }
+    if (RENDER.prestige) { updatePrestige(); RENDER.prestige = false; }
+    if (RENDER.combo) { updateCombo(); RENDER.combo = false; }
+    if (RENDER.autoBuy) { updateAutoBuy(); RENDER.autoBuy = false; }
+    if (state._upgradesDirty) { renderUpgrades(); state._upgradesDirty = false; RENDER.upgradeState = false; }
+    else if (RENDER.upgradeState) { refreshUpgradeState(); RENDER.upgradeState = false; }
     if (document.getElementById('achOverlay').classList.contains('open')) {
       renderAchievements();
     }
@@ -1456,7 +1590,7 @@
 
   /* --- PRESTIGE --- */
   function getPrestigeReq() {
-    return 500000 * (state.prestigeCount + 1);
+    return CONFIG.PRESTIGE_BASE_REQ * (state.prestigeCount + 1);
   }
 
   function showPrestigePreview() {
@@ -1465,7 +1599,7 @@
     var overlay = document.getElementById('prestigePreviewOverlay');
     if (!overlay) return;
     document.getElementById('previewMultCurrent').textContent = 'x' + Number(state.prestigeMultiplier).toFixed(1);
-    document.getElementById('previewMultNext').textContent = 'x' + Number(state.prestigeMultiplier * 1.5).toFixed(1);
+    document.getElementById('previewMultNext').textContent = 'x' + Number(state.prestigeMultiplier * CONFIG.PRESTIGE_MULT_FACTOR).toFixed(1);
     document.getElementById('previewPoints').textContent = '+' + 1;
     var startData = Math.floor(getShopBonus('startData'));
     document.getElementById('previewStartData').textContent = formatData(startData);
@@ -1481,7 +1615,7 @@
     playSound('crit');
 
     setTimeout(function () {
-      state.prestigeMultiplier *= 1.5;
+      state.prestigeMultiplier *= CONFIG.PRESTIGE_MULT_FACTOR;
       state.prestigeCount++;
       state.prestigePoints = (state.prestigePoints || 0) + 1;
       state.data = Math.floor(getShopBonus('startData'));
@@ -1490,8 +1624,7 @@
       initUpgrades();
       if (autoClickInterval) clearInterval(autoClickInterval);
       calculateStats();
-      state._upgradesDirty = true;
-      renderAll();
+      bus.emit(EVENTS.PRESTIGE_CHANGED);
       setupAutoClick();
       setupAutoBuy();
       saveGame();
@@ -1501,7 +1634,7 @@
 
       playSound('levelup');
       showToast(t('prestigeLabel', { n: Number(state.prestigeMultiplier).toFixed(1) }), 'info');
-    }, 1600);
+    }, CONFIG.PRESTIGE_GLITCH_DELAY_MS);
   }
 
   function doPrestige() {
@@ -1657,7 +1790,7 @@
           applySkin();
           saveGame();
           renderSkins();
-          renderAll();
+          bus.emit(EVENTS.SKIN_CHANGED);
         }
       });
 
@@ -1667,135 +1800,134 @@
 
   /* --- SOUND --- */
   function playSound(type) {
-    if (!state.soundEnabled) return;
+    if (!state.soundEnabled || !audioCtx) return;
     try {
-      var actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       if (type === 'click') {
-        var osc = actx.createOscillator();
-        var gain = actx.createGain();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
         osc.type = 'square';
         osc.frequency.value = 440;
-        gain.gain.setValueAtTime(0.08, actx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
         osc.connect(gain);
-        gain.connect(actx.destination);
+        gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(actx.currentTime + 0.05);
+        osc.stop(audioCtx.currentTime + 0.05);
       } else if (type === 'crit') {
-        var osc2 = actx.createOscillator();
-        var gain2 = actx.createGain();
+        var osc2 = audioCtx.createOscillator();
+        var gain2 = audioCtx.createGain();
         osc2.type = 'sawtooth';
-        osc2.frequency.setValueAtTime(440, actx.currentTime);
-        osc2.frequency.exponentialRampToValueAtTime(880, actx.currentTime + 0.15);
-        gain2.gain.setValueAtTime(0.12, actx.currentTime);
-        gain2.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.15);
+        osc2.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain2.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
         osc2.connect(gain2);
-        gain2.connect(actx.destination);
+        gain2.connect(audioCtx.destination);
         osc2.start();
-        osc2.stop(actx.currentTime + 0.15);
+        osc2.stop(audioCtx.currentTime + 0.15);
       } else if (type === 'buy') {
-        var bufferSize = actx.sampleRate * 0.05;
-        var buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+        var bufferSize = audioCtx.sampleRate * 0.05;
+        var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         var data = buffer.getChannelData(0);
         for (var i = 0; i < bufferSize; i++) {
           data[i] = (Math.random() * 2 - 1) * 0.06;
         }
-        var noise = actx.createBufferSource();
+        var noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
-        noise.connect(actx.destination);
+        noise.connect(audioCtx.destination);
         noise.start();
-        noise.stop(actx.currentTime + 0.05);
+        noise.stop(audioCtx.currentTime + 0.05);
       } else if (type === 'levelup') {
         [440, 554, 659].forEach(function (freq, idx) {
-          var o = actx.createOscillator();
-          var g = actx.createGain();
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
           o.type = 'sine';
           o.frequency.value = freq;
-          g.gain.setValueAtTime(0.1, actx.currentTime + idx * 0.1);
-          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.1 + 0.12);
+          g.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.1);
+          g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.12);
           o.connect(g);
-          g.connect(actx.destination);
-          o.start(actx.currentTime + idx * 0.1);
-          o.stop(actx.currentTime + idx * 0.1 + 0.12);
+          g.connect(audioCtx.destination);
+          o.start(audioCtx.currentTime + idx * 0.1);
+          o.stop(audioCtx.currentTime + idx * 0.1 + 0.12);
         });
       } else if (type === 'autoclick') {
-        var osc3 = actx.createOscillator();
-        var gain3 = actx.createGain();
+        var osc3 = audioCtx.createOscillator();
+        var gain3 = audioCtx.createGain();
         osc3.type = 'sine';
         osc3.frequency.value = 220;
-        gain3.gain.setValueAtTime(0.04, actx.currentTime);
-        gain3.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.03);
+        gain3.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain3.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
         osc3.connect(gain3);
-        gain3.connect(actx.destination);
+        gain3.connect(audioCtx.destination);
         osc3.start();
-        osc3.stop(actx.currentTime + 0.03);
+        osc3.stop(audioCtx.currentTime + 0.03);
       } else if (type === 'offline') {
         [330, 440, 554].forEach(function (freq, idx) {
-          var o = actx.createOscillator();
-          var g = actx.createGain();
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
           o.type = 'triangle';
           o.frequency.value = freq;
-          g.gain.setValueAtTime(0.08, actx.currentTime + idx * 0.15);
-          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.15 + 0.1);
+          g.gain.setValueAtTime(0.08, audioCtx.currentTime + idx * 0.15);
+          g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.15 + 0.1);
           o.connect(g);
-          g.connect(actx.destination);
-          o.start(actx.currentTime + idx * 0.15);
-          o.stop(actx.currentTime + idx * 0.15 + 0.1);
+          g.connect(audioCtx.destination);
+          o.start(audioCtx.currentTime + idx * 0.15);
+          o.stop(audioCtx.currentTime + idx * 0.15 + 0.1);
         });
       } else if (type === 'event') {
         [440, 554, 440].forEach(function (freq, idx) {
-          var o = actx.createOscillator();
-          var g = actx.createGain();
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
           o.type = 'sine';
           o.frequency.value = freq;
-          g.gain.setValueAtTime(0.07, actx.currentTime + idx * 0.08);
-          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.08 + 0.1);
+          g.gain.setValueAtTime(0.07, audioCtx.currentTime + idx * 0.08);
+          g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.1);
           o.connect(g);
-          g.connect(actx.destination);
-          o.start(actx.currentTime + idx * 0.08);
-          o.stop(actx.currentTime + idx * 0.08 + 0.1);
+          g.connect(audioCtx.destination);
+          o.start(audioCtx.currentTime + idx * 0.08);
+          o.stop(audioCtx.currentTime + idx * 0.08 + 0.1);
         });
       } else if (type === 'event_bad') {
-        var osc4 = actx.createOscillator();
-        var gain4 = actx.createGain();
+        var osc4 = audioCtx.createOscillator();
+        var gain4 = audioCtx.createGain();
         osc4.type = 'sawtooth';
-        osc4.frequency.setValueAtTime(300, actx.currentTime);
-        osc4.frequency.exponentialRampToValueAtTime(100, actx.currentTime + 0.3);
-        gain4.gain.setValueAtTime(0.1, actx.currentTime);
-        gain4.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.3);
+        osc4.frequency.setValueAtTime(300, audioCtx.currentTime);
+        osc4.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+        gain4.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain4.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
         osc4.connect(gain4);
-        gain4.connect(actx.destination);
+        gain4.connect(audioCtx.destination);
         osc4.start();
-        osc4.stop(actx.currentTime + 0.3);
+        osc4.stop(audioCtx.currentTime + 0.3);
       } else if (type === 'boss_start') {
         [220, 330, 440, 550].forEach(function (freq, idx) {
-          var o = actx.createOscillator();
-          var g = actx.createGain();
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
           o.type = 'square';
           o.frequency.value = freq;
-          g.gain.setValueAtTime(0.06, actx.currentTime + idx * 0.12);
-          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.12 + 0.15);
+          g.gain.setValueAtTime(0.06, audioCtx.currentTime + idx * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.15);
           o.connect(g);
-          g.connect(actx.destination);
-          o.start(actx.currentTime + idx * 0.12);
-          o.stop(actx.currentTime + idx * 0.12 + 0.15);
+          g.connect(audioCtx.destination);
+          o.start(audioCtx.currentTime + idx * 0.12);
+          o.stop(audioCtx.currentTime + idx * 0.12 + 0.15);
         });
       } else if (type === 'boss_end') {
         [550, 440, 330].forEach(function (freq, idx) {
-          var o = actx.createOscillator();
-          var g = actx.createGain();
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
           o.type = 'sawtooth';
           o.frequency.value = freq;
-          g.gain.setValueAtTime(0.05, actx.currentTime + idx * 0.12);
-          g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.12 + 0.15);
+          g.gain.setValueAtTime(0.05, audioCtx.currentTime + idx * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.15);
           o.connect(g);
-          g.connect(actx.destination);
-          o.start(actx.currentTime + idx * 0.12);
-          o.stop(actx.currentTime + idx * 0.12 + 0.15);
+          g.connect(audioCtx.destination);
+          o.start(audioCtx.currentTime + idx * 0.12);
+          o.stop(audioCtx.currentTime + idx * 0.12 + 0.15);
         });
       }
-      setTimeout(function () { actx.close(); }, 1000);
-    } catch (e) {}
+    } catch (e) { console.error('[Sound]', e); }
   }
 
   function toggleSound() {
@@ -1851,7 +1983,7 @@
 
   function scheduleEvent() {
     if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
-    var delay = 45000 + Math.random() * 45000;
+    var delay = CONFIG.EVENT_SCHEDULE_BASE_MS + Math.random() * CONFIG.EVENT_SCHEDULE_RANDOM_MS;
     eventScheduleTimeout = setTimeout(startRandomEvent, delay);
   }
 
@@ -1887,7 +2019,7 @@
     if (!el) return;
     clearEventTick();
     if (evt.id === 'windfall') {
-      var bonus = Math.floor(state.data * 0.1);
+      var bonus = Math.floor(state.data * CONFIG.EVENT_WINDFALL_PERCENT);
       if (bonus < 1) return;
       addData(bonus);
       playSound('event');
@@ -1896,15 +2028,16 @@
       document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatData(bonus);
       document.getElementById('eventTimer').textContent = '';
       el.className = 'open event-info';
-      setTimeout(function () { el.classList.remove('open'); }, 3000);
-      renderAll();
+      setTimeout(function () { el.classList.remove('open'); }, CONFIG.EVENT_WINDFALL_DISPLAY_MS);
+      bus.emit(EVENTS.DATA_CHANGED);
+      bus.emit(EVENTS.EVENT_CHANGED);
       scheduleEvent();
       return;
     }
     state.eventActive = evt.id;
     state.eventTimer = evt.dur;
     if (evt.id === 'data_leak') {
-      var penalty = Math.floor(state.data * 0.05);
+      var penalty = Math.floor(state.data * CONFIG.EVENT_LEAK_PENALTY);
       state.data = Math.max(0, state.data - penalty);
       showToast('-' + formatData(penalty) + ' | ' + t('eventLeak', { dur: evt.dur }), 'warn');
     } else {
@@ -1916,7 +2049,7 @@
     document.getElementById('eventTimer').textContent = evt.dur + 's';
     el.className = 'open ' + (evt.id === 'data_leak' ? 'event-warn' : 'event-buff');
     calculateStats();
-    renderAll();
+    bus.emit(EVENTS.EVENT_CHANGED);
     scheduleEvent();
     eventTickInterval = setInterval(function () {
       if (!state.eventActive) { clearEventTick(); return; }
@@ -1928,7 +2061,7 @@
           el.classList.remove('open');
           clearEventTick();
           calculateStats();
-          renderAll();
+          bus.emit(EVENTS.EVENT_CHANGED);
           return;
         }
         document.getElementById('eventTimer').textContent = state.eventTimer + 's';
@@ -1939,10 +2072,10 @@
   function getEventMultiplier() {
     if (!state.eventActive) return { click: 1, dps: 1, cost: 1 };
     var m = { click: 1, dps: 1, cost: 1 };
-    if (state.eventActive === 'overclock') m.click = 3;
-    if (state.eventActive === 'ddos_attack') m.dps = 2;
-    if (state.eventActive === 'crypto_crash') m.cost = 0.8;
-    if (state.eventActive === 'data_leak') m.dps = 1.5;
+    if (state.eventActive === 'overclock') m.click = CONFIG.EVENT_OVERCLOCK_CLICK;
+    if (state.eventActive === 'ddos_attack') m.dps = CONFIG.EVENT_DDOS_DPS;
+    if (state.eventActive === 'crypto_crash') m.cost = CONFIG.EVENT_CRYPTO_CRASH_COST;
+    if (state.eventActive === 'data_leak') m.dps = CONFIG.EVENT_DATA_LEAK_DPS;
     return m;
   }
 
@@ -1952,8 +2085,8 @@
 
   function scheduleBoss() {
     if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
-    if (state.dps < 1) { bossScheduleTimeout = setTimeout(scheduleBoss, 10000); return; }
-    var delay = 120000 + Math.random() * 60000;
+    if (state.dps < CONFIG.BOSS_SCHEDULE_MIN_DPS) { bossScheduleTimeout = setTimeout(scheduleBoss, CONFIG.BOSS_SCHEDULE_RETRY_MS); return; }
+    var delay = CONFIG.BOSS_SCHEDULE_BASE_MS + Math.random() * CONFIG.BOSS_SCHEDULE_RANDOM_MS;
     bossScheduleTimeout = setTimeout(startBoss, delay);
   }
 
@@ -1961,8 +2094,8 @@
     if (state.bossActive || state.firewallActive || state.eventActive) { scheduleBoss(); return; }
     state.bossActive = true;
     state.bossData = 0;
-    var timeLimit = Math.max(5, 15 - Math.floor(state.level / 5));
-    state.bossThreshold = Math.floor(state.dps * timeLimit * (1 + state.level * 0.15));
+    var timeLimit = Math.max(CONFIG.BOSS_TIME_MIN, CONFIG.BOSS_TIME_BASE - Math.floor(state.level / CONFIG.BOSS_TIME_DIVISOR));
+    state.bossThreshold = Math.floor(state.dps * timeLimit * (1 + state.level * CONFIG.BOSS_LEVEL_SCALE));
     playSound('boss_start');
     var overlay = document.getElementById('bossOverlay');
     overlay.classList.add('open');
@@ -1987,7 +2120,7 @@
     if (bossInterval) { clearInterval(bossInterval); bossInterval = null; }
     var reward = document.getElementById('bossReward');
     if (success) {
-      var bonus = Math.floor(state.bossThreshold * 0.5);
+      var bonus = Math.floor(state.bossThreshold * CONFIG.BOSS_REWARD_FRACTION);
       addData(bonus);
       reward.textContent = t('bossSuccess', { n: formatData(bonus) });
       reward.style.color = '#00ff00';
@@ -1999,11 +2132,11 @@
       playSound('boss_end');
     }
     calculateStats();
-    renderAll();
+    bus.emit(EVENTS.DATA_CHANGED);
     setTimeout(function () {
       document.getElementById('bossOverlay').classList.remove('open');
       scheduleBoss();
-    }, 2000);
+    }, CONFIG.BOSS_DISPLAY_DELAY_MS);
   }
 
   /* --- PRESTIGE SHOP --- */
@@ -2029,11 +2162,11 @@
   function getShopBonus(id) {
     var lvl = state.prestigeShop[id] || 0;
     switch (id) {
-      case 'clickBoost': return 1 + lvl * 0.25;
-      case 'dpsBoost': return 1 + lvl * 0.25;
-      case 'startData': return lvl * 1000;
-      case 'comboBoost': return lvl * 0.05;
-      case 'critBoost': return lvl * 5;
+      case 'clickBoost': return 1 + lvl * CONFIG.SHOP_CLICK_BOOST;
+      case 'dpsBoost': return 1 + lvl * CONFIG.SHOP_DPS_BOOST;
+      case 'startData': return lvl * CONFIG.SHOP_START_DATA;
+      case 'comboBoost': return lvl * CONFIG.SHOP_COMBO_BOOST;
+      case 'critBoost': return lvl * CONFIG.SHOP_CRIT_BOOST;
     }
     return 0;
   }
@@ -2106,7 +2239,7 @@
         document.body.removeChild(ta);
         showToast(t('exportOk'), 'info');
       }
-    } catch (e) { showToast(t('importFail'), 'warn'); }
+    } catch (e) { showToast(t('exportFail'), 'warn'); }
   }
 
   function importSave() {
@@ -2125,8 +2258,7 @@
       state.firewallActive = false;
       state.eventActive = null;
       calculateStats();
-      state._upgradesDirty = true;
-      renderAll();
+      bus.emit(EVENTS.GAME_RESET);
       saveGame();
       showToast(t('importOk'), 'info');
     } catch (e) { showToast(t('importFail'), 'warn'); }
@@ -2136,7 +2268,7 @@
   function scheduleFirewall() {
     if (firewallTimeout) clearTimeout(firewallTimeout);
     if (!state.firewallEnabled) return;
-    var delay = 60000 + Math.random() * 60000;
+    var delay = CONFIG.FW_SCHEDULE_BASE_MS + Math.random() * CONFIG.FW_SCHEDULE_RANDOM_MS;
     firewallTimeout = setTimeout(startFirewall, delay);
   }
 
@@ -2144,9 +2276,9 @@
     if (!state.firewallEnabled) return;
     var overlay = document.getElementById('fwOverlay');
     if (!overlay) return;
-    var nodeCount = 3 + Math.floor(state.level / 5);
-    if (nodeCount > 8) nodeCount = 8;
-    var timeLimit = Math.max(2, 5 - Math.floor(state.level / 10));
+    var nodeCount = CONFIG.FW_NODE_BASE + Math.floor(state.level / CONFIG.FW_NODE_DIVISOR);
+    if (nodeCount > CONFIG.FW_NODE_MAX) nodeCount = CONFIG.FW_NODE_MAX;
+    var timeLimit = Math.max(CONFIG.FW_TIME_MIN, CONFIG.FW_TIME_BASE - Math.floor(state.level / CONFIG.FW_TIME_DIVISOR));
 
     state.firewallNodes = [];
     for (var i = 1; i <= nodeCount; i++) {
@@ -2230,13 +2362,13 @@
     var result = document.getElementById('fwResult');
     result.style.display = 'block';
     if (success) {
-      var bonus = Math.floor(state.dps * 10 * (1 + state.level * 0.1));
+      var bonus = Math.floor(state.dps * CONFIG.FW_REWARD_DPS_MULT * (1 + state.level * CONFIG.FW_REWARD_LEVEL_SCALE));
       addData(bonus);
       result.textContent = t('fwSuccess', { n: formatData(bonus) });
       result.className = 'fwResult success';
       playSound('levelup');
       calculateStats();
-      renderAll();
+      bus.emit(EVENTS.DATA_CHANGED);
       showToast(t('fwSuccess', { n: formatData(bonus) }), 'info');
     } else {
       result.textContent = t('fwFail');
@@ -2247,7 +2379,7 @@
     setTimeout(function () {
       document.getElementById('fwOverlay').classList.remove('open');
       scheduleFirewall();
-    }, 2000);
+    }, CONFIG.FW_DISPLAY_DELAY_MS);
   }
 
   function skipFirewall() {
@@ -2262,7 +2394,7 @@
   /* --- AUTO CLICK --- */
   function setupAutoClick() {
     if (autoClickInterval) clearInterval(autoClickInterval);
-    var ms = Math.max(2000, state.autoInterval || 8000);
+    var ms = Math.max(CONFIG.AUTO_INTERVAL_MIN, state.autoInterval || CONFIG.AUTO_INTERVAL_DEFAULT);
     autoClickInterval = setInterval(function () {
       var level = state.upgrades['trojan'] || 0;
       var extra = 0;
@@ -2278,7 +2410,7 @@
         }
         playSound('autoclick');
       }
-    }, 8000);
+    }, ms);
   }
 
   /* --- AUTO-BUY (prestige shop) --- */
@@ -2297,7 +2429,7 @@
     if (enabled) {
       autoBuyInterval = setInterval(function () {
         tryBuyCheapest();
-      }, 500);
+      }, CONFIG.AUTO_BUY_INTERVAL_MS);
     }
   }
 
@@ -2310,7 +2442,7 @@
   /* --- GAME LOOP --- */
   function gameLoop() {
     if (state.dps > 0) {
-      var gain = state.dps / 10;
+      var gain = state.dps / (1000 / CONFIG.GAME_LOOP_TICK_MS);
       addData(gain);
       if (state.bossActive) {
         state.bossData += gain;
@@ -2319,10 +2451,10 @@
         if (bar) bar.style.width = pct + '%';
         if (state.bossData >= state.bossThreshold) endBoss(true);
       }
-      state.playTime += 0.1;
+      state.playTime += CONFIG.GAME_LOOP_TICK_MS / 1000;
       calculateStats();
       checkAchievements();
-      renderAll();
+      bus.emit(EVENTS.DATA_CHANGED);
       if (state._autoDirty) { state._autoDirty = false; setupAutoClick(); }
     }
   }
@@ -2336,8 +2468,40 @@
       dom.saveStatus.textContent = t('saved', { time: new Date().toLocaleTimeString() });
       setTimeout(function () {
         dom.saveStatus.textContent = t('autoSave');
-      }, 2000);
-    } catch (e) {}
+    }, CONFIG.SAVE_STATUS_DURATION_MS);
+    } catch (e) { console.error('[Save]', e); }
+  }
+
+  function validateState(saved) {
+    if (typeof saved !== 'object' || saved === null) return;
+    var fields = {
+      data: 0, clickPower: 1, dps: 0, level: 1,
+      totalClicks: 0, critChance: 0, discount: 0,
+      lastSaveTime: null, synergy: false, architect: false, architectCount: 0,
+      totalCrits: 0, combo: 0, playTime: 0, prestigeProgress: 0,
+      prestigeMultiplier: 1, prestigeCount: 0, totalDataEarned: 0,
+      firewallEnabled: true, prestigePoints: 0,
+      soundEnabled: true, autoBuyEnabled: false, buyMode: 1,
+      upgrades: {}, achievements: {}, ownedSkins: [],
+      prestigeShop: {}, activeSkin: 'default', lang: 'es',
+    };
+    Object.keys(fields).forEach(function (k) {
+      var v = saved[k];
+      var def = fields[k];
+      var defType = typeof def;
+      // If field is missing, wrong type, or NaN, use default
+      if (v === undefined || v === null || typeof v !== defType || (defType === 'number' && isNaN(v))) {
+        saved[k] = def;
+      }
+      // Clamp numbers to non-negative for most numeric fields
+      if (defType === 'number' && k !== 'prestigeMultiplier' && k !== 'level') {
+        saved[k] = Math.max(0, saved[k]);
+      }
+    });
+    if (typeof saved.lang !== 'string' || (saved.lang !== 'es' && saved.lang !== 'en')) saved.lang = 'es';
+    if (typeof saved.activeSkin !== 'string') saved.activeSkin = 'default';
+    if (saved.totalDataEarned < saved.data) saved.totalDataEarned = saved.data;
+    return saved;
   }
 
   function loadGame() {
@@ -2345,23 +2509,15 @@
       var raw = localStorage.getItem(SAVE_KEY);
       if (raw) {
         var saved = JSON.parse(raw);
+        if (typeof saved !== 'object' || saved === null) return false;
+        validateState(saved);
         state = Object.assign(state, saved);
-        if (!state.upgrades) state.upgrades = {};
-        if (state.totalDataEarned < state.data) state.totalDataEarned = state.data;
-        if (!state.achievements) state.achievements = {};
-        if (!state.ownedSkins) state.ownedSkins = [];
-        if (!state.activeSkin) state.activeSkin = 'default';
-        if (!state.prestigeShop) state.prestigeShop = {};
-        if (state.prestigePoints == null) state.prestigePoints = 0;
-        if (state.autoBuyEnabled == null) state.autoBuyEnabled = false;
-        if (state.buyMode == null) state.buyMode = 1;
-        if (state.prestigeProgress == null) state.prestigeProgress = state.totalDataEarned || 0;
         calculateStats();
 
         var rootkitLevel = state.upgrades['rootkit'] || 0;
         if (rootkitLevel > 0 && state.lastSaveTime && state.dps > 0) {
           var elapsed = (Date.now() - state.lastSaveTime) / 1000;
-          var offlineData = Math.floor(state.dps * elapsed * rootkitLevel * 0.15);
+          var offlineData = Math.floor(state.dps * elapsed * rootkitLevel * CONFIG.OFFLINE_ROOTKIT_MULT);
           if (offlineData > 0) {
             playSound('offline');
             addData(offlineData);
@@ -2370,11 +2526,11 @@
         }
         return true;
       }
-    } catch (e) {}
+    } catch (e) { console.error('[Load]', e); }
     return false;
   }
 
-  function resetGame() {
+  function resetGame(hard) {
     localStorage.removeItem(SAVE_KEY);
     if (autoClickInterval) clearInterval(autoClickInterval);
     if (firewallTimeout) clearTimeout(firewallTimeout);
@@ -2384,15 +2540,6 @@
     state.firewallActive = false;
     state.bossActive = false;
     state.eventActive = null;
-    var savedLang = state.lang;
-    var savedPrestigeMult = state.prestigeMultiplier;
-    var savedPrestigeCount = state.prestigeCount;
-    var savedAchievements = Object.assign({}, state.achievements);
-    var savedSkins = state.ownedSkins.slice();
-    var savedActiveSkin = state.activeSkin;
-    var savedPrestigeShop = Object.assign({}, state.prestigeShop);
-    var savedPrestigePoints = state.prestigePoints || 0;
-    var savedPrestigeProgress = state.prestigeProgress;
     state = {
       data: 0,
       clickPower: 1,
@@ -2406,28 +2553,27 @@
       synergy: false,
       architect: false,
       architectCount: 0,
-      lang: savedLang,
-      prestigeMultiplier: savedPrestigeMult,
-      prestigeCount: savedPrestigeCount,
+      lang: hard ? 'es' : state.lang,
+      prestigeMultiplier: hard ? 1 : state.prestigeMultiplier,
+      prestigeCount: hard ? 0 : state.prestigeCount,
       totalDataEarned: 0,
-      achievements: savedAchievements,
+      achievements: hard ? {} : Object.assign({}, state.achievements),
       totalCrits: 0,
       combo: 0,
-      activeSkin: savedActiveSkin,
-      ownedSkins: savedSkins,
-      soundEnabled: state.soundEnabled,
+      activeSkin: hard ? 'default' : state.activeSkin,
+      ownedSkins: hard ? [] : state.ownedSkins.slice(),
+      soundEnabled: hard ? true : state.soundEnabled,
       playTime: 0,
       firewallEnabled: true,
-      prestigePoints: savedPrestigePoints,
-      prestigeProgress: savedPrestigeProgress,
-      prestigeShop: savedPrestigeShop,
+      prestigePoints: hard ? 0 : (state.prestigePoints || 0),
+      prestigeProgress: hard ? 0 : state.prestigeProgress,
+      prestigeShop: hard ? {} : Object.assign({}, state.prestigeShop),
       buyMode: 1,
-      autoBuyEnabled: state.autoBuyEnabled,
+      autoBuyEnabled: hard ? false : state.autoBuyEnabled,
     };
     initUpgrades();
     calculateStats();
-    state._upgradesDirty = true;
-    renderAll();
+    bus.emit(EVENTS.GAME_RESET);
     setupAutoClick();
     setupAutoBuy();
     scheduleFirewall();
@@ -2458,56 +2604,7 @@
   }
 
   function hardReset() {
-    localStorage.removeItem(SAVE_KEY);
-    if (autoClickInterval) clearInterval(autoClickInterval);
-    if (firewallTimeout) clearTimeout(firewallTimeout);
-    if (firewallTimerInterval) clearTimeout(firewallTimerInterval);
-    if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
-    if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
-    state.firewallActive = false;
-    state.bossActive = false;
-    state.eventActive = null;
-    state = {
-      data: 0,
-      clickPower: 1,
-      dps: 0,
-      level: 1,
-      upgrades: {},
-      totalClicks: 0,
-      critChance: 0,
-      discount: 0,
-      lastSaveTime: null,
-      synergy: false,
-      architect: false,
-      architectCount: 0,
-      lang: 'es',
-      prestigeMultiplier: 1,
-      prestigeCount: 0,
-      totalDataEarned: 0,
-      achievements: {},
-      totalCrits: 0,
-      combo: 0,
-      activeSkin: 'default',
-      ownedSkins: [],
-      soundEnabled: true,
-      playTime: 0,
-      firewallEnabled: true,
-      prestigePoints: 0,
-      prestigeProgress: 0,
-      prestigeShop: {},
-      buyMode: 1,
-      autoBuyEnabled: false,
-    };
-    initUpgrades();
-    calculateStats();
-    state._upgradesDirty = true;
-    renderAll();
-    setupAutoClick();
-    setupAutoBuy();
-    scheduleFirewall();
-    scheduleEvent();
-    scheduleBoss();
-    localStorage.removeItem(SAVE_KEY);
+    resetGame(true);
     saveGame();
     toggleSettings();
     showToast(t('resetDone'), 'warn');
@@ -2562,16 +2659,17 @@
     cacheDom();
     resizeCanvas();
     initMatrixRain();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    setupBusUI();
 
     loadGame();
     initUpgrades();
     calculateStats();
     applyLanguage();
     applySkin();
-    renderAll();
 
     animId = requestAnimationFrame(rainLoop);
-    gameLoopInterval = setInterval(gameLoop, 100);
+    gameLoopInterval = setInterval(gameLoop, CONFIG.GAME_LOOP_TICK_MS);
 
     dom.hackBtn.addEventListener('click', handleClick);
     document.addEventListener('keydown', handleKeydown);
@@ -2681,7 +2779,7 @@
         initUpgrades();
         calculateStats();
         applyLanguage();
-        renderAll();
+        bus.emit(EVENTS.GAME_RESET);
       }
     });
 

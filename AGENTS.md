@@ -10,9 +10,20 @@ Vanilla HTML/CSS/JS. No build step, no npm, no external libs.
 open index.html          # run the game (no dev server needed)
 ```
 
+## Module structure
+
+- **6 script files** loaded in order from `index.html`: `js/config.js`, `js/state.js`, `js/core.js`, `js/render.js`, `js/systems.js`, `js/main.js`.
+- Each file starts with `'use strict'`. No IIFE wrapper — top-level `const`/`let`/`function` are globally visible across scripts.
+- **config.js**: All data constants — `STRINGS`, `CONFIG`, `UPGRADE_DEFS`, `ACHIEVEMENT_DEFS`, `VISUAL_SKINS`, `EVENT_DEFS`, `PRESTIGE_SHOP_DEFS`, milestones, thresholds, `SAVE_KEY`, `SAVE_INTERVAL`, `t()`.
+- **state.js**: `state` singleton, `formatNum`/`formatData`/`formatTime`, DOM refs (`dom`, `canvas`, `ctx`), interval IDs, `RENDER` dirty flags, `EVENTS`/`bus` event system, matrix rain functions, `applySkin()`, `applyLanguage()`.
+- **core.js**: Game logic — `addData`, `getUpgradeCost`, `calculateStats`, `buyUpgrade`, `doClick`, `handleClick`, floating text pool, `showToast`, `showTooltip`, `hideTooltip`.
+- **render.js**: UI rendering — `updateHUD`, `updateLevelBar`, `updateCombo`, `renderAll`, `renderUpgrades`, `refreshUpgradeState`, tooltip HTML builder.
+- **systems.js**: All systems — prestige, achievements, skins, sound, stats, events, bosses, prestige shop, export/import, firewall, auto-click, auto-buy, game loop, save/load, reset, language toggle, settings.
+- **main.js**: `cacheDom()` (populates `dom.*`), `handleKeydown()`, `init()` (setup, load, event wiring), start gate (`DOMContentLoaded` / immediate).
+
 ## Key conventions
 
-- **JS**: IIFE with `'use strict'`. Single `UPGRADE_DEFS` array determines all upgrades.
+- **Single `UPGRADE_DEFS` array** determines all upgrades.
 - **Upgrade object format**: `{ id, name, desc, cost, effect, value, icon, unlockAt?, maxLevel? }`. Effect types: `click`, `dps`, `crit`, `discount`, `autoclick`, `clickDps`, `critDmg`, `autoSpeed`, `comboBoost`. Cost formula is `baseCost * 1.15^level` (or `1.25^level` for limited upgrades) with `state.discount`% off (see `getUpgradeCost`).
 - **State**: single `state` object saved to `localStorage` key `matrixHackerClicker` every 15s. Fields: `data`, `clickPower`, `dps`, `critChance`, `critMultiplier`, `discount`, `autoInterval`, `upgrades`, `totalClicks`, `level`, `prestigeProgress`, `prestigeMultiplier`, `combo`, `ownedSkins`, `activeSkin`, `playTime`, `soundEnabled`.
 - **CSS**: Matrix palette (`#00ff00`, `#003300`, `#000`), `font-family: 'Courier New', monospace`, scanlines overlay on `#scanlines`.
