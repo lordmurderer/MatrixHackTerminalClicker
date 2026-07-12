@@ -13,7 +13,7 @@
       secure: '[CONEXIÓN SEGURA]',
       autoSave: 'AUTO-GUARDADO ACTIVO',
       saved: 'GUARDADO {time}',
-      offline: 'OFFLINE +{n} MB',
+      offline: 'OFFLINE +{n}',
       synergyDivider: ' | ',
       synergyScanner: 'SCANNER→CPU +{n} DPS',
       synergyArch: 'ARQUITECTO x{n}',
@@ -34,7 +34,7 @@
       groupDps: '> DPS_',
       groupSpecial: '> ESPECIAL_',
       groupMult: '> MULTIPLICADORES_',
-      milestoneLabel: '{n} MB',
+      milestoneLabel: '{n}',
       upgradeCount: '{n}/{m}',
       cardLvl: 'NVL',
       effectClick: 'CLICK +{n}',
@@ -59,7 +59,7 @@
       offlineExtra: ' GANADOS',
       resetConfirm: '¿Reiniciar todos los datos del juego?',
       prestigeLabel: 'PRESTIGE x{n}',
-      prestigeReq: 'SIGUIENTE: {n} MB ({p}%)',
+      prestigeReq: 'SIGUIENTE: {n} ({p}%)',
       prestigeBtn: 'PURGE & BOOT',
       prestigeReady: 'LISTO → PURGAR',
       prestigeConfirm: '¿PURGE & BOOT? El progreso se reiniciará. Multiplicador: x{n}',
@@ -115,7 +115,7 @@
       statCombo: 'Combo actual',
       fwTitle: '⚠ FIREWALL DETECTED',
       fwIgnore: 'IGNORE',
-      fwSuccess: 'ACCESO CONCEDIDO +{n} MB',
+      fwSuccess: 'ACCESO CONCEDIDO +{n}',
       fwFail: 'FIREWALL BLOQUEADO',
       upgrade: {
         terminal: { name: 'Terminal Básica', desc: 'Acceso shell inicial' },
@@ -209,9 +209,9 @@
       eventWindfall: '💰 GANANCIA INESPERADA: +10% datos',
       eventDdos: '🔥 DDoS: +100% DPS durante {dur}s',
       bossTitle: '⚠ INTRUSIÓN DE BOSS',
-      bossInfo: 'GENERA {n} MB EN {t}s',
+      bossInfo: 'GENERA {n} EN {t}s',
       bossFail: 'INTRUSIÓN FALLIDA',
-      bossSuccess: '¡INTRUSIÓN EXITOSA! +{n} MB',
+      bossSuccess: '¡INTRUSIÓN EXITOSA! +{n}',
       prestigeShopTitle: 'TIENDA DE PRESTIGE',
       prestigePoints: 'PUNTOS: {n}',
       shopLevel: 'NVL {n}/{m}',
@@ -247,7 +247,7 @@
       secure: '[CONNECTION SECURE]',
       autoSave: 'AUTO-SAVE ACTIVE',
       saved: 'SAVED {time}',
-      offline: 'OFFLINE +{n} MB',
+      offline: 'OFFLINE +{n}',
       synergyDivider: ' | ',
       synergyScanner: 'SCANNER→CPU +{n} DPS',
       synergyArch: 'ARCHITECT x{n}',
@@ -268,7 +268,7 @@
       groupDps: '> DPS_',
       groupSpecial: '> SPECIAL_',
       groupMult: '> MULTIPLIERS_',
-      milestoneLabel: '{n} MB',
+      milestoneLabel: '{n}',
       upgradeCount: '{n}/{m}',
       cardLvl: 'LVL',
       effectClick: 'CLICK +{n}',
@@ -293,7 +293,7 @@
       offlineExtra: ' EARNED',
       resetConfirm: 'Reset all game data?',
       prestigeLabel: 'PRESTIGE x{n}',
-      prestigeReq: 'NEXT: {n} MB ({p}%)',
+      prestigeReq: 'NEXT: {n} ({p}%)',
       prestigeBtn: 'PURGE & BOOT',
       prestigeReady: 'READY → PURGE',
       prestigeConfirm: 'PURGE & BOOT? Progress will reset. Multiplier: x{n}',
@@ -349,7 +349,7 @@
       statCombo: 'Current combo',
       fwTitle: '⚠ FIREWALL DETECTED',
       fwIgnore: 'IGNORE',
-      fwSuccess: 'ACCESS GRANTED +{n} MB',
+      fwSuccess: 'ACCESS GRANTED +{n}',
       fwFail: 'FIREWALL BLOCKED',
       upgrade: {
         terminal: { name: 'Basic Terminal', desc: 'Init shell access' },
@@ -443,9 +443,9 @@
       eventWindfall: '💰 WINDFALL: +10% data',
       eventDdos: '🔥 DDoS: +100% DPS for {dur}s',
       bossTitle: '⚠ BOSS INTRUSION',
-      bossInfo: 'GENERATE {n} MB IN {t}s',
+      bossInfo: 'GENERATE {n} IN {t}s',
       bossFail: 'INTRUSION FAILED',
-      bossSuccess: 'INTRUSION SUCCESS! +{n} MB',
+      bossSuccess: 'INTRUSION SUCCESS! +{n}',
       prestigeShopTitle: 'PRESTIGE SHOP',
       prestigePoints: 'POINTS: {n}',
       shopLevel: 'LVL {n}/{m}',
@@ -658,6 +658,15 @@
     var u = 0;
     while (s >= 1000 && u < units.length - 1) { s /= 1000; u++; }
     return (s < 10 ? s.toFixed(2) : s < 100 ? s.toFixed(1) : s.toFixed(0)) + units[u];
+  }
+
+  function formatData(n) {
+    if (n < 1000) return Math.floor(n) + ' MB';
+    var units = [' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
+    var u = -1;
+    while (n >= 1000 && u < units.length - 1) { n /= 1000; u++; }
+    var val = n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : n.toFixed(0);
+    return val + units[u];
   }
 
   const dom = {};
@@ -1034,7 +1043,7 @@
     renderAll();
 
     var prefix = isAuto ? t('autoPrefix') + ' ' : '';
-    spawnFloatingText(x, y, prefix + '+' + formatNum(gained) + ' ' + t('mb'));
+    spawnFloatingText(x, y, prefix + '+' + formatData(gained));
   }
 
   function handleClick(e) {
@@ -1142,9 +1151,9 @@
   /* --- RENDER --- */
   function renderAll() {
     var dataFloor = Math.floor(state.data);
-    dom.dataAmount.textContent = formatNum(dataFloor);
-    dom.clickPower.textContent = formatNum(state.clickPower);
-    dom.dpsValue.textContent = formatNum(state.dps);
+    dom.dataAmount.textContent = formatData(dataFloor);
+    dom.clickPower.textContent = formatData(state.clickPower);
+    dom.dpsValue.textContent = formatData(state.dps) + '/s';
     dom.critDisplay.textContent = state.critChance;
     dom.discountDisplay.textContent = state.discount;
     dom.playerLevel.textContent = t('level', { n: state.level });
@@ -1173,7 +1182,7 @@
     }
     var milestoneText = '';
     if (nextMilestone) {
-      milestoneText = t('milestoneLabel', { n: formatNum(nextMilestone) });
+      milestoneText = t('milestoneLabel', { n: formatData(nextMilestone) });
     } else {
       milestoneText = '∞';
     }
@@ -1228,7 +1237,7 @@
     if (dom.prestigeReq) {
       var req = getPrestigeReq();
       var progress = Math.min(100, Math.floor(state.prestigeProgress / req * 100));
-      dom.prestigeReq.textContent = t('prestigeReq', { n: formatNum(req), p: progress });
+      dom.prestigeReq.textContent = t('prestigeReq', { n: formatData(req), p: progress });
       if (dom.prestigeBtn) {
         var ready = state.prestigeProgress >= req;
         dom.prestigeBtn.disabled = !ready;
@@ -1301,7 +1310,7 @@
       html += '<div class="tooltipRow"><span>NOW</span><span class="tooltipVal">' + curEffect + '</span></div>';
     }
     html += '<div class="tooltipRow"><span>NEXT</span><span class="tooltipVal">' + nextEffect + '</span></div>';
-    html += '<div class="tooltipRow"><span>COST</span><span class="tooltipVal">' + formatNum(cost) + ' ' + t('mb') + '</span></div>';
+    html += '<div class="tooltipRow"><span>COST</span><span class="tooltipVal">' + formatData(cost) + '</span></div>';
     return html;
   }
 
@@ -1351,7 +1360,7 @@
 
         var costRow = document.createElement('div');
         costRow.className = 'upgradeCost';
-        costRow.textContent = isMaxed ? 'MAX' : formatNum(cost) + ' ' + t('mb');
+        costRow.textContent = isMaxed ? 'MAX' : formatData(cost);
 
         var ownedRow = document.createElement('div');
         ownedRow.className = 'upgradeOwned';
@@ -1409,7 +1418,7 @@
       var hint = document.createElement('div');
       hint.className = 'nextUpgradeHint';
       var remaining = Math.max(0, nextLocked.unlockAt - state.prestigeProgress);
-      hint.textContent = '🔒 ' + t('upgrade.' + nextLocked.id + '.name') + ' — ' + formatNum(remaining) + ' ' + t('mb');
+      hint.textContent = '🔒 ' + t('upgrade.' + nextLocked.id + '.name') + ' — ' + formatData(remaining);
       dom.upgradesGrid.appendChild(hint);
     }
   }
@@ -1426,7 +1435,7 @@
       var isMaxed = def.maxLevel > 0 && owned >= def.maxLevel;
       var cost = isMaxed ? Infinity : getUpgradeCost(def, owned);
       var costEl = card.querySelector('.upgradeCost');
-      if (costEl) costEl.textContent = isMaxed ? 'MAX' : formatNum(cost) + ' ' + t('mb');
+      if (costEl) costEl.textContent = isMaxed ? 'MAX' : formatData(cost);
       card.classList.toggle('locked', !isMaxed && state.data < cost);
       card.classList.toggle('bought', owned > 0);
       card.classList.toggle('unowned', owned === 0);
@@ -1459,7 +1468,7 @@
     document.getElementById('previewMultNext').textContent = 'x' + Number(state.prestigeMultiplier * 1.5).toFixed(1);
     document.getElementById('previewPoints').textContent = '+' + 1;
     var startData = Math.floor(getShopBonus('startData'));
-    document.getElementById('previewStartData').textContent = formatNum(startData) + ' MB';
+    document.getElementById('previewStartData').textContent = formatData(startData);
     overlay.classList.add('open');
   }
 
@@ -1629,7 +1638,7 @@
       } else if (owned) {
         statusRow.textContent = '[' + t('skinSelect') + ']';
       } else {
-        statusRow.textContent = formatNum(s.cost) + ' ' + t('mb');
+        statusRow.textContent = formatData(s.cost);
       }
 
       card.appendChild(preview);
@@ -1812,9 +1821,9 @@
     var rows = [
       { label: t('statTime'), value: formatTime(Math.floor(state.playTime)) },
       { label: t('statClicks'), value: formatNum(state.totalClicks) },
-      { label: t('statDataEarned'), value: formatNum(state.totalDataEarned) + ' MB' },
-      { label: t('statClickPower'), value: formatNum(state.clickPower) + ' MB' },
-      { label: t('statDps'), value: formatNum(state.dps) + ' MB/s' },
+      { label: t('statDataEarned'), value: formatData(state.totalDataEarned) },
+      { label: t('statClickPower'), value: formatData(state.clickPower) },
+      { label: t('statDps'), value: formatData(state.dps) + '/s' },
       { label: t('statCritChance'), value: state.critChance + '%' },
       { label: t('statCrits'), value: formatNum(state.totalCrits || 0) },
       { label: t('statUpgrades'), value: formatNum(getTotalUpgradeLevels()) },
@@ -1882,9 +1891,9 @@
       if (bonus < 1) return;
       addData(bonus);
       playSound('event');
-      showToast(t('eventWindfall') + ' +' + formatNum(bonus), 'info');
+      showToast(t('eventWindfall') + ' +' + formatData(bonus), 'info');
       document.getElementById('eventIcon').textContent = evt.icon;
-      document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatNum(bonus);
+      document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatData(bonus);
       document.getElementById('eventTimer').textContent = '';
       el.className = 'open event-info';
       setTimeout(function () { el.classList.remove('open'); }, 3000);
@@ -1897,7 +1906,7 @@
     if (evt.id === 'data_leak') {
       var penalty = Math.floor(state.data * 0.05);
       state.data = Math.max(0, state.data - penalty);
-      showToast('-' + formatNum(penalty) + ' ' + t('mb') + ' | ' + t('eventLeak', { dur: evt.dur }), 'warn');
+      showToast('-' + formatData(penalty) + ' | ' + t('eventLeak', { dur: evt.dur }), 'warn');
     } else {
       showToast(t(evt.descKey, { dur: evt.dur }), 'info');
     }
@@ -1957,7 +1966,7 @@
     playSound('boss_start');
     var overlay = document.getElementById('bossOverlay');
     overlay.classList.add('open');
-    document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatNum(state.bossThreshold), t: timeLimit + 's' });
+    document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatData(state.bossThreshold), t: timeLimit + 's' });
     document.getElementById('bossBarInner').style.width = '0%';
     document.getElementById('bossReward').textContent = '';
     var remaining = timeLimit;
@@ -1980,10 +1989,10 @@
     if (success) {
       var bonus = Math.floor(state.bossThreshold * 0.5);
       addData(bonus);
-      reward.textContent = t('bossSuccess', { n: formatNum(bonus) });
+      reward.textContent = t('bossSuccess', { n: formatData(bonus) });
       reward.style.color = '#00ff00';
       playSound('levelup');
-      showToast(t('bossSuccess', { n: formatNum(bonus) }), 'info');
+      showToast(t('bossSuccess', { n: formatData(bonus) }), 'info');
     } else {
       reward.textContent = t('bossFail');
       reward.style.color = '#ff0044';
@@ -2223,12 +2232,12 @@
     if (success) {
       var bonus = Math.floor(state.dps * 10 * (1 + state.level * 0.1));
       addData(bonus);
-      result.textContent = t('fwSuccess', { n: formatNum(bonus) });
+      result.textContent = t('fwSuccess', { n: formatData(bonus) });
       result.className = 'fwResult success';
       playSound('levelup');
       calculateStats();
       renderAll();
-      showToast(t('fwSuccess', { n: formatNum(bonus) }), 'info');
+      showToast(t('fwSuccess', { n: formatData(bonus) }), 'info');
     } else {
       result.textContent = t('fwFail');
       result.className = 'fwResult fail';
@@ -2356,7 +2365,7 @@
           if (offlineData > 0) {
             playSound('offline');
             addData(offlineData);
-            showToast(t('offline', { n: formatNum(offlineData) }) + t('offlineExtra'), 'info');
+            showToast(t('offline', { n: formatData(offlineData) }) + t('offlineExtra'), 'info');
           }
         }
         return true;

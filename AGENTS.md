@@ -13,8 +13,8 @@ open index.html          # run the game (no dev server needed)
 ## Key conventions
 
 - **JS**: IIFE with `'use strict'`. Single `UPGRADE_DEFS` array determines all upgrades.
-- **Upgrade object format**: `{ id, name, desc, cost, effect, value, icon }`. Effect types: `click`, `dps`, `crit`, `discount`, `autoclick`. Cost formula is `baseCost * 1.15^level` with `state.discount`% off (see `getUpgradeCost`).
-- **State**: single `state` object saved to `localStorage` key `matrixHackerClicker` every 15s. Fields: `data`, `clickPower`, `dps`, `critChance`, `discount`, `upgrades`, `totalClicks`, `level`.
+- **Upgrade object format**: `{ id, name, desc, cost, effect, value, icon, unlockAt?, maxLevel? }`. Effect types: `click`, `dps`, `crit`, `discount`, `autoclick`, `clickDps`, `critDmg`, `autoSpeed`, `comboBoost`. Cost formula is `baseCost * 1.15^level` (or `1.25^level` for limited upgrades) with `state.discount`% off (see `getUpgradeCost`).
+- **State**: single `state` object saved to `localStorage` key `matrixHackerClicker` every 15s. Fields: `data`, `clickPower`, `dps`, `critChance`, `critMultiplier`, `discount`, `autoInterval`, `upgrades`, `totalClicks`, `level`, `prestigeProgress`, `prestigeMultiplier`, `combo`, `ownedSkins`, `activeSkin`, `playTime`, `soundEnabled`.
 - **CSS**: Matrix palette (`#00ff00`, `#003300`, `#000`), `font-family: 'Courier New', monospace`, scanlines overlay on `#scanlines`.
 - **Game loop**: `setInterval(100ms)` for DPS, `requestAnimationFrame` for Matrix rain canvas.
 - **Shortcuts**: `Space`/`Enter` = hack, `Ctrl+Shift+R` = reset (with confirm).
@@ -27,13 +27,20 @@ open index.html          # run the game (no dev server needed)
 - `state.lang` is persisted in localStorage and preserved on reset.
 - Language toggle button `#langToggle` calls `toggleLang()` which switches `state.lang`, calls `applyLanguage()`, and re-saves.
 - Upgrade names/descs are not in UPGRADE_DEFS — they're looked up via `t('upgrade.' + id + '.name')` and `t('upgrade.' + id + '.desc')`.
+- Data display uses `formatData(n)` (MB/GB/TB/etc.) instead of raw numbers + "MB" suffix; i18n templates (`offline`, `fwSuccess`, `bossInfo`, `bossSuccess`) omit the unit.
+- Language templates use `{n}` for data values (already formatted with `formatData` which includes the unit).
 
 ## Upgrade system
 
 - Adding a new upgrade: append entry to `UPGRADE_DEFS` and add `upgrade.{id}.name` and `upgrade.{id}.desc` to STRINGS in both languages.
 - New effect types need logic in `calculateStats()`. For `crit` also modify `doClick()`. For `discount` modify `getUpgradeCost()`. For `autoclick` modify `setupAutoClick()`. For `mult_click`/`mult_dps` apply multiplicatively in `calculateStats()`. For `offline` implement in `loadGame()`.
 - Passive synergies (Synergy, The Architect) are computed in `calculateStats()` and displayed via `#synergyDisplay` — no UPGRADE_DEFS entry needed.
-- Upgrade display card classes: `upgradeCard`, `.locked` (afford), `.bought`.
+- Upgrade display card classes: `upgradeCard`, `.locked` (afford), `.bought`, `.maxed` (golden border, "MAX" label).
+- **Unlock thresholds (`unlockAt`)**: upgrades hidden until `state.prestigeProgress >= unlockAt`; `isUpgradeUnlocked()` filters both `renderUpgrades()` and `tryBuyCheapest()`.
+- **Max level (`maxLevel`)**: limited upgrades use exponent `1.25^level` instead of `1.15^level`; `getUpgradeCost()` returns `Infinity` when capped.
+- **New effect types**: `clickDps` (click+dps hybrid), `critDmg` (increases `state.critMultiplier` in `calculateStats()`), `autoSpeed` (reduces `state.autoInterval`, min 2000ms, dynamic re-setup via `_autoDirty` flag), `comboBoost` (increases combo multiplier ceiling).
+- **52 upgrades** across 6 groups: CLICK (14), DPS (14), SPECIAL (10), MULTIPLICADORES (6), COMBO (4), META (4).
+- **formatData(n)**: scales data with units (MB/GB/TB/PB/EB/ZB/YB) — replaces all data display in HUD, costs, events, boss/firewall/offline, stats, skin shop, floating text, milestones, and prestige UI.
 
 ## Notes
 
