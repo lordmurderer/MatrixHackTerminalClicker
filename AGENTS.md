@@ -59,3 +59,12 @@ open index.html          # run the game (no dev server needed)
 ## PLAN.md
 
 `PLAN.md` tracks pending improvements with `[x]` checkboxes grouped by priority.
+
+## Layout
+
+- **Structure**: `#gameContainer` → `#mainRow` (`flex:1`) + `#footer`. Inside `#mainRow`: `#leftPane` (header + gameArea) + `#rightPane` (upgradesPanel).
+- **Responsive**: `< 900px` = single column (`#mainRow flex-direction: column`). `>= 900px` = two columns (`flex-direction: row`, leftPane 380px fixed, rightPane fills rest).
+- **Small screens** (`≤ 600px`): reduced font sizes, 2-col upgrade grid, compact spacing.
+- **Footer** (`#footer`): direct child of `#gameContainer`, centered via `margin: 0 auto`, `max-width: 700px` (removed in wide mode).
+- **Floating damage** (`#floatingDamage`): `position: absolute` inside `#gameArea` (which has `position: relative`). Coordinates derived from `#hackBtn` bounding rect.
+- **All JS DOM lookups use `getElementById`** — parent structure changes do not affect functionality.

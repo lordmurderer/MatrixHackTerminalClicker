@@ -13,105 +13,111 @@
 <div id="scanlines"></div>
 
 <div id="gameContainer">
-  <header id="header">
-    <div id="headerTop">
-      <span class="glitch" data-i18n="title">MATRIX HACK TERMINAL v1.0</span>
-      <span id="headerPrestige" class="headerExtra"></span>
-    </div>
-    <div id="headerBottom">
-      <span class="prompt" data-i18n="headerPrompt">root@matrix:~$</span>
-      <span id="headerTime" class="headerExtra"></span>
-      <span class="blink">_</span>
-    </div>
-  </header>
+  <div id="mainRow">
+    <div id="leftPane">
+      <header id="header">
+        <div id="headerTop">
+          <span class="glitch" data-i18n="title">MATRIX HACK TERMINAL v1.0</span>
+          <span id="headerPrestige" class="headerExtra"></span>
+        </div>
+        <div id="headerBottom">
+          <span class="prompt" data-i18n="headerPrompt">root@matrix:~$</span>
+          <span id="headerTime" class="headerExtra"></span>
+          <span class="blink">_</span>
+        </div>
+      </header>
 
-  <main id="gameArea">
-    <div id="profile">
-      <span id="playerHandle" class="handle">>> NEO_001</span>
-      <span id="playerLevel" class="level">LEVEL: 1</span>
+      <main id="gameArea">
+        <div id="profile">
+          <span id="playerHandle" class="handle">>> NEO_001</span>
+          <span id="playerLevel" class="level">LEVEL: 1</span>
+        </div>
+
+        <div id="dataDisplay">
+          <div id="dataRow">
+            <span id="dataAmount">0</span>
+            <span class="dataLabel" data-i18n="mb" style="display:none">MB</span>
+            <span id="milestoneInfo" class="milestoneText"></span>
+          </div>
+          <div id="dataBarOuter">
+            <div id="dataBarInner"></div>
+            <div id="milestoneMarkers"></div>
+          </div>
+        </div>
+
+        <button id="hackBtn">
+          <span class="btnPrompt" data-i18n="btnPrompt">[root@matrix]~$</span>
+          <span class="btnText" data-i18n="btnText">./hack.exe</span>
+          <span class="btnCursor">_</span>
+        </button>
+
+        <div id="floatingDamage"></div>
+
+        <div id="stats">
+          <div class="stat">
+            <span class="statLabel" data-i18n="statClick">CLICK</span>
+            <span id="clickPower" class="statValue">1</span>
+          </div>
+          <div class="stat">
+            <span class="statLabel" data-i18n="statDps">DPS</span>
+            <span id="dpsValue" class="statValue">0</span>
+          </div>
+          <div class="stat">
+            <span class="statLabel" data-i18n="statCrit">CRIT</span>
+            <span id="critDisplay" class="statValue">0</span>
+            <span class="statUnit" data-i18n="unitPercent">%</span>
+          </div>
+          <div class="stat">
+            <span class="statLabel" data-i18n="statDiscount">DISCOUNT</span>
+            <span id="discountDisplay" class="statValue">0</span>
+            <span class="statUnit" data-i18n="unitPercent">%</span>
+          </div>
+        </div>
+        <div id="synergyDisplay"></div>
+        <div id="prestigeSection">
+          <div id="prestigeTopRow">
+            <span id="prestigeInfo"></span>
+            <button id="prestigeBtn">⟳ <span data-i18n="prestigeBtn">PURGE & BOOT</span></button>
+          </div>
+          <div id="prestigeProgressOuter">
+            <div id="prestigeProgressInner"></div>
+            <span id="prestigeReq"></span>
+          </div>
+        </div>
+        <div id="toolbar">
+          <button id="achBtn">🏆 <span data-i18n="achBtn">ACHIEVEMENTS</span></button>
+          <button id="statsBtn">📊 <span data-i18n="statsBtn">STATS</span></button>
+          <button id="skinBtn">🎨 <span data-i18n="skinBtn">SKINS</span></button>
+          <button id="settingsBtn">⚙ <span data-i18n="settingsBtn">OPTIONS</span></button>
+        </div>
+        <div id="comboDisplay"></div>
+        <div id="eventDisplay">
+          <span id="eventIcon"></span>
+          <span id="eventText"></span>
+          <span id="eventTimer"></span>
+        </div>
+      </main>
     </div>
 
-    <div id="dataDisplay">
-      <div id="dataRow">
-        <span id="dataAmount">0</span>
-        <span class="dataLabel" data-i18n="mb" style="display:none">MB</span>
-        <span id="milestoneInfo" class="milestoneText"></span>
-      </div>
-      <div id="dataBarOuter">
-        <div id="dataBarInner"></div>
-        <div id="milestoneMarkers"></div>
-      </div>
+    <div id="rightPane">
+      <section id="upgradesPanel">
+        <div class="panelHeader">
+          <span data-i18n="panelTitle">> UPGRADES_</span>
+          <span id="upgradeCount"></span>
+        </div>
+        <div id="buyModeBar">
+          <span class="buyModeLabel" data-i18n="buyModeLabel">BUY:</span>
+          <button class="buyModeBtn active" data-mode="1">1x</button>
+          <button class="buyModeBtn" data-mode="10">10x</button>
+          <button class="buyModeBtn" data-mode="max" data-i18n="buyMax">MAX</button>
+          <span class="buyModeSep">|</span>
+          <button id="prestigeShopBtn" class="toolBtn" data-i18n="prestigeShopBtn">SHOP</button>
+          <button id="autoBuyToggle" class="autoBuyToggle" data-i18n="autoBuyOff">AUTO: OFF</button>
+        </div>
+        <div id="upgradesGrid"></div>
+      </section>
     </div>
-
-    <button id="hackBtn">
-      <span class="btnPrompt" data-i18n="btnPrompt">[root@matrix]~$</span>
-      <span class="btnText" data-i18n="btnText">./hack.exe</span>
-      <span class="btnCursor">_</span>
-    </button>
-
-    <div id="floatingDamage"></div>
-
-    <div id="stats">
-      <div class="stat">
-        <span class="statLabel" data-i18n="statClick">CLICK</span>
-        <span id="clickPower" class="statValue">1</span>
-      </div>
-      <div class="stat">
-        <span class="statLabel" data-i18n="statDps">DPS</span>
-        <span id="dpsValue" class="statValue">0</span>
-      </div>
-      <div class="stat">
-        <span class="statLabel" data-i18n="statCrit">CRIT</span>
-        <span id="critDisplay" class="statValue">0</span>
-        <span class="statUnit" data-i18n="unitPercent">%</span>
-      </div>
-      <div class="stat">
-        <span class="statLabel" data-i18n="statDiscount">DISCOUNT</span>
-        <span id="discountDisplay" class="statValue">0</span>
-        <span class="statUnit" data-i18n="unitPercent">%</span>
-      </div>
-    </div>
-    <div id="synergyDisplay"></div>
-    <div id="prestigeSection">
-      <div id="prestigeTopRow">
-        <span id="prestigeInfo"></span>
-        <button id="prestigeBtn">⟳ <span data-i18n="prestigeBtn">PURGE & BOOT</span></button>
-      </div>
-      <div id="prestigeProgressOuter">
-        <div id="prestigeProgressInner"></div>
-        <span id="prestigeReq"></span>
-      </div>
-    </div>
-    <div id="toolbar">
-      <button id="achBtn">🏆 <span data-i18n="achBtn">ACHIEVEMENTS</span></button>
-      <button id="statsBtn">📊 <span data-i18n="statsBtn">STATS</span></button>
-      <button id="skinBtn">🎨 <span data-i18n="skinBtn">SKINS</span></button>
-      <button id="settingsBtn">⚙ <span data-i18n="settingsBtn">OPTIONS</span></button>
-    </div>
-    <div id="comboDisplay"></div>
-    <div id="eventDisplay">
-      <span id="eventIcon"></span>
-      <span id="eventText"></span>
-      <span id="eventTimer"></span>
-    </div>
-  </main>
-
-  <section id="upgradesPanel">
-    <div class="panelHeader">
-      <span data-i18n="panelTitle">> UPGRADES_</span>
-      <span id="upgradeCount"></span>
-    </div>
-    <div id="buyModeBar">
-      <span class="buyModeLabel" data-i18n="buyModeLabel">BUY:</span>
-      <button class="buyModeBtn active" data-mode="1">1x</button>
-      <button class="buyModeBtn" data-mode="10">10x</button>
-      <button class="buyModeBtn" data-mode="max" data-i18n="buyMax">MAX</button>
-      <span class="buyModeSep">|</span>
-      <button id="prestigeShopBtn" class="toolBtn" data-i18n="prestigeShopBtn">SHOP</button>
-      <button id="autoBuyToggle" class="autoBuyToggle" data-i18n="autoBuyOff">AUTO: OFF</button>
-    </div>
-    <div id="upgradesGrid"></div>
-  </section>
+  </div>
 
   <footer id="footer">
     <span id="footerLeft">

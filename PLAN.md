@@ -296,7 +296,7 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 ### P2 — Contenido
 
 - [x] **8 nuevas mejoras** — phantom, overmind, evolution, transcend, apocalypse, collective, cipher, keymaker (rellenan huecos de progresión y extienden endgame)
-- [ ] **Más eventos** — 3-4 nuevos (botnet_recruit, backdoor, ransomware, etc.)
+- [ ] **Eventos de hackeo tipeado** — 4-5 minigames donde el jugador debe escribir comandos, códigos o secuencias para ganar bonus (ver sección abajo)
 - [ ] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
 - [ ] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
 
@@ -350,3 +350,51 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 - [ ] **Atajos de teclado visibles** — Mostrar [SPACE], [1/2/3], [B] en los botones
 - [ ] **Partículas al hacer clic** — Chispas/glitches visuales
 - [ ] **Gráfico de data/min** — Mini barra ASCII en estadísticas
+
+---
+
+### P5 — Eventos de Hackeo Tipeado
+
+Minijuegos opcionales que aparecen cada 60-120s (alternando con firewall). El jugador debe tipear algo para ganar un bonus de datos.
+
+**Mecánica general:**
+- Overlay con un prompt y un campo de texto oculto (o input real)
+- Timer visible (5-10s según nivel)
+- Acierto → bonus de datos (`dps * 5-15` según dificultad)
+- Falla/tiempo → nada, posible penalización menor
+- Se puede ignorar (botón "IGNORE" como en firewall)
+
+**Evento 1: `sql_inject` — Inyección SQL**
+- Aparece: `root@matrix:~$ sql_inject --target=0x4D3 > _`
+- El jugador debe tipear una palabra mostrada (ej: `UNION SELECT * FROM users`)
+- La palabra aparece cifrada/glitch y se devela letra por letra (2 letras/s)
+- Timer: 8s. Bonus: `dps * 10`
+
+**Evento 2: `brute_force` — Fuerza Bruta**
+- Aparece una clave de 4-6 caracteres (ej: `A3F9`)
+- El jugador debe reescribirla exactamente
+- Timer: 5s. Bonus: `dps * 8`. Penalización: -10% data actual si falla
+
+**Evento 3: `decode` — Decodificar Binario**
+- Aparece: `01001000 01000001 01000011 01001011` → hay que escribir "HACK"
+- Secuencia de 3-5 letras en binario que el jugador debe decodificar y tipear
+- Timer: 10s. Bonus: `dps * 15`
+
+**Evento 4: `command_chain` — Cadena de Comandos**
+- Aparece una secuencia de comandos que el jugador debe repetir en orden
+- Ej: `ls → grep → awk → sort` (el jugador escribe cada comando y presiona Enter)
+- 3-6 comandos según nivel. Timer: 8s. Bonus: `dps * 12`
+
+**Evento 5: `captcha` — Captcha Hacker**
+- Aparece texto distorsionado (estilo Matrix) con 4-6 caracteres alfanuméricos
+- El jugador debe tipear lo que ve
+- Timer: 6s. Bonus: `dps * 6`. Siempre aparece (no compite con otros eventos)
+
+**Cambios necesarios:**
+- Nuevo estado: `state.typingEventActive`, `state.typingEventData` (comandos, timer, bonus)
+- `startTypingEvent(type)` — genera el evento, muestra overlay, inicia timer
+- `handleTypingInput(input)` — verifica si coincide, concede bonus
+- Overlay HTML reutilizable (tipo terminal) con input oculto o `contenteditable`
+- Escucha global de teclado para capturar input sin input field visible
+- `scheduleNextTypingEvent()` — integrado con `scheduleEvent()` o independiente
+- CSS: overlay tipo terminal con prompt parpadeante, texto verde sobre negro

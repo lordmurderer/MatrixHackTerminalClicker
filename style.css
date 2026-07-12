@@ -58,11 +58,38 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
   height: 100vh;
   width: 100vw;
   padding: 6px;
   gap: 4px;
+}
+
+#mainRow {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  gap: 4px;
+}
+
+#leftPane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+#rightPane {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  position: relative;
 }
 
 /* HEADER */
@@ -70,11 +97,12 @@ body {
   border: 1px solid var(--amber);
   border-style: double;
   padding: 4px 12px;
-  width: 90%;
+  width: 100%;
   max-width: 700px;
   background: rgba(10, 5, 0, 0.85);
   box-shadow: 0 0 15px rgba(255, 136, 0, 0.25), inset 0 0 10px rgba(255, 136, 0, 0.08);
   position: relative;
+  flex-shrink: 0;
 }
 
 #headerTop {
@@ -88,17 +116,17 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: 2px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--amber-dim);
 }
 
 .headerExtra {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dark);
 }
 
 .glitch {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: bold;
   letter-spacing: 2px;
   text-shadow: 0 0 10px var(--amber-bright), 0 0 20px var(--amber);
@@ -137,19 +165,21 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  width: 90%;
+  width: 100%;
   max-width: 500px;
   background: rgba(10, 5, 0, 0.88);
   border: 1px solid var(--amber-dark);
   padding: 8px;
   box-shadow: inset 0 0 20px rgba(255, 136, 0, 0.04);
+  flex-shrink: 0;
+  position: relative;
 }
 
 #profile {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .handle {
@@ -174,7 +204,7 @@ body {
 }
 
 #dataAmount {
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: bold;
   text-shadow: 0 0 15px var(--amber-bright), 0 0 30px var(--amber-glow);
   color: var(--amber-bright);
@@ -187,12 +217,12 @@ body {
 }
 
 .dataLabel {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--amber-dim);
 }
 
 .milestoneText {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dark);
   letter-spacing: 0.5px;
 }
@@ -243,7 +273,7 @@ body {
 }
 
 #synergyDisplay {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--amber-dim);
   text-align: center;
   letter-spacing: 1px;
@@ -263,7 +293,7 @@ body {
   align-items: center;
   gap: 3px;
   width: 100%;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   margin-top: 2px;
 }
 
@@ -292,8 +322,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.6rem;
-  padding: 3px 10px;
+  font-size: 0.7rem;
+  padding: 4px 12px;
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.5px;
@@ -320,8 +350,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.6rem;
-  padding: 3px 12px;
+  font-size: 0.7rem;
+  padding: 4px 14px;
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.5px;
@@ -383,7 +413,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   color: var(--amber-dim);
   white-space: nowrap;
   line-height: 1;
@@ -406,8 +436,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.55rem;
-  padding: 2px 8px;
+  font-size: 0.65rem;
+  padding: 2px 10px;
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.5px;
@@ -635,7 +665,7 @@ body {
 }
 
 #comboDisplay {
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #ffcc00;
   text-shadow: 0 0 10px #ff8800;
@@ -1100,18 +1130,18 @@ body {
   border: 1px solid var(--amber);
   color: var(--amber-bright);
   font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  padding: 5px 20px;
+  font-size: 1rem;
+  padding: 6px 24px;
   cursor: pointer;
   text-align: center;
   width: 100%;
-  max-width: 300px;
+  max-width: 320px;
   transition: none;
   box-shadow: 0 0 8px rgba(255, 136, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
 }
 
 #hackBtn:hover {
@@ -1125,12 +1155,12 @@ body {
 }
 
 .btnPrompt {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dark);
 }
 
 .btnText {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: bold;
   letter-spacing: 1px;
   text-shadow: 0 0 5px var(--amber);
@@ -1138,7 +1168,7 @@ body {
 
 .btnCursor {
   animation: blinkAnim 1s step-end infinite;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
 }
 
 #hackBtn.flicker {
@@ -1172,7 +1202,7 @@ body {
 
 .floatingText {
   position: absolute;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: bold;
   color: var(--amber-bright);
   text-shadow: 0 0 10px var(--amber-bright), 0 0 20px var(--amber-glow);
@@ -1182,7 +1212,7 @@ body {
 
 .floatingCrit {
   position: absolute;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: bold;
   color: #ffcc00;
   text-shadow: 0 0 15px #ffcc00, 0 0 30px #ff8800, 0 0 60px #ff4400;
@@ -1229,9 +1259,9 @@ body {
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   border: 1px solid var(--amber-dark);
-  padding: 2px 6px;
+  padding: 3px 8px;
   background: rgba(20, 10, 0, 0.5);
 }
 
@@ -1251,7 +1281,7 @@ body {
 
 /* UPGRADES PANEL */
 #upgradesPanel {
-  width: 90%;
+  width: 100%;
   max-width: 700px;
   background: rgba(10, 5, 0, 0.88);
   border: 1px solid var(--amber-dark);
@@ -1278,14 +1308,14 @@ body {
   justify-content: space-between;
   align-items: center;
   color: var(--amber-bright);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   margin-bottom: 4px;
   border-bottom: 1px solid var(--amber-dark);
   padding-bottom: 2px;
 }
 
 #upgradeCount {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dim);
 }
 
@@ -1293,7 +1323,7 @@ body {
   grid-column: 1 / -1;
   text-align: center;
   color: var(--amber-dim);
-  font-size: 11px;
+  font-size: 13px;
   padding: 8px 0;
   border-top: 1px solid rgba(255, 136, 0, 0.15);
   margin-top: 4px;
@@ -1307,7 +1337,7 @@ body {
 
 .upgradeGroupHeader {
   color: var(--amber-dim);
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   padding: 4px 2px 2px;
   border-bottom: 1px solid var(--amber-bg);
   margin-top: 4px;
@@ -1392,7 +1422,7 @@ body {
 }
 
 .buyModeLabel {
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   color: var(--amber-dark);
   letter-spacing: 0.5px;
   margin-right: 2px;
@@ -1400,7 +1430,7 @@ body {
 
 .buyModeSep {
   color: var(--amber-bg);
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   margin: 0 2px;
 }
 
@@ -1409,8 +1439,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.55rem;
-  padding: 1px 5px;
+  font-size: 0.65rem;
+  padding: 2px 7px;
   cursor: pointer;
   transition: all 0.1s;
 }
@@ -1432,8 +1462,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.5rem;
-  padding: 1px 5px;
+  font-size: 0.6rem;
+  padding: 2px 7px;
   cursor: pointer;
   transition: all 0.1s;
   letter-spacing: 0.5px;
@@ -1450,8 +1480,8 @@ body {
   border: 1px solid var(--amber-dark);
   color: var(--amber-dim);
   font-family: 'Courier New', monospace;
-  font-size: 0.5rem;
-  padding: 1px 5px;
+  font-size: 0.6rem;
+  padding: 2px 7px;
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.5px;
@@ -1469,7 +1499,7 @@ body {
 
 /* EVENT DISPLAY */
 #eventDisplay {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber);
   text-align: center;
   display: none;
@@ -1477,16 +1507,16 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  padding: 2px 4px;
+  padding: 3px 6px;
   border: 1px solid var(--amber-bg);
   background: rgba(10, 5, 0, 0.5);
 }
 #eventDisplay.open { display: flex; }
 
-#eventIcon { font-size: 0.65rem; }
+#eventIcon { font-size: 0.75rem; }
 #eventText { color: var(--amber-dim); }
 #eventTimer {
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   color: var(--amber-dark);
   animation: pulseText 1s ease-in-out infinite;
 }
@@ -1933,7 +1963,7 @@ body {
 
 .upgradeNameText {
   font-weight: bold;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: var(--amber-bright);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1942,7 +1972,7 @@ body {
 }
 
 .upgradeDesc {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dim);
   line-height: 1.2;
   overflow: hidden;
@@ -1951,7 +1981,7 @@ body {
 }
 
 .upgradeCost {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--amber);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1959,7 +1989,7 @@ body {
 }
 
 .upgradeOwned {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--amber-dark);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1967,23 +1997,25 @@ body {
 }
 
 .upgradeEffect {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dim);
 }
 
 /* FOOTER */
 #footer {
-  width: 90%;
+  width: 100%;
   max-width: 700px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 3px 6px;
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: var(--amber-dark);
   border-top: 1px solid var(--amber-dark);
   padding-top: 3px;
+  flex-shrink: 0;
+  margin: 0 auto;
 }
 
 #footerLeft, #footerRight {
@@ -2138,31 +2170,41 @@ body.shake {
 
 /* RESPONSIVE */
 @media (max-width: 600px) {
-  .glitch { font-size: 0.7rem; letter-spacing: 1px; }
-  #dataAmount { font-size: 1.3rem; }
+  .glitch { font-size: 0.85rem; letter-spacing: 1px; }
+  #dataAmount { font-size: 1.6rem; }
   #upgradesGrid { grid-template-columns: 1fr 1fr; }
-  #hackBtn { padding: 4px 12px; }
-  .btnText { font-size: 0.75rem; }
-  .stat { font-size: 0.55rem; padding: 1px 4px; }
+  #hackBtn { padding: 5px 16px; }
+  .btnText { font-size: 0.85rem; }
+  .stat { font-size: 0.65rem; padding: 2px 6px; }
   #stats { gap: 3px; }
-  #headerBottom { font-size: 0.55rem; }
-  .headerExtra { font-size: 0.5rem; }
-  .milestoneText { font-size: 0.5rem; }
+  #headerBottom { font-size: 0.65rem; }
+  .headerExtra { font-size: 0.55rem; }
+  .milestoneText { font-size: 0.55rem; }
   #toastContainer { max-width: 200px; top: 5px; right: 5px; }
-  .buyModeBtn { font-size: 0.5rem; padding: 1px 3px; }
-  .toolBtn { font-size: 0.45rem; padding: 1px 3px; }
+  .buyModeBtn { font-size: 0.55rem; padding: 1px 5px; }
+  .toolBtn { font-size: 0.55rem; padding: 1px 5px; }
   #buyModeBar { gap: 1px; }
-  #footer { font-size: 0.5rem; gap: 2px 4px; }
+  #footer { font-size: 0.55rem; gap: 2px 4px; }
   #footerLeft, #footerRight { flex-wrap: wrap; }
   #footerRight { justify-content: flex-end; }
   #prestigeShopPanel { padding: 10px; }
   .shopCard { flex-wrap: wrap; gap: 2px; }
   .shopCardCost { font-size: 0.55rem; }
   #toolbar { gap: 3px; }
-  #toolbar button { font-size: 0.55rem; padding: 2px 7px; }
+  #toolbar button { font-size: 0.6rem; padding: 3px 8px; }
   #prestigeTopRow { gap: 4px; }
-  #prestigeBtn { font-size: 0.55rem; padding: 2px 8px; }
+  #prestigeBtn { font-size: 0.6rem; padding: 3px 10px; }
   #prestigeProgressOuter { height: 5px; }
-  #prestigeReq { font-size: 0.45rem; }
-  .autoBuyToggle { font-size: 0.45rem; padding: 1px 4px; }
+  #prestigeReq { font-size: 0.5rem; }
+  .autoBuyToggle { font-size: 0.5rem; padding: 1px 5px; }
+}
+
+/* WIDE: two-column layout */
+@media (min-width: 900px) {
+  #mainRow { flex-direction: row; }
+  #leftPane { width: 380px; flex-shrink: 0; }
+  #rightPane { flex: 1; min-width: 0; }
+  #header, #gameArea, #upgradesPanel, #footer { max-width: none; }
+  #rightPane #upgradesPanel { height: 100%; }
+  #upgradesGrid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
