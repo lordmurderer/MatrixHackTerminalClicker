@@ -48,7 +48,7 @@ function handleKeydown(e) {
 function init() {
   cacheDom();
   resizeCanvas();
-  initMatrixRain();
+  initTerminal();
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   setupBusUI();
 
@@ -58,7 +58,7 @@ function init() {
   applyLanguage();
   applySkin();
 
-  animId = requestAnimationFrame(rainLoop);
+  animId = requestAnimationFrame(terminalLoop);
   gameLoopInterval = setInterval(gameLoop, CONFIG.GAME_LOOP_TICK_MS);
 
   dom.hackBtn.addEventListener('click', handleClick);
@@ -156,7 +156,6 @@ function init() {
 
   window.addEventListener('resize', function () {
     resizeCanvas();
-    initMatrixRain();
   });
 
   setInterval(saveGame, SAVE_INTERVAL);

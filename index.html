@@ -21,6 +21,10 @@
           <span id="headerPrestige" class="headerExtra"></span>
         </div>
         <div id="headerBottom">
+          <span id="playerHandle" class="handle">>> NEO_001</span>
+          <span class="headerSep">·</span>
+          <span id="playerLevel" class="level">LEVEL: 1</span>
+          <span class="headerSep right">|</span>
           <span class="prompt" data-i18n="headerPrompt">root@matrix:~$</span>
           <span id="headerTime" class="headerExtra"></span>
           <span class="blink">_</span>
@@ -28,10 +32,6 @@
       </header>
 
       <main id="gameArea">
-        <div id="profile">
-          <span id="playerHandle" class="handle">>> NEO_001</span>
-          <span id="playerLevel" class="level">LEVEL: 1</span>
-        </div>
 
         <div id="dataDisplay">
           <div id="dataRow">
@@ -76,19 +76,10 @@
         <div id="synergyDisplay"></div>
         <div id="prestigeSection">
           <div id="prestigeTopRow">
-            <span id="prestigeInfo"></span>
-            <button id="prestigeBtn">⟳ <span data-i18n="prestigeBtn">PURGE & BOOT</span></button>
-          </div>
-          <div id="prestigeProgressOuter">
-            <div id="prestigeProgressInner"></div>
+            <button id="prestigeBtn"><span data-i18n="prestigeBtn">PRESTIGIO</span></button>
             <span id="prestigeReq"></span>
+            <span id="prestigeInfo"></span>
           </div>
-        </div>
-        <div id="toolbar">
-          <button id="achBtn">🏆 <span data-i18n="achBtn">ACHIEVEMENTS</span></button>
-          <button id="statsBtn">📊 <span data-i18n="statsBtn">STATS</span></button>
-          <button id="skinBtn">🎨 <span data-i18n="skinBtn">SKINS</span></button>
-          <button id="settingsBtn">⚙ <span data-i18n="settingsBtn">OPTIONS</span></button>
         </div>
         <div id="comboDisplay"></div>
         <div id="eventDisplay">
@@ -100,6 +91,13 @@
     </div>
 
     <div id="rightPane">
+      <div id="toolbar">
+        <button id="achBtn">🏆 <span data-i18n="achBtn">ACHIEVEMENTS</span></button>
+        <button id="statsBtn">📊 <span data-i18n="statsBtn">STATS</span></button>
+        <button id="skinBtn">🎨 <span data-i18n="skinBtn">SKINS</span></button>
+        <button id="prestigeShopBtn" class="toolBtn" data-i18n="prestigeShopBtn">SHOP</button>
+        <button id="settingsBtn">⚙ <span data-i18n="settingsBtn">OPTIONS</span></button>
+      </div>
       <section id="upgradesPanel">
         <div class="panelHeader">
           <span data-i18n="panelTitle">> UPGRADES_</span>
@@ -111,7 +109,6 @@
           <button class="buyModeBtn" data-mode="10">10x</button>
           <button class="buyModeBtn" data-mode="max" data-i18n="buyMax">MAX</button>
           <span class="buyModeSep">|</span>
-          <button id="prestigeShopBtn" class="toolBtn" data-i18n="prestigeShopBtn">SHOP</button>
           <button id="autoBuyToggle" class="autoBuyToggle" data-i18n="autoBuyOff">AUTO: OFF</button>
         </div>
         <div id="upgradesGrid"></div>
@@ -125,8 +122,6 @@
       <span id="saveStatus" data-i18n="autoSave">AUTO-SAVE ACTIVE</span>
     </span>
     <span id="footerRight">
-      <button id="exportBtn" class="toolBtn" data-i18n="exportBtn">EXPORT</button>
-      <button id="importBtn" class="toolBtn" data-i18n="importBtn">IMPORT</button>
       <button id="soundBtn">♪</button>
       <button id="langToggle">EN</button>
     </span>

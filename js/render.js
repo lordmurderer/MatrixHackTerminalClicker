@@ -80,7 +80,7 @@ function updatePrestige() {
   if (dom.prestigeReq) {
     var req = getPrestigeReq();
     var progress = Math.min(100, Math.floor(state.prestigeProgress / req * 100));
-    dom.prestigeReq.textContent = t('prestigeReq', { n: formatData(req), p: progress });
+    dom.prestigeReq.textContent = progress + '% ▸ ' + formatData(req);
     if (dom.prestigeBtn) {
       var ready = state.prestigeProgress >= req;
       dom.prestigeBtn.disabled = !ready;
@@ -88,11 +88,6 @@ function updatePrestige() {
       dom.prestigeBtn.style.display = state.prestigeCount > 0 || state.prestigeProgress >= req * 0.3 ? 'inline-flex' : 'none';
       var btnSpan = dom.prestigeBtn.querySelector('span');
       if (btnSpan) btnSpan.textContent = ready ? t('prestigeReady') : t('prestigeBtn');
-    }
-    var bar = document.getElementById('prestigeProgressInner');
-    if (bar) {
-      bar.style.width = progress + '%';
-      bar.classList.toggle('ready', ready);
     }
   }
 }

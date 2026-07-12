@@ -63,7 +63,9 @@ const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
 
 let animId = null;
-let dropChars = [];
+const TERM_MAX_LINES = 30;
+const TERM_LINE_HEIGHT = 18;
+var termLines = [];
 let autoClickInterval = null;
 let gameLoopInterval = null;
 let comboTimeout = null;
@@ -110,19 +112,20 @@ function setupBusUI() {
 var textPool = [];
 var textPoolMax = 20;
 
-/* --- MATRIX RAIN --- */
-function initMatrixRain() {
+/* --- TERMINAL --- */
+function initTerminal() {
   resizeCanvas();
-  const cols = Math.floor(canvas.width / 14);
-  dropChars = [];
-  for (let i = 0; i < cols; i++) {
-    dropChars.push({
-      x: i * 14,
-      y: Math.random() * canvas.height,
-      speed: 0.5 + Math.random() * 2,
-      chars: [],
-    });
-  }
+  termLines = [];
+  addTermLines([
+    '> SYSTEM BOOT v3.12',
+    '> Kernel: Linux 5.15.0-matrix',
+    '> Network: eth0 10.0.0.1/24',
+    '> Port 8080 listening...',
+    '> Root access granted',
+    '',
+    'root@matrix:~$ ./matrix_daemon --start',
+    '[OK] Daemon running on PID 4711',
+  ]);
 }
 
 function resizeCanvas() {
@@ -130,62 +133,38 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
 }
 
-function getMatrixChars() {
-  const chars = [];
-  const base = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-  for (let i = 0; i < 20; i++) {
-    chars.push(base[Math.floor(Math.random() * base.length)]);
-  }
-  return chars;
-}
-
 function getSkin() {
   return VISUAL_SKINS.find(function (s) { return s.id === state.activeSkin; }) || VISUAL_SKINS[0];
 }
 
-function drawRain() {
-  var skin = getSkin();
-  var c = skin.colors;
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = '14px monospace';
-
-  // Draw all head characters in one pass
-  ctx.shadowBlur = 10;
-  ctx.shadowColor = c.shadow;
-  for (let i = 0; i < dropChars.length; i++) {
-    const drop = dropChars[i];
-    if (drop.chars.length === 0) drop.chars = getMatrixChars();
-    const headY = drop.y;
-    if (headY >= 0) {
-      ctx.fillStyle = 'rgba(' + c.head + ', 1)';
-      ctx.fillText(drop.chars[0], drop.x, headY);
-    }
-  }
-  // Draw all body characters in a second pass
-  ctx.shadowBlur = 0;
-  for (let i = 0; i < dropChars.length; i++) {
-    const drop = dropChars[i];
-    for (let j = 1; j < drop.chars.length; j++) {
-      const alpha = 1 - (j / drop.chars.length);
-      const y = drop.y - j * 14;
-      if (y < 0) break;
-      ctx.fillStyle = 'rgba(' + c.body + ', ' + (alpha * 0.6) + ')';
-      ctx.fillText(drop.chars[j], drop.x, y);
-    }
-    ctx.shadowBlur = 0;
-    drop.y += drop.speed * skin.speedMult;
-    if (drop.y - drop.chars.length * 14 > canvas.height) {
-      drop.y = 0;
-      drop.chars = getMatrixChars();
-      drop.x = Math.floor(Math.random() * (canvas.width / 14)) * 14;
-    }
-  }
+function addTermLine(text) {
+  termLines.push(text);
+  if (termLines.length > TERM_MAX_LINES) termLines.shift();
 }
 
-function rainLoop() {
-  drawRain();
-  animId = requestAnimationFrame(rainLoop);
+function addTermLines(lines) {
+  for (var i = 0; i < lines.length; i++) addTermLine(lines[i]);
+}
+
+function drawTerminal() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = '14px monospace';
+  var bottomY = canvas.height - 10;
+  for (var i = 0; i < termLines.length; i++) {
+    var y = bottomY - (termLines.length - 1 - i) * TERM_LINE_HEIGHT;
+    if (y < -TERM_LINE_HEIGHT) break;
+    ctx.fillStyle = '#00ff00';
+    ctx.fillText(termLines[i], 10, y);
+  }
+  ctx.fillStyle = '#00ff00';
+  var blink = Math.floor(Date.now() / 500) % 2 ? '_' : ' ';
+  ctx.fillText('root@matrix:~$ ' + blink, 10, bottomY);
+}
+
+function terminalLoop() {
+  drawTerminal();
+  animId = requestAnimationFrame(terminalLoop);
 }
 
 /* --- TRANSLATION --- */

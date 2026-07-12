@@ -27,6 +27,14 @@ function executePrestige() {
   playSound('crit');
 
   setTimeout(function () {
+    termLines = [];
+    addTermLines([
+      '> SYSTEM RESET',
+      '> Purge complete — all data wiped',
+      '> Multiplier: x' + Number(state.prestigeMultiplier).toFixed(1) + ' → x' + Number(state.prestigeMultiplier * CONFIG.PRESTIGE_MULT_FACTOR).toFixed(1),
+      '> Initializing new environment...',
+    ]);
+
     state.prestigeMultiplier *= CONFIG.PRESTIGE_MULT_FACTOR;
     state.prestigeCount++;
     state.prestigePoints = (state.prestigePoints || 0) + 1;
@@ -40,6 +48,11 @@ function executePrestige() {
     setupAutoClick();
     setupAutoBuy();
     saveGame();
+
+    addTermLines([
+      '[OK] Multiplier: x' + Number(state.prestigeMultiplier).toFixed(1),
+      '[OK] Ready',
+    ]);
 
     glitch.classList.remove('active');
     document.body.classList.remove('shake');
@@ -440,6 +453,7 @@ function applyEvent(evt) {
     document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatData(bonus);
     document.getElementById('eventTimer').textContent = '';
     el.className = 'open event-info';
+    addTermLines(['[+] Windfall +' + formatData(bonus)]);
     setTimeout(function () { el.classList.remove('open'); }, CONFIG.EVENT_WINDFALL_DISPLAY_MS);
     bus.emit(EVENTS.DATA_CHANGED);
     bus.emit(EVENTS.EVENT_CHANGED);
@@ -452,8 +466,10 @@ function applyEvent(evt) {
     var penalty = Math.floor(state.data * CONFIG.EVENT_LEAK_PENALTY);
     state.data = Math.max(0, state.data - penalty);
     showToast('-' + formatData(penalty) + ' | ' + t('eventLeak', { dur: evt.dur }), 'warn');
+    addTermLines(['[!] Data leak — -' + formatData(penalty) + ' (' + evt.dur + 's)']);
   } else {
     showToast(t(evt.descKey, { dur: evt.dur }), 'info');
+    addTermLines(['> Event: ' + evt.id + ' (' + evt.dur + 's)']);
   }
   playSound(evt.id === 'data_leak' ? 'event_bad' : 'event');
   document.getElementById('eventIcon').textContent = evt.icon;
@@ -514,6 +530,7 @@ function startBoss() {
   document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatData(state.bossThreshold), t: timeLimit + 's' });
   document.getElementById('bossBarInner').style.width = '0%';
   document.getElementById('bossReward').textContent = '';
+  addTermLines(['⚠ BOSS INTRUSION — threshold ' + formatData(state.bossThreshold), '⚠ Deploying countermeasures...']);
   var remaining = timeLimit;
   document.getElementById('bossTimer').textContent = remaining + 's';
   if (bossInterval) clearInterval(bossInterval);
@@ -538,9 +555,11 @@ function endBoss(success) {
     reward.style.color = '#00ff00';
     playSound('levelup');
     showToast(t('bossSuccess', { n: formatData(bonus) }), 'info');
+    addTermLines(['[✓] Boss neutralized +' + formatData(bonus)]);
   } else {
     reward.textContent = t('bossFail');
     reward.style.color = '#ff0044';
+    addTermLines(['[✗] Boss intrusion — failed']);
     playSound('boss_end');
   }
   calculateStats();
@@ -731,6 +750,7 @@ function startFirewall() {
   document.getElementById('fwResult').style.display = 'none';
 
   overlay.classList.add('open');
+  addTermLines(['⚠ Firewall detected — ' + nodeCount + ' nodes (' + timeLimit + 's)']);
 
   timerBar.animate([
     { width: '100%', background: '#00ff00', boxShadow: '0 0 6px #00ff00' },
@@ -782,10 +802,12 @@ function endFirewall(success) {
     calculateStats();
     bus.emit(EVENTS.DATA_CHANGED);
     showToast(t('fwSuccess', { n: formatData(bonus) }), 'info');
+    addTermLines(['[✓] Firewall bypassed +' + formatData(bonus)]);
   } else {
     result.textContent = t('fwFail');
     result.className = 'fwResult fail';
     showToast(t('fwFail'), 'warn');
+    addTermLines(['[✗] Firewall active — connection failed']);
   }
 
   setTimeout(function () {
@@ -852,6 +874,17 @@ function toggleAutoBuy() {
 }
 
 /* --- GAME LOOP --- */
+var termNoiseTimer = 0;
+var termNoiseLines = [
+  '[UDP] 10.0.0.1:8080 › ',
+  '[TCP] 45.33.32.156:22 › established',
+  'wlan0: TX ',
+  '[ICMP] heartbeat 127.0.0.1 › OK',
+  'eth0: RX ',
+  '[DNS] matrix.local › resolved 10.0.0.1',
+  '[SSH] session 0x4D3 › keepalive',
+];
+
 function gameLoop() {
   if (state.dps > 0) {
     var gain = state.dps / (1000 / CONFIG.GAME_LOOP_TICK_MS);
@@ -868,6 +901,19 @@ function gameLoop() {
     checkAchievements();
     bus.emit(EVENTS.DATA_CHANGED);
     if (state._autoDirty) { state._autoDirty = false; setupAutoClick(); }
+
+    termNoiseTimer += CONFIG.GAME_LOOP_TICK_MS;
+    if (state.dps > 0 && termNoiseTimer >= CONFIG.TERM_NOISE_INTERVAL_MS) {
+      termNoiseTimer = 0;
+      var line = termNoiseLines[Math.floor(Math.random() * termNoiseLines.length)];
+      if (line.indexOf('TX ') !== -1 || line.indexOf('RX ') !== -1) {
+        addTermLine(line + formatData(Math.floor(state.dps * 2)) + '/s');
+      } else if (line.indexOf('8080') !== -1) {
+        addTermLine(line + formatData(Math.floor(state.dps)));
+      } else {
+        addTermLine(line);
+      }
+    }
   }
 }
 
@@ -944,6 +990,7 @@ function loadGame() {
 
 function resetGame(hard) {
   localStorage.removeItem(SAVE_KEY);
+  termLines = [];
   if (autoClickInterval) clearInterval(autoClickInterval);
   if (firewallTimeout) clearTimeout(firewallTimeout);
   if (firewallTimerInterval) clearTimeout(firewallTimerInterval);

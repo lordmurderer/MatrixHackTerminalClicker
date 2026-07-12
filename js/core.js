@@ -85,6 +85,7 @@ function checkLevelUp() {
   if (state.level > lastLevel) {
     playSound('levelup');
     showToast(t('level', { n: state.level }), 'info');
+    addTermLines(['> SYSTEM UPGRADE — Node level ' + state.level, '> New capabilities online']);
   }
   lastLevel = state.level;
 }
@@ -255,6 +256,14 @@ function doClick(e, isAuto) {
   }
 
   applyClickFx(x, y, isCrit);
+
+  if (isAuto) {
+    addTermLines(['[AUTO] exploit 0x' + Math.floor(Math.random() * 0xFFFF).toString(16), '+ ' + formatData(gained) + '  OK']);
+  } else if (isCrit) {
+    addTermLines(['⚠ CRITICAL — Overflow x' + state.critMultiplier, '+ ' + formatData(gained)]);
+  } else {
+    addTermLines(['> ./hack.exe — target 0x' + Math.floor(Math.random() * 0xFFFF).toString(16), '[' + '\u2588'.repeat(8) + '\u2592\u2592' + ']  78%', '[' + '\u2588'.repeat(10) + '] 100%', '+ ' + formatData(gained)]);
+  }
 
   addData(gained);
   state.totalClicks++;

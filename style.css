@@ -33,7 +33,7 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 0;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 #scanlines {
@@ -113,11 +113,18 @@ body {
 
 #headerBottom {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 4px;
   margin-top: 2px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--amber-dim);
+}
+
+.headerSep {
+  color: var(--amber-bg);
+}
+.headerSep.right {
+  margin-left: auto;
 }
 
 .headerExtra {
@@ -169,26 +176,34 @@ body {
   max-width: 500px;
   background: rgba(10, 5, 0, 0.88);
   border: 1px solid var(--amber-dark);
-  padding: 8px;
+  padding: 6px 8px;
   box-shadow: inset 0 0 20px rgba(255, 136, 0, 0.04);
   flex-shrink: 0;
   position: relative;
 }
 
-#profile {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 0.8rem;
+#gameArea > * + * {
+  border-top: 1px solid var(--amber-bg);
+  padding-top: 4px;
+  margin-top: 0;
+}
+#gameArea > #comboDisplay,
+#gameArea > #eventDisplay,
+#gameArea > #synergyDisplay,
+#gameArea > #floatingDamage {
+  border-top: none;
+  padding-top: 0;
 }
 
-.handle {
+#playerHandle {
   color: #00ff00;
   text-shadow: 0 0 5px #00ff00;
+  font-size: 0.7rem;
 }
 
-.level {
+#playerLevel {
   color: var(--amber-dim);
+  font-size: 0.7rem;
 }
 
 #dataDisplay {
@@ -229,7 +244,7 @@ body {
 
 #dataBarOuter {
   width: 100%;
-  height: 6px;
+  height: 10px;
   background: var(--amber-bg);
   border: 1px solid var(--amber-dark);
   margin-top: 4px;
@@ -291,36 +306,45 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
   width: 100%;
   font-size: 0.7rem;
-  margin-top: 2px;
 }
 
 #prestigeTopRow {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
   justify-content: center;
 }
 
-#prestigeInfo {
-  color: var(--amber-dim);
+#prestigeReq {
+  color: var(--amber-bright);
+  font-size: 0.65rem;
 }
 
-/* TOOLBAR — Ach, Stats, Skins */
+#prestigeInfo {
+  color: var(--amber-dim);
+  font-size: 0.6rem;
+  margin-left: auto;
+}
+
+/* TOOLBAR — Ach, Stats, Skins, Shop, Options */
 #toolbar {
   display: flex;
   gap: 4px;
   width: 100%;
   justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--amber-dark);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
 }
 
 #toolbar button {
-  background: transparent;
+  background: rgba(20, 10, 0, 0.6);
   border: 1px solid var(--amber-dark);
-  color: var(--amber-dim);
+  color: var(--amber-bright);
   font-family: 'Courier New', monospace;
   font-size: 0.7rem;
   padding: 4px 12px;
@@ -335,12 +359,12 @@ body {
 #toolbar button:hover {
   border-color: var(--amber);
   color: var(--amber-bright);
-  background: rgba(255, 136, 0, 0.06);
+  background: rgba(40, 20, 0, 0.6);
   box-shadow: 0 0 10px rgba(255, 136, 0, 0.2), inset 0 0 8px rgba(255, 136, 0, 0.05);
 }
 
 #toolbar button:active {
-  background: rgba(255, 136, 0, 0.12);
+  background: rgba(60, 30, 0, 0.7);
   box-shadow: 0 0 6px rgba(255, 136, 0, 0.3);
 }
 
@@ -385,39 +409,9 @@ body {
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 0, 0, 0.1);
 }
 
-/* PRESTIGE PROGRESS BAR */
-#prestigeProgressOuter {
-  width: 100%;
-  height: 6px;
-  background: var(--amber-bg);
-  border: 1px solid var(--amber-dark);
-  position: relative;
-  overflow: hidden;
-}
-
-#prestigeProgressInner {
-  height: 100%;
-  width: 0%;
-  background: var(--amber-dark);
-  transition: width 0.2s ease;
-}
-
-#prestigeProgressInner.ready {
-  background: #ff4400;
-  box-shadow: 0 0 8px #ff4400;
-  animation: prestigeBarPulse 1s ease-in-out infinite;
-}
-
-#prestigeReq {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.6rem;
-  color: var(--amber-dim);
-  white-space: nowrap;
-  line-height: 1;
-  z-index: 1;
+@keyframes prestigeBarPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
 }
 
 @keyframes prestigePulse {
@@ -1130,8 +1124,8 @@ body {
   border: 1px solid var(--amber);
   color: var(--amber-bright);
   font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  padding: 6px 24px;
+  font-size: 1.1rem;
+  padding: 8px 24px;
   cursor: pointer;
   text-align: center;
   width: 100%;
@@ -1141,7 +1135,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 #hackBtn:hover {
@@ -1247,19 +1241,19 @@ body {
   }
 }
 
-/* STATS */
+/* STATS — 2x2 grid */
 #stats {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
   width: 100%;
-  justify-content: center;
 }
 
 .stat {
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-size: 0.75rem;
+  gap: 4px;
+  font-size: 0.7rem;
   border: 1px solid var(--amber-dark);
   padding: 3px 8px;
   background: rgba(20, 10, 0, 0.5);
@@ -1267,16 +1261,18 @@ body {
 
 .statLabel {
   color: var(--amber-dim);
+  flex-shrink: 0;
 }
 
 .statValue {
   color: var(--amber-bright);
-  min-width: 16px;
   text-align: right;
+  flex: 1;
 }
 
 .statUnit {
   color: var(--amber-dark);
+  flex-shrink: 0;
 }
 
 /* UPGRADES PANEL */
@@ -2176,9 +2172,10 @@ body.shake {
   #hackBtn { padding: 5px 16px; }
   .btnText { font-size: 0.85rem; }
   .stat { font-size: 0.65rem; padding: 2px 6px; }
-  #stats { gap: 3px; }
-  #headerBottom { font-size: 0.65rem; }
-  .headerExtra { font-size: 0.55rem; }
+  #stats { gap: 2px; }
+  .stat { font-size: 0.6rem; padding: 2px 6px; }
+  #headerBottom { font-size: 0.6rem; }
+  .headerExtra { font-size: 0.5rem; }
   .milestoneText { font-size: 0.55rem; }
   #toastContainer { max-width: 200px; top: 5px; right: 5px; }
   .buyModeBtn { font-size: 0.55rem; padding: 1px 5px; }
@@ -2191,11 +2188,11 @@ body.shake {
   .shopCard { flex-wrap: wrap; gap: 2px; }
   .shopCardCost { font-size: 0.55rem; }
   #toolbar { gap: 3px; }
-  #toolbar button { font-size: 0.6rem; padding: 3px 8px; }
+  #toolbar button { font-size: 0.65rem; padding: 3px 9px; }
   #prestigeTopRow { gap: 4px; }
   #prestigeBtn { font-size: 0.6rem; padding: 3px 10px; }
-  #prestigeProgressOuter { height: 5px; }
   #prestigeReq { font-size: 0.5rem; }
+  #prestigeInfo { font-size: 0.5rem; }
   .autoBuyToggle { font-size: 0.5rem; padding: 1px 5px; }
 }
 
