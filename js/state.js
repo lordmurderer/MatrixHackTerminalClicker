@@ -37,6 +37,12 @@ let state = {
   bossActive: false,
   bossData: 0,
   bossThreshold: 0,
+  bossType: 'normal',
+  bossShieldHp: 0,
+  bossRegenActive: false,
+  bossCounterTimer: 0,
+  typingEventActive: false,
+  typingEventData: null,
 };
 
 function formatNum(n) {

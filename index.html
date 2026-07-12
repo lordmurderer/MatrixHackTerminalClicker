@@ -182,7 +182,9 @@
     </div>
     <div id="bossBody">
       <div id="bossInfo"></div>
+      <div id="bossVariantHint"></div>
       <div id="bossBarContainer"><div id="bossBarInner"></div></div>
+      <div id="bossShieldBarContainer" style="display:none"><div id="bossShieldBar"></div></div>
       <div id="bossReward"></div>
     </div>
   </div>
@@ -235,6 +237,59 @@
       <button id="prestigeShopClose">X</button>
     </div>
     <div id="prestigeShopGrid"></div>
+  </div>
+</div>
+
+<div id="offlineOverlay">
+  <div id="offlinePanel">
+    <div id="offlineHeader">
+      <span id="offlineTitle" data-i18n="offlineTitle">▸ OFFLINE SUMMARY_</span>
+      <span id="offlineClose">X</span>
+    </div>
+    <div id="offlineBody">
+      <div id="offlineDesc" data-i18n="offlineDesc">W H I L E   Y O U   W E R E   A W A Y ...</div>
+      <div class="offlineRow"><span data-i18n="offlineTime">TIME</span><span id="offlineTime"></span></div>
+      <div class="offlineRow"><span data-i18n="offlineData">DATA</span><span id="offlineData" class="offlineHighlight"></span></div>
+    </div>
+    <div id="offlineFooter">
+      <button id="offlineConfirm" data-i18n="offlineClose">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div id="tutorialOverlay">
+  <div id="tutorialPanel">
+    <div id="tutorialHeader">
+      <span data-i18n="tutorialTitle">> TUTORIAL_</span>
+      <span id="tutorialStep">0/5</span>
+    </div>
+    <div id="tutorialBody">
+      <div id="tutorialText"></div>
+      <div id="tutorialProgressBar"><div id="tutorialProgressInner"></div></div>
+    </div>
+    <div id="tutorialFooter">
+      <button id="tutorialSkip" data-i18n="tutorialSkip">SKIP TUTORIAL</button>
+      <button id="tutorialNext" data-i18n="tutorialDone">✓ DONE</button>
+    </div>
+  </div>
+</div>
+
+<div id="typingOverlay">
+  <div id="typingPanel">
+    <div id="typingHeader">
+      <span id="typingTitle" data-i18n="typingTitle">⚠ TYPING HACK</span>
+      <span id="typingTimer"></span>
+    </div>
+    <div id="typingBody">
+      <div id="typingPrompt"></div>
+      <div id="typingHint"></div>
+      <div id="typingDisplay"></div>
+      <input id="typingInput" type="text" autocomplete="off" spellcheck="false" />
+    </div>
+    <div id="typingFooter">
+      <span id="typingResult"></span>
+      <button id="typingIgnore" data-i18n="typingIgnore">IGNORE</button>
+    </div>
   </div>
 </div>
 

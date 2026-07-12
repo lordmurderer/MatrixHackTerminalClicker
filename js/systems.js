@@ -157,6 +157,8 @@ function checkAchievements() {
       newUnlock = true;
       var nameKey = 'ach' + ach.id.charAt(0).toUpperCase() + ach.id.slice(1);
       showToast(t('achUnlocked', { name: t(nameKey) }), 'ach');
+      // Cosmetic skin reward
+      unlockAchievementSkin(ach.id);
     }
   });
   return newUnlock;
@@ -519,18 +521,63 @@ function scheduleBoss() {
 }
 
 function startBoss() {
-  if (state.bossActive || state.firewallActive || state.eventActive) { scheduleBoss(); return; }
+  if (state.bossActive || state.firewallActive || state.eventActive || state.typingEventActive) { scheduleBoss(); return; }
   state.bossActive = true;
   state.bossData = 0;
   var timeLimit = Math.max(CONFIG.BOSS_TIME_MIN, CONFIG.BOSS_TIME_BASE - Math.floor(state.level / CONFIG.BOSS_TIME_DIVISOR));
   state.bossThreshold = Math.floor(state.dps * timeLimit * (1 + state.level * CONFIG.BOSS_LEVEL_SCALE));
+
+  // Pick variant
+  var variantRoll = Math.random();
+  if (variantRoll < 0.3 && state.totalClicks > 50) {
+    state.bossType = 'shield';
+    state.bossShieldHp = CONFIG.BOSS_SHIELD_CLICKS_BASE + Math.floor(state.level / 3);
+  } else if (variantRoll < 0.5) {
+    state.bossType = 'regen';
+    state.bossRegenActive = false;
+    state._bossRegenTimer = 0;
+  } else if (variantRoll < 0.65) {
+    state.bossType = 'counter';
+    state._bossCounterTimer = 0;
+  } else {
+    state.bossType = 'normal';
+  }
+
   playSound('boss_start');
   var overlay = document.getElementById('bossOverlay');
   overlay.classList.add('open');
+
+  var variantHint = document.getElementById('bossVariantHint');
+  var shieldContainer = document.getElementById('bossShieldBarContainer');
+  var shieldBar = document.getElementById('bossShieldBar');
+
+  variantHint.style.display = 'block';
+  shieldContainer.style.display = 'none';
+
+  switch (state.bossType) {
+    case 'shield':
+      variantHint.textContent = t('bossShield', { n: state.bossShieldHp }) + ' — ' + t('bossShieldHint');
+      variantHint.style.color = '#ffcc00';
+      shieldContainer.style.display = 'block';
+      shieldBar.style.width = '100%';
+      break;
+    case 'regen':
+      variantHint.textContent = '⚠ ' + t('bossRegen') + ' — ' + t('bossRegenHint');
+      variantHint.style.color = '#ff4400';
+      break;
+    case 'counter':
+      variantHint.textContent = '⚠ ' + t('bossCounter') + ' — ' + t('bossCounterHint');
+      variantHint.style.color = '#ff0044';
+      break;
+    default:
+      variantHint.style.display = 'none';
+      break;
+  }
+
   document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatData(state.bossThreshold), t: timeLimit + 's' });
   document.getElementById('bossBarInner').style.width = '0%';
   document.getElementById('bossReward').textContent = '';
-  addTermLines(['⚠ BOSS INTRUSION — threshold ' + formatData(state.bossThreshold), '⚠ Deploying countermeasures...']);
+  addTermLines(['⚠ BOSS INTRUSION — ' + state.bossType + ' — threshold ' + formatData(state.bossThreshold)]);
   var remaining = timeLimit;
   document.getElementById('bossTimer').textContent = remaining + 's';
   if (bossInterval) clearInterval(bossInterval);
@@ -541,6 +588,38 @@ function startBoss() {
       return;
     }
     document.getElementById('bossTimer').textContent = remaining + 's';
+
+    // Regen tick
+    if (state.bossType === 'regen' && state.bossActive) {
+      state._bossRegenTimer = (state._bossRegenTimer || 0) + 1000;
+      if (state._bossRegenTimer >= CONFIG.BOSS_REGEN_INTERVAL_MS) {
+        state._bossRegenTimer = 0;
+        var dataIncreased = state.bossData > (state._bossLastData || 0);
+        state._bossLastData = state.bossData;
+        if (!dataIncreased) {
+          var regenAmount = Math.floor(state.bossThreshold * CONFIG.BOSS_REGEN_PERCENT);
+          state.bossData = Math.max(0, state.bossData - regenAmount);
+          var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
+          var bar = document.getElementById('bossBarInner');
+          if (bar) bar.style.width = pct + '%';
+          variantHint.textContent = '⚠ ' + t('bossRegen') + ' -' + formatData(regenAmount);
+        }
+      }
+    }
+
+    // Counter tick
+    if (state.bossType === 'counter' && state.bossActive) {
+      state._bossCounterTimer = (state._bossCounterTimer || 0) + 1000;
+      if (state._bossCounterTimer >= CONFIG.BOSS_COUNTER_INTERVAL_MS) {
+        state._bossCounterTimer = 0;
+        var penalty = Math.floor(state.data * CONFIG.BOSS_COUNTER_PENALTY);
+        if (penalty > 0) {
+          state.data = Math.max(0, state.data - penalty);
+          showToast(t('bossCounter') + ' -' + formatData(penalty), 'warn');
+          bus.emit(EVENTS.DATA_CHANGED);
+        }
+      }
+    }
   }, 1000);
 }
 
@@ -890,7 +969,10 @@ function gameLoop() {
     var gain = state.dps / (1000 / CONFIG.GAME_LOOP_TICK_MS);
     addData(gain);
     if (state.bossActive) {
-      state.bossData += gain;
+      // Shield boss: DPS does not bypass shield
+      if (state.bossType !== 'shield' || state.bossShieldHp <= 0) {
+        state.bossData += gain;
+      }
       var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
       var bar = document.getElementById('bossBarInner');
       if (bar) bar.style.width = pct + '%';
@@ -942,6 +1024,9 @@ function validateState(saved) {
     soundEnabled: true, autoBuyEnabled: false, buyMode: 1,
     upgrades: {}, achievements: {}, ownedSkins: [],
     prestigeShop: {}, activeSkin: 'default', lang: 'es',
+    bossType: 'normal', bossShieldHp: 0,
+    bossRegenActive: false, bossCounterTimer: 0,
+    typingEventActive: false, typingEventData: null,
   };
   Object.keys(fields).forEach(function (k) {
     var v = saved[k];
@@ -973,14 +1058,23 @@ function loadGame() {
       calculateStats();
 
       var rootkitLevel = state.upgrades['rootkit'] || 0;
+      var offlineElapsed = 0;
+      var offlineData = 0;
       if (rootkitLevel > 0 && state.lastSaveTime && state.dps > 0) {
-        var elapsed = (Date.now() - state.lastSaveTime) / 1000;
-        var offlineData = Math.floor(state.dps * elapsed * rootkitLevel * CONFIG.OFFLINE_ROOTKIT_MULT);
+        offlineElapsed = (Date.now() - state.lastSaveTime) / 1000;
+        offlineData = Math.floor(state.dps * offlineElapsed * rootkitLevel * CONFIG.OFFLINE_ROOTKIT_MULT);
         if (offlineData > 0) {
-          playSound('offline');
           addData(offlineData);
-          showToast(t('offline', { n: formatData(offlineData) }) + t('offlineExtra'), 'info');
         }
+      }
+      // Show offline summary if there was meaningful offline time
+      if (offlineElapsed > 10) {
+        // Defer to ensure DOM is ready
+        setTimeout(function () {
+          showOfflineSummary(offlineElapsed, offlineData);
+        }, 500);
+      } else if (offlineData > 0) {
+        showToast(t('offline', { n: formatData(offlineData) }) + t('offlineExtra'), 'info');
       }
       return true;
     }
@@ -1029,6 +1123,12 @@ function resetGame(hard) {
     prestigeShop: hard ? {} : Object.assign({}, state.prestigeShop),
     buyMode: 1,
     autoBuyEnabled: hard ? false : state.autoBuyEnabled,
+    bossType: 'normal',
+    bossShieldHp: 0,
+    bossRegenActive: false,
+    bossCounterTimer: 0,
+    typingEventActive: false,
+    typingEventData: null,
   };
   initUpgrades();
   calculateStats();
@@ -1038,6 +1138,7 @@ function resetGame(hard) {
   scheduleFirewall();
   scheduleEvent();
   scheduleBoss();
+  scheduleTypingEvent();
 }
 
 /* --- LANGUAGE TOGGLE --- */
@@ -1067,5 +1168,336 @@ function hardReset() {
   saveGame();
   toggleSettings();
   showToast(t('resetDone'), 'warn');
+}
+
+/* --- OFFLINE SUMMARY --- */
+function showOfflineSummary(elapsed, dataEarned) {
+  var overlay = document.getElementById('offlineOverlay');
+  if (!overlay) return;
+  document.getElementById('offlineTime').textContent = formatTime(Math.floor(elapsed));
+  document.getElementById('offlineData').textContent = '+' + formatData(dataEarned);
+  overlay.classList.add('open');
+  playSound('offline');
+}
+
+function closeOfflineSummary() {
+  document.getElementById('offlineOverlay').classList.remove('open');
+}
+
+/* --- TUTORIAL --- */
+var TUTORIAL_SEEN_KEY = 'mh_tutorial_seen';
+
+function startTutorial() {
+  if (localStorage.getItem(TUTORIAL_SEEN_KEY)) return;
+  localStorage.setItem(TUTORIAL_SEEN_KEY, '1');
+  var overlay = document.getElementById('tutorialOverlay');
+  if (!overlay) return;
+  state._tutorialSlide = 0;
+  overlay.classList.add('open');
+  renderTutorialStep();
+}
+
+function renderTutorialStep() {
+  var slide = state._tutorialSlide || 0;
+  if (slide < 0 || slide >= TUTORIAL_STEPS) return;
+  var text = document.getElementById('tutorialText');
+  var step = document.getElementById('tutorialStep');
+  var progress = document.getElementById('tutorialProgressInner');
+  var nextBtn = document.getElementById('tutorialNext');
+  if (text) text.textContent = t('tutorialStep' + slide);
+  if (step) step.textContent = (slide + 1) + '/' + TUTORIAL_STEPS;
+  if (progress) progress.style.width = ((slide + 1) / TUTORIAL_STEPS * 100) + '%';
+  if (nextBtn) {
+    if (slide >= TUTORIAL_STEPS - 1) {
+      nextBtn.textContent = t('tutorialDone');
+    } else {
+      nextBtn.textContent = '→';
+    }
+  }
+}
+
+function advanceTutorial() {
+  var slide = (state._tutorialSlide || 0) + 1;
+  if (slide >= TUTORIAL_STEPS) {
+    closeTutorial();
+    return;
+  }
+  state._tutorialSlide = slide;
+  renderTutorialStep();
+}
+
+function closeTutorial() {
+  document.getElementById('tutorialOverlay').classList.remove('open');
+  delete state._tutorialSlide;
+  saveGame();
+}
+
+function skipTutorial() {
+  closeTutorial();
+}
+
+/* --- TYPING EVENTS --- */
+var typingScheduleTimeout = null;
+var typingTimerInterval = null;
+
+function generateTypingEventData(type) {
+  var def = TYPEVENT_DEFS.find(function (d) { return d.id === type; });
+  if (!def) return null;
+  switch (type) {
+    case 'sql_inject': {
+      var target = Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase();
+      var words = ['UNION SELECT * FROM users', 'DROP TABLE logs', 'SELECT password FROM admins', 'INSERT INTO root VALUES(1)', 'UPDATE config SET level=99'];
+      var word = words[Math.floor(Math.random() * words.length)];
+      return { type: type, dur: def.dur, word: word, target: target, display: word, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'brute_force': {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      var len = 4 + Math.floor(Math.random() * 3);
+      var key = '';
+      for (var i = 0; i < len; i++) key += chars[Math.floor(Math.random() * chars.length)];
+      return { type: type, dur: def.dur, word: key, display: key, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'decode': {
+      var decodedWords = ['HACK', 'DATA', 'CODE', 'ROOT', 'SHELL', 'MATRIX', 'CYBER', 'BYTE'];
+      var word = decodedWords[Math.floor(Math.random() * decodedWords.length)];
+      var binary = '';
+      for (var i = 0; i < word.length; i++) {
+        var bin = word.charCodeAt(i).toString(2);
+        while (bin.length < 8) bin = '0' + bin;
+        if (i > 0) binary += ' ';
+        binary += bin;
+      }
+      return { type: type, dur: def.dur, word: word, display: binary, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'command_chain': {
+      var allCmds = ['ls', 'grep', 'awk', 'sort', 'cat', 'tail', 'find', 'chmod', 'ssh', 'ping', 'curl', 'wget'];
+      var count = 3 + Math.floor(state.level / 5);
+      if (count > 6) count = 6;
+      var cmds = [];
+      var used = {};
+      for (var i = 0; i < count; i++) {
+        var cmd;
+        do { cmd = allCmds[Math.floor(Math.random() * allCmds.length)]; } while (used[cmd]);
+        used[cmd] = true;
+        cmds.push(cmd);
+      }
+      return { type: type, dur: def.dur, word: cmds[0], chain: cmds, chainStep: 0, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'captcha': {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+      var len = 4 + Math.floor(Math.random() * 3);
+      var captcha = '';
+      for (var i = 0; i < len; i++) captcha += chars[Math.floor(Math.random() * chars.length)];
+      return { type: type, dur: def.dur, word: captcha, display: captcha, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+  }
+  return null;
+}
+
+function scheduleTypingEvent() {
+  if (typingScheduleTimeout) clearTimeout(typingScheduleTimeout);
+  var delay = 60000 + Math.random() * 60000;
+  typingScheduleTimeout = setTimeout(startRandomTypingEvent, delay);
+}
+
+function startRandomTypingEvent() {
+  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleTypingEvent(); return; }
+  var types = ['sql_inject', 'brute_force', 'decode', 'command_chain'];
+  // captcha has separate lower chance and can appear alongside other events
+  if (Math.random() < 0.15) {
+    startTypingEvent('captcha');
+  } else {
+    var type = types[Math.floor(Math.random() * types.length)];
+    startTypingEvent(type);
+  }
+}
+
+var typingCaptchaActive = false;
+
+function startTypingEvent(type) {
+  var data = generateTypingEventData(type);
+  if (!data) { scheduleTypingEvent(); return; }
+  state.typingEventActive = true;
+  state.typingEventData = data;
+  if (type === 'captcha') typingCaptchaActive = true;
+
+  var overlay = document.getElementById('typingOverlay');
+  var prompt = document.getElementById('typingPrompt');
+  var hint = document.getElementById('typingHint');
+  var display = document.getElementById('typingDisplay');
+  var input = document.getElementById('typingInput');
+  var timer = document.getElementById('typingTimer');
+  var result = document.getElementById('typingResult');
+
+  result.style.display = 'none';
+  input.value = '';
+  input.style.display = 'block';
+  input.disabled = false;
+
+  switch (type) {
+    case 'sql_inject':
+      prompt.textContent = t('sqlInjectTarget', { target: data.target });
+      hint.textContent = t('sqlInjectWord', { word: data.word }) + ' [Enter]';
+      display.textContent = '> ' + '_'.repeat(data.word.length);
+      break;
+    case 'brute_force':
+      prompt.textContent = t('bruteForceKey', { key: data.word });
+      hint.textContent = t('bruteForceHint') + ' [Enter]';
+      display.textContent = data.word;
+      break;
+    case 'decode':
+      prompt.textContent = t('decodePrompt');
+      hint.textContent = t('decodeHint') + ' [Enter]';
+      display.textContent = data.display;
+      break;
+    case 'command_chain':
+      prompt.textContent = t('commandChainPrompt', { n: data.chain.length - data.chainStep });
+      hint.textContent = t('commandChainHint', { cmd: data.word }) + ' [Enter]';
+      display.textContent = '> ' + data.word;
+      break;
+    case 'captcha':
+      prompt.textContent = t('captchaPrompt');
+      hint.textContent = t('captchaHint') + ' [Enter]';
+      display.textContent = data.display;
+      break;
+  }
+
+  timer.textContent = data.dur + 's';
+  overlay.classList.add('open');
+  addTermLines(['> Typing hack: ' + type]);
+
+  setTimeout(function () { input.focus(); }, 100);
+
+  data._remaining = data.dur;
+  if (typingTimerInterval) clearInterval(typingTimerInterval);
+  typingTimerInterval = setInterval(function () {
+    if (!state.typingEventActive) { clearInterval(typingTimerInterval); return; }
+    data._remaining--;
+    if (data._remaining <= 0) {
+      clearInterval(typingTimerInterval);
+      endTypingEvent(false);
+      return;
+    }
+    timer.textContent = data._remaining + 's';
+  }, 1000);
+
+  // If not captcha, schedule next normal typing event
+  if (type !== 'captcha') scheduleTypingEvent();
+}
+
+function submitTypingInput() {
+  if (!state.typingEventActive || !state.typingEventData) return;
+  var data = state.typingEventData;
+  var input = document.getElementById('typingInput');
+  var val = input.value.trim();
+
+  if (data.type === 'command_chain') {
+    if (val.toLowerCase() === data.word.toLowerCase()) {
+      data.chainStep++;
+      if (data.chainStep >= data.chain.length) {
+        endTypingEvent(true);
+      } else {
+        data.word = data.chain[data.chainStep];
+        var prompt = document.getElementById('typingPrompt');
+        var hint = document.getElementById('typingHint');
+        var display = document.getElementById('typingDisplay');
+        prompt.textContent = t('commandChainPrompt', { n: data.chain.length - data.chainStep });
+        hint.textContent = t('commandChainHint', { cmd: data.word });
+        display.textContent = '> ' + data.word;
+        input.value = '';
+        input.focus();
+      }
+    } else {
+      endTypingEvent(false);
+    }
+  } else {
+    if (val.toUpperCase() === data.word.toUpperCase()) {
+      endTypingEvent(true);
+    } else {
+      endTypingEvent(false);
+    }
+  }
+}
+
+function endTypingEvent(success) {
+  if (!state.typingEventActive) return;
+  state.typingEventActive = false;
+  var data = state.typingEventData;
+  var input = document.getElementById('typingInput');
+  var display = document.getElementById('typingDisplay');
+  var result = document.getElementById('typingResult');
+  var overlay = document.getElementById('typingOverlay');
+
+  input.disabled = true;
+  if (typingTimerInterval) { clearInterval(typingTimerInterval); typingTimerInterval = null; }
+
+  // Show result prominently in the display area
+  display.style.fontSize = '1.6rem';
+  display.style.padding = '15px 10px';
+
+  if (success) {
+    var bonus = Math.floor(state.dps * data.rewardMult);
+    if (bonus < 1) bonus = 1;
+    addData(bonus);
+    display.textContent = '✔ ' + t('typingSuccess', { n: formatData(bonus) });
+    display.style.color = '#00ff00';
+    display.style.textShadow = '0 0 20px rgba(0,255,0,0.5)';
+    display.style.borderColor = '#00ff00';
+    display.style.background = 'rgba(0,40,0,0.5)';
+    result.textContent = '';
+    playSound('levelup');
+    showToast(t('typingSuccess', { n: formatData(bonus) }), 'info');
+    addTermLines(['[✓] Typing hack success +' + formatData(bonus)]);
+    calculateStats();
+    bus.emit(EVENTS.DATA_CHANGED);
+  } else {
+    var penalty = data.penaltyMult > 0 ? Math.floor(state.data * data.penaltyMult) : 0;
+    if (penalty > 0) {
+      state.data = Math.max(0, state.data - penalty);
+      display.textContent = '✘ ' + t('typingPenalty', { n: formatData(penalty) });
+      bus.emit(EVENTS.DATA_CHANGED);
+    } else {
+      display.textContent = '✘ ' + t('typingFail');
+    }
+    display.style.color = '#ff4400';
+    display.style.textShadow = '0 0 20px rgba(255,68,0,0.5)';
+    display.style.borderColor = '#ff4400';
+    display.style.background = 'rgba(40,0,0,0.5)';
+    result.textContent = '';
+    playSound('event_bad');
+    addTermLines(['[✗] Typing hack — failed']);
+  }
+
+  setTimeout(function () {
+    overlay.classList.remove('open');
+    typingCaptchaActive = false;
+    state.typingEventData = null;
+    display.style.fontSize = '';
+    display.style.padding = '';
+    display.style.color = '';
+    display.style.textShadow = '';
+    display.style.borderColor = '';
+    display.style.background = '';
+  }, 2000);
+}
+
+function skipTypingEvent() {
+  if (state.typingEventActive) {
+    endTypingEvent(false);
+  } else {
+    document.getElementById('typingOverlay').classList.remove('open');
+    typingCaptchaActive = false;
+    scheduleTypingEvent();
+  }
+}
+
+/* --- COSMETIC ACHIEVEMENT REWARDS --- */
+function unlockAchievementSkin(achId) {
+  var skinId = ACHIEVEMENT_SKIN_REWARDS[achId];
+  if (!skinId) return;
+  if (state.ownedSkins.indexOf(skinId) !== -1) return;
+  state.ownedSkins.push(skinId);
+  var key = 'skin' + skinId.charAt(0).toUpperCase() + skinId.slice(1);
+  showToast('✦ ' + t(key), 'ach');
 }
 

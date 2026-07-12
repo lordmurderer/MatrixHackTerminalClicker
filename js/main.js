@@ -239,6 +239,34 @@ function init() {
 
   scheduleEvent();
   scheduleBoss();
+
+  // Offline summary
+  document.getElementById('offlineConfirm').addEventListener('click', closeOfflineSummary);
+  document.getElementById('offlineClose').addEventListener('click', closeOfflineSummary);
+  document.getElementById('offlineOverlay').addEventListener('click', function (e) {
+    if (e.target === this) closeOfflineSummary();
+  });
+
+  // Tutorial — solo se muestra una vez (controlado por localStorage)
+  startTutorial();
+  document.getElementById('tutorialSkip').addEventListener('click', skipTutorial);
+  document.getElementById('tutorialNext').addEventListener('click', advanceTutorial);
+
+  // Typing events
+  document.getElementById('typingInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitTypingInput();
+    }
+    if (e.key === 'Escape') {
+      skipTypingEvent();
+    }
+  });
+  document.getElementById('typingIgnore').addEventListener('click', skipTypingEvent);
+  document.getElementById('typingOverlay').addEventListener('click', function (e) {
+    if (e.target === this) skipTypingEvent();
+  });
+  scheduleTypingEvent();
 }
 
 if (document.readyState === 'loading') {

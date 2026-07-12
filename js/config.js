@@ -236,6 +236,41 @@ const STRINGS = {
     resetCancel: 'CANCELAR',
     resetExecute: '☠ ELIMINAR TODO',
     resetDone: 'TODO EL PROGRESO HA SIDO ELIMINADO',
+    offlineTitle: '▸ RESUMEN OFFLINE_',
+    offlineTime: 'TIEMPO: {n}',
+    offlineData: 'DATOS: +{n}',
+    offlineDesc: 'M I E N T R A S   E S T A B A S   F U E R A ...',
+    offlineClose: 'CERRAR',
+    tutorialTitle: '> TUTORIAL_',
+    tutorialStep0: 'Haz clic en ./hack.exe para generar datos',
+    tutorialStep1: 'Compra mejoras en el panel derecho haciendo clic en ellas',
+    tutorialStep2: 'Sigue comprando mejoras para aumentar tu poder',
+    tutorialStep3: 'Haz clics rápidos para activar la racha COMBO y multiplicar ganancias',
+    tutorialStep4: 'Llega a PRESTIGE para reiniciar y multiplicar tu poder permanentemente',
+    tutorialDone: '✓ LISTO',
+    tutorialSkip: 'SALTAR TUTORIAL',
+    typingTitle: '⚠ HACKEO POR TECLADO',
+    typingIgnore: 'IGNORAR',
+    typingSuccess: '✔ ACCESO CONCEDIDO +{n}',
+    typingFail: '✘ ACCESO DENEGADO',
+    typingPenalty: '✘ FALLO CRÍTICO -{n}',
+    typingInput: '>_',
+    sqlInjectTarget: 'Inyectar SQL en: 0x{target}',
+    sqlInjectWord: 'Escribe: "{word}"',
+    bruteForceKey: 'Clave: {key}',
+    bruteForceHint: 'Reescribe la clave exactamente',
+    decodePrompt: 'Decodifica el binario:',
+    decodeHint: 'Escribe el texto descifrado',
+    commandChainPrompt: 'Comandos restantes: {n}',
+    commandChainHint: 'Escribe "{cmd}" y presiona Enter',
+    captchaPrompt: 'Captcha:',
+    captchaHint: 'Escribe lo que ves',
+    bossShield: 'ESCUDO: {n} clics',
+    bossShieldHint: '¡Hackea para romper el escudo!',
+    bossRegen: 'REGENERACIÓN ACTIVA',
+    bossRegenHint: '¡Mantén el ataque constante!',
+    bossCounter: 'CONTRATAQUE',
+    bossCounterHint: '¡Completa rápido o perderás datos!',
   },
   en: {
     title: 'MATRIX HACK TERMINAL v1.0',
@@ -471,6 +506,41 @@ const STRINGS = {
     resetCancel: 'CANCEL',
     resetExecute: '☠ ERASE EVERYTHING',
     resetDone: 'ALL PROGRESS HAS BEEN WIPED',
+    offlineTitle: '▸ OFFLINE SUMMARY_',
+    offlineTime: 'TIME: {n}',
+    offlineData: 'DATA: +{n}',
+    offlineDesc: 'W H I L E   Y O U   W E R E   A W A Y ...',
+    offlineClose: 'CLOSE',
+    tutorialTitle: '> TUTORIAL_',
+    tutorialStep0: 'Click ./hack.exe to generate data',
+    tutorialStep1: 'Buy upgrades in the right panel by clicking them',
+    tutorialStep2: 'Keep buying upgrades to increase your power',
+    tutorialStep3: 'Click rapidly to activate COMBO streaks and multiply earnings',
+    tutorialStep4: 'Reach PRESTIGE to reset and permanently multiply your power',
+    tutorialDone: '✓ DONE',
+    tutorialSkip: 'SKIP TUTORIAL',
+    typingTitle: '⚠ TYPING HACK',
+    typingIgnore: 'IGNORE',
+    typingSuccess: '✔ ACCESS GRANTED +{n}',
+    typingFail: '✘ ACCESS DENIED',
+    typingPenalty: '✘ CRITICAL FAIL -{n}',
+    typingInput: '>_',
+    sqlInjectTarget: 'SQL Inject into: 0x{target}',
+    sqlInjectWord: 'Type: "{word}"',
+    bruteForceKey: 'Key: {key}',
+    bruteForceHint: 'Rewrite the key exactly',
+    decodePrompt: 'Decode the binary:',
+    decodeHint: 'Type the decoded text',
+    commandChainPrompt: 'Commands remaining: {n}',
+    commandChainHint: 'Type "{cmd}" and press Enter',
+    captchaPrompt: 'Captcha:',
+    captchaHint: 'Type what you see',
+    bossShield: 'SHIELD: {n} clicks',
+    bossShieldHint: 'Hack to break the shield!',
+    bossRegen: 'REGENERATION ACTIVE',
+    bossRegenHint: 'Keep the attack constant!',
+    bossCounter: 'COUNTERATTACK',
+    bossCounterHint: 'Finish fast or lose data!',
   },
 };
 
@@ -691,6 +761,30 @@ const EVENT_DEFS = [
   { id: 'windfall', dur: 0, chance: 0.15, descKey: 'eventWindfall', icon: '💰' },
   { id: 'ddos_attack', dur: 30, chance: 0.15, descKey: 'eventDdos', icon: '🔥' },
 ];
+
+const ACHIEVEMENT_SKIN_REWARDS = {
+  data_lord: 'golden',
+  elite_hacker: 'neon',
+  auto_pilot: 'hacker',
+  completionist: 'glitch',
+};
+
+const TYPEVENT_DEFS = [
+  { id: 'sql_inject', dur: 8, rewardMult: 10, penaltyMult: 0, descKey: 'sqlInjectWord' },
+  { id: 'brute_force', dur: 5, rewardMult: 8, penaltyMult: 0.1, descKey: 'bruteForceKey' },
+  { id: 'decode', dur: 10, rewardMult: 15, penaltyMult: 0, descKey: 'decodePrompt' },
+  { id: 'command_chain', dur: 8, rewardMult: 12, penaltyMult: 0, descKey: 'commandChainPrompt' },
+  { id: 'captcha', dur: 6, rewardMult: 6, penaltyMult: 0, descKey: 'captchaPrompt' },
+];
+
+const BOSS_VARIANTS = ['normal', 'shield', 'regen', 'counter'];
+const BOSS_SHIELD_CLICKS_BASE = 3;
+const BOSS_REGEN_INTERVAL_MS = 3000;
+const BOSS_REGEN_PERCENT = 0.1;
+const BOSS_COUNTER_INTERVAL_MS = 4000;
+const BOSS_COUNTER_PENALTY = 0.03;
+
+const TUTORIAL_STEPS = 5;
 
 const SAVE_KEY = 'matrixHackerClicker';
 const SAVE_INTERVAL = 15000;
