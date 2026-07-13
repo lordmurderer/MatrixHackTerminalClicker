@@ -853,6 +853,9 @@ function clickFirewallNode(num) {
   if (!state.firewallActive) return;
   if (num === state.firewallStep + 1) {
     state.firewallStep++;
+    // Ocultar nodo clickeado
+    var el = document.querySelector('.fwNode[data-num="' + num + '"]');
+    if (el) el.classList.add('fwNode-done');
     document.getElementById('fwStep').textContent = (state.firewallStep + 1) + '/' + state.firewallNodes.length;
     playSound('click');
     if (state.firewallStep >= state.firewallNodes.length) {
