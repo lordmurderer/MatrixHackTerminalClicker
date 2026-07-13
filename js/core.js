@@ -9,7 +9,21 @@ function addData(amount) {
 }
 
 function isUpgradeUnlocked(def) {
-  return state.prestigeProgress >= def.unlockAt;
+  if (state.prestigeProgress < def.unlockAt) return false;
+  if (!def.legendaryReq) return true;
+  var req = def.legendaryReq;
+  if (req.minPrestige && (state.prestigeCount || 0) < req.minPrestige) return false;
+  if (req.achievements) {
+    for (var a = 0; a < req.achievements.length; a++) {
+      if (!state.achievements[req.achievements[a]]) return false;
+    }
+  }
+  if (req.upgrades) {
+    for (var b = 0; b < req.upgrades.length; b++) {
+      if (!state.upgrades[req.upgrades[b]] || state.upgrades[req.upgrades[b]] < 1) return false;
+    }
+  }
+  return true;
 }
 
 function initUpgrades() {

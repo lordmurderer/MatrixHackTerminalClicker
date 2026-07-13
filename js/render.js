@@ -148,11 +148,34 @@ function getEffectText(u, owned) {
   return '';
 }
 
+function getLegendaryReqText(u) {
+  if (!u.legendaryReq) return '';
+  var req = u.legendaryReq;
+  var parts = [];
+  if (req.minPrestige) parts.push('Prestige ' + req.minPrestige + '+');
+  if (req.achievements) {
+    req.achievements.forEach(function (aid) {
+      var ach = ACHIEVEMENT_DEFS.find(function (a) { return a.id === aid; });
+      if (ach) parts.push(t('ach' + ach.id.charAt(0).toUpperCase() + ach.id.slice(1)));
+    });
+  }
+  if (req.upgrades) {
+    req.upgrades.forEach(function (uid) {
+      parts.push(t('upgrade.' + uid + '.name'));
+    });
+  }
+  return parts.join(' + ');
+}
+
 function buildUpgradeTooltipHTML(u, owned, cost) {
   var nextEffect = getEffectText(u, owned + 1);
   var curEffect = owned > 0 ? getEffectText(u, owned) : t('upgrade.' + u.id + '.desc');
   var html = '<div class="tooltipTitle">' + t('upgrade.' + u.id + '.name') + '</div>';
   html += '<div class="tooltipDesc">' + t('upgrade.' + u.id + '.desc') + '</div>';
+  var reqText = getLegendaryReqText(u);
+  if (reqText) {
+    html += '<div class="tooltipReq" style="color:rgb(255,140,0);font-size:0.55rem;border-top:1px solid rgba(255,140,0,0.2);padding-top:2px;margin-top:2px;">REQ: ' + reqText + '</div>';
+  }
   html += '<div class="tooltipRow"><span>' + t('cardLvl') + '</span><span class="tooltipVal">' + owned + '</span></div>';
   if (owned > 0) {
     html += '<div class="tooltipRow"><span>NOW</span><span class="tooltipVal">' + curEffect + '</span></div>';
@@ -187,6 +210,7 @@ function renderUpgrades() {
       if (owned > 0) card.classList.add('bought');
       if (state.data < cost) card.classList.add('locked');
       if (isMaxed) card.classList.add('maxed');
+      if (u.rarity && u.rarity !== 'common') card.classList.add('rarity-' + u.rarity);
 
       var headerRow = document.createElement('div');
       headerRow.className = 'upgradeHeader';
@@ -208,13 +232,13 @@ function renderUpgrades() {
 
       var costRow = document.createElement('div');
       costRow.className = 'upgradeCost';
-      costRow.textContent = isMaxed ? 'MAX' : formatData(cost);
+      costRow.textContent = isMaxed ? '\u2605 ' + t('buyMax') + ' \u2605' : formatData(cost);
 
       var ownedRow = document.createElement('div');
       ownedRow.className = 'upgradeOwned';
       if (isMaxed) {
-        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')';
-        ownedRow.style.color = 'var(--amber-bright)';
+        ownedRow.textContent = '\u2713 ' + t('cardLvl') + ' ' + owned + ' \u00B7 ' + getEffectText(u, owned);
+        ownedRow.style.color = 'rgba(255, 204, 0, 0.65)';
       } else {
         var nextText = (u.maxLevel > 1 && owned < u.maxLevel) ? ' → ' + getEffectText(u, owned + 1) : '';
         ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(u, owned) + ')' + nextText;
@@ -283,7 +307,7 @@ function refreshUpgradeState() {
     var isMaxed = def.maxLevel > 0 && owned >= def.maxLevel;
     var cost = isMaxed ? Infinity : getUpgradeCost(def, owned);
     var costEl = card.querySelector('.upgradeCost');
-    if (costEl) costEl.textContent = isMaxed ? 'MAX' : formatData(cost);
+    if (costEl) costEl.textContent = isMaxed ? '\u2605 ' + t('buyMax') + ' \u2605' : formatData(cost);
     card.classList.toggle('locked', !isMaxed && state.data < cost);
     card.classList.toggle('bought', owned > 0);
     card.classList.toggle('unowned', owned === 0);
@@ -291,8 +315,8 @@ function refreshUpgradeState() {
     var ownedRow = card.querySelector('.upgradeOwned');
     if (ownedRow) {
       if (isMaxed) {
-        ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')';
-        ownedRow.style.color = 'var(--amber-bright)';
+        ownedRow.textContent = '\u2713 ' + t('cardLvl') + ' ' + owned + ' \u00B7 ' + getEffectText(def, owned);
+        ownedRow.style.color = 'rgba(255, 204, 0, 0.65)';
       } else {
         var nextText = (def.maxLevel > 1 && owned < def.maxLevel) ? ' → ' + getEffectText(def, owned + 1) : '';
         ownedRow.textContent = t('cardLvl') + ' ' + owned + ' (' + getEffectText(def, owned) + ')' + nextText;

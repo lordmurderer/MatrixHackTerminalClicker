@@ -1384,8 +1384,6 @@ function startTypingEvent(type) {
     timer.textContent = data._remaining + 's';
   }, 1000);
 
-  // If not captcha, schedule next normal typing event
-  if (type !== 'captcha') scheduleTypingEvent();
 }
 
 function submitTypingInput() {
@@ -1471,6 +1469,8 @@ function endTypingEvent(success) {
     addTermLines(['[✗] Typing hack — failed']);
   }
 
+  scheduleTypingEvent();
+
   setTimeout(function () {
     overlay.classList.remove('open');
     typingCaptchaActive = false;
@@ -1490,8 +1490,8 @@ function skipTypingEvent() {
   } else {
     document.getElementById('typingOverlay').classList.remove('open');
     typingCaptchaActive = false;
-    scheduleTypingEvent();
   }
+  scheduleTypingEvent();
 }
 
 /* --- COSMETIC ACHIEVEMENT REWARDS --- */

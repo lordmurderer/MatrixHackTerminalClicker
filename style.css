@@ -1354,12 +1354,49 @@ body {
 
 .upgradeCard.maxed {
   border-color: #ffcc00;
-  background: rgba(40, 30, 0, 0.4);
+  border-width: 2px;
+  background: rgba(40, 30, 0, 0.35);
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.12), inset 0 0 24px rgba(255, 204, 0, 0.03);
+  cursor: default;
+}
+
+.upgradeCard.maxed:hover {
+  border-color: #ffcc00;
+  background: rgba(40, 30, 0, 0.35);
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.12), inset 0 0 24px rgba(255, 204, 0, 0.03);
+  transform: none;
+}
+
+.upgradeCard.maxed:active {
+  background: rgba(40, 30, 0, 0.35);
+}
+
+.upgradeCard.maxed .upgradeIcon {
+  opacity: 0.6;
+  border-color: #ffcc00;
+  color: #ffcc00;
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.15);
+}
+
+.upgradeCard.maxed .upgradeNameText {
+  color: #ffcc00;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.25);
+}
+
+.upgradeCard.maxed .upgradeDesc {
+  color: rgba(255, 204, 0, 0.35);
 }
 
 .upgradeCard.maxed .upgradeCost {
   color: #ffcc00;
-  text-shadow: 0 0 6px rgba(255, 204, 0, 0.3);
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 0.75rem;
+}
+
+.upgradeCard.maxed .upgradeOwned {
+  color: rgba(255, 204, 0, 0.65);
 }
 
 #upgradesGrid {
@@ -1859,6 +1896,128 @@ body {
   border-color: #2a0000;
   box-shadow: 0 0 8px rgba(255, 0, 0, 0.08);
   background: rgba(15, 0, 0, 0.4);
+}
+
+/* --- RARITY THEMES --- */
+.rarity-uncommon {
+  border-color: rgb(0, 200, 80);
+  box-shadow: inset 0 0 20px rgba(0, 200, 80, 0.04), 0 0 8px rgba(0, 200, 80, 0.08);
+  background: rgba(0, 50, 20, 0.35);
+}
+.rarity-uncommon .upgradeIcon {
+  border-color: rgb(0, 200, 80);
+  color: rgb(0, 200, 80);
+}
+.rarity-uncommon .upgradeNameText {
+  color: rgb(0, 200, 80);
+}
+.rarity-uncommon:hover {
+  border-color: rgb(0, 255, 100);
+  box-shadow: 0 0 14px rgba(0, 200, 80, 0.2), inset 0 0 25px rgba(0, 200, 80, 0.06);
+}
+
+.rarity-rare {
+  border-color: rgb(60, 120, 255);
+  box-shadow: inset 0 0 20px rgba(60, 120, 255, 0.04), 0 0 8px rgba(60, 120, 255, 0.08);
+  background: rgba(0, 20, 60, 0.35);
+}
+.rarity-rare .upgradeIcon {
+  border-color: rgb(60, 120, 255);
+  color: rgb(60, 120, 255);
+}
+.rarity-rare .upgradeNameText {
+  color: rgb(60, 120, 255);
+}
+.rarity-rare:hover {
+  border-color: rgb(100, 160, 255);
+  box-shadow: 0 0 14px rgba(60, 120, 255, 0.2), inset 0 0 25px rgba(60, 120, 255, 0.06);
+}
+
+.rarity-epic {
+  border-color: rgb(160, 60, 255);
+  box-shadow: inset 0 0 20px rgba(160, 60, 255, 0.04), 0 0 8px rgba(160, 60, 255, 0.08);
+  background: rgba(40, 0, 60, 0.35);
+}
+.rarity-epic .upgradeIcon {
+  border-color: rgb(160, 60, 255);
+  color: rgb(160, 60, 255);
+}
+.rarity-epic .upgradeNameText {
+  color: rgb(160, 60, 255);
+}
+.rarity-epic:hover {
+  border-color: rgb(200, 100, 255);
+  box-shadow: 0 0 14px rgba(160, 60, 255, 0.2), inset 0 0 25px rgba(160, 60, 255, 0.06);
+}
+
+.rarity-legendary {
+  border-color: rgb(255, 140, 0);
+  box-shadow: inset 0 0 20px rgba(255, 140, 0, 0.04), 0 0 8px rgba(255, 140, 0, 0.08);
+  background: rgba(50, 20, 0, 0.45);
+}
+.rarity-legendary .upgradeIcon {
+  border-color: rgb(255, 140, 0);
+  color: rgb(255, 140, 0);
+  box-shadow: 0 0 6px rgba(255, 140, 0, 0.2);
+}
+.rarity-legendary .upgradeNameText {
+  color: rgb(255, 140, 0);
+  text-shadow: 0 0 8px rgba(255, 140, 0, 0.3);
+}
+.rarity-legendary:hover {
+  border-color: rgb(255, 180, 50);
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.3), inset 0 0 30px rgba(255, 140, 0, 0.08);
+}
+
+/* Preserve rarity background when bought */
+.upgradeCard.bought.rarity-uncommon {
+  background: rgba(0, 50, 20, 0.4);
+  border-color: rgb(0, 200, 80);
+}
+.upgradeCard.bought.rarity-uncommon:hover {
+  background: rgba(0, 60, 25, 0.45);
+  box-shadow: 0 0 10px rgba(0, 200, 80, 0.12);
+}
+.upgradeCard.bought.rarity-rare {
+  background: rgba(0, 20, 60, 0.4);
+  border-color: rgb(60, 120, 255);
+}
+.upgradeCard.bought.rarity-rare:hover {
+  background: rgba(0, 25, 70, 0.45);
+  box-shadow: 0 0 10px rgba(60, 120, 255, 0.12);
+}
+.upgradeCard.bought.rarity-epic {
+  background: rgba(40, 0, 60, 0.4);
+  border-color: rgb(160, 60, 255);
+}
+.upgradeCard.bought.rarity-epic:hover {
+  background: rgba(50, 0, 70, 0.45);
+  box-shadow: 0 0 10px rgba(160, 60, 255, 0.12);
+}
+.upgradeCard.bought.rarity-legendary {
+  background: rgba(50, 20, 0, 0.5);
+  border-color: rgb(255, 140, 0);
+}
+.upgradeCard.bought.rarity-legendary:hover {
+  background: rgba(60, 25, 0, 0.55);
+  box-shadow: 0 0 14px rgba(255, 140, 0, 0.18);
+}
+
+/* Maxed overrides rarity for gold prestige */
+.upgradeCard.maxed.rarity-uncommon .upgradeNameText,
+.upgradeCard.maxed.rarity-rare .upgradeNameText,
+.upgradeCard.maxed.rarity-epic .upgradeNameText,
+.upgradeCard.maxed.rarity-legendary .upgradeNameText {
+  color: #ffcc00 !important;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.25) !important;
+}
+.upgradeCard.maxed.rarity-uncommon .upgradeIcon,
+.upgradeCard.maxed.rarity-rare .upgradeIcon,
+.upgradeCard.maxed.rarity-epic .upgradeIcon,
+.upgradeCard.maxed.rarity-legendary .upgradeIcon {
+  border-color: #ffcc00 !important;
+  color: #ffcc00 !important;
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.15) !important;
 }
 
 .upgradeHeader {
