@@ -415,7 +415,7 @@ function scheduleEvent() {
 }
 
 function startRandomEvent() {
-  if (state.bossActive || state.firewallActive) { scheduleEvent(); return; }
+  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleEvent(); return; }
   var roll = Math.random();
   var cum = 0;
   for (var i = 0; i < EVENT_DEFS.length; i++) {
@@ -783,7 +783,7 @@ function scheduleFirewall() {
 }
 
 function startFirewall() {
-  if (!state.firewallEnabled) return;
+  if (!state.firewallEnabled || state.typingEventActive) { scheduleFirewall(); return; }
   var overlay = document.getElementById('fwOverlay');
   if (!overlay) return;
   var nodeCount = CONFIG.FW_NODE_BASE + Math.floor(state.level / CONFIG.FW_NODE_DIVISOR);
@@ -1093,6 +1093,7 @@ function resetGame(hard) {
   if (firewallTimerInterval) clearTimeout(firewallTimerInterval);
   if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
   if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
+  if (typingScheduleTimeout) clearTimeout(typingScheduleTimeout);
   state.firewallActive = false;
   state.bossActive = false;
   state.eventActive = null;
@@ -1297,16 +1298,15 @@ function generateTypingEventData(type) {
   return null;
 }
 
-function scheduleTypingEvent() {
+function scheduleTypingEvent(urgent) {
   if (typingScheduleTimeout) clearTimeout(typingScheduleTimeout);
-  var delay = 60000 + Math.random() * 60000;
+  var delay = urgent ? (5000 + Math.random() * 10000) : (60000 + Math.random() * 60000);
   typingScheduleTimeout = setTimeout(startRandomTypingEvent, delay);
 }
 
 function startRandomTypingEvent() {
-  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleTypingEvent(); return; }
+  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleTypingEvent(true); return; }
   var types = ['sql_inject', 'brute_force', 'decode', 'command_chain'];
-  // captcha has separate lower chance and can appear alongside other events
   if (Math.random() < 0.15) {
     startTypingEvent('captcha');
   } else {
