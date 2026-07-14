@@ -87,6 +87,12 @@
             <span id="prestigeInfo"></span>
           </div>
         </div>
+        <div id="bossMeterSection">
+          <div id="bossMeterTopRow">
+            <span id="bossMeterLabel">☠ EVENTOS PARA JEFE</span>
+            <span id="bossMeterText">0/5</span>
+          </div>
+        </div>
         <div id="comboDisplay">
           <span id="comboText"></span>
           <div id="comboBarOuter"><div id="comboBarInner"></div></div>
@@ -178,33 +184,16 @@
   </div>
 </div>
 
-<div id="fwOverlay">
-  <div id="fwPanel">
-    <div id="fwHeader">
-      <span data-i18n="fwTitle">⚠ FIREWALL DETECTED</span>
-      <span id="fwTimeLimit"></span>
-    </div>
-    <div id="fwTimerBarContainer"><div id="fwTimerBar"></div></div>
-    <div id="fwNodes"></div>
-    <div id="fwFooter">
-      <span id="fwStep"></span>
-      <button id="fwIgnore" data-i18n="fwIgnore">IGNORE</button>
-    </div>
-    <div id="fwResult"></div>
-  </div>
-</div>
-
 <div id="bossOverlay">
   <div id="bossPanel">
     <div id="bossHeader">
-      <span data-i18n="bossTitle">⚠ BOSS INTRUSION</span>
+      <span id="bossTitle">☠ BOSS INTRUSION</span>
       <span id="bossTimer"></span>
     </div>
     <div id="bossBody">
+      <div id="bossSkull"></div>
       <div id="bossInfo"></div>
-      <div id="bossVariantHint"></div>
       <div id="bossBarContainer"><div id="bossBarInner"></div></div>
-      <div id="bossShieldBarContainer" style="display:none"><div id="bossShieldBar"></div></div>
       <div id="bossReward"></div>
     </div>
   </div>
@@ -304,6 +293,17 @@
       <div id="typingPrompt"></div>
       <div id="typingHint"></div>
       <div id="typingDisplay"></div>
+      <div id="seqOptions">
+        <button class="seqOptionBtn" data-value=""></button>
+        <button class="seqOptionBtn" data-value=""></button>
+        <button class="seqOptionBtn" data-value=""></button>
+      </div>
+      <div id="simonGrid">
+        <div class="simonCell" data-cell="1">1</div>
+        <div class="simonCell" data-cell="2">2</div>
+        <div class="simonCell" data-cell="3">3</div>
+        <div class="simonCell" data-cell="4">4</div>
+      </div>
       <input id="typingInput" type="text" autocomplete="off" spellcheck="false" />
     </div>
     <div id="typingFooter">
@@ -363,6 +363,7 @@
 <script src="js/core.js"></script>
 <script src="js/render.js"></script>
 <script src="js/systems.js"></script>
+<script src="js/boss.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

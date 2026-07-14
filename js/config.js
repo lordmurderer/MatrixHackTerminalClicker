@@ -277,16 +277,26 @@ const STRINGS = {
     typingFail: '✘ ACCESO DENEGADO',
     typingPenalty: '✘ FALLO CRÍTICO -{n}',
     typingInput: '>_',
-    sqlInjectTarget: 'Inyectar SQL en: 0x{target}',
-    sqlInjectWord: 'Escribe: "{word}"',
     bruteForceKey: 'Clave: {key}',
     bruteForceHint: 'Reescribe la clave exactamente',
-    decodePrompt: 'Decodifica el binario:',
-    decodeHint: 'Escribe el texto descifrado',
     commandChainPrompt: 'Comandos restantes: {n}',
     commandChainHint: 'Escribe "{cmd}" y presiona Enter',
     captchaPrompt: 'Captcha:',
     captchaHint: 'Escribe lo que ves',
+    seqNumTitle: 'Secuencia Numérica',
+    seqNumTarget: '¿Qué número falta en la secuencia?',
+    seqNumHint: 'Haz clic en la respuesta correcta',
+    seqStepTitle: 'Secuencia de Pasos',
+    seqStepTarget: '¿Cuál es el siguiente número en la secuencia?',
+    seqStepHint: 'Haz clic en la respuesta correcta',
+    simonTitle: 'Simon Dice',
+    simonPrompt: 'Memoriza la secuencia... {n}',
+    simonHint: 'Repite la secuencia haciendo clic en las casillas',
+    simonGo: '¡TU TURNO!',
+    wallTitle: 'Firewall',
+    wallPrompt: 'Haz clic en los nodos en orden: 1 → 2 → 3...',
+    wallHint: '',
+    wallStep: '{n}/{m}',
     bossShield: 'ESCUDO: {n} clics',
     bossShieldHint: '¡Hackea para romper el escudo!',
     bossRegen: 'REGENERACIÓN ACTIVA',
@@ -569,16 +579,26 @@ const STRINGS = {
     typingFail: '✘ ACCESS DENIED',
     typingPenalty: '✘ CRITICAL FAIL -{n}',
     typingInput: '>_',
-    sqlInjectTarget: 'SQL Inject into: 0x{target}',
-    sqlInjectWord: 'Type: "{word}"',
     bruteForceKey: 'Key: {key}',
     bruteForceHint: 'Rewrite the key exactly',
-    decodePrompt: 'Decode the binary:',
-    decodeHint: 'Type the decoded text',
     commandChainPrompt: 'Commands remaining: {n}',
     commandChainHint: 'Type "{cmd}" and press Enter',
     captchaPrompt: 'Captcha:',
     captchaHint: 'Type what you see',
+    seqNumTitle: 'Numeric Sequence',
+    seqNumTarget: 'Which number is missing from the sequence?',
+    seqNumHint: 'Click the correct answer',
+    seqStepTitle: 'Step Sequence',
+    seqStepTarget: 'What is the next number in the sequence?',
+    seqStepHint: 'Click the correct answer',
+    simonTitle: 'Simon Says',
+    simonPrompt: 'Memorize the sequence... {n}',
+    simonHint: 'Repeat the sequence by clicking the cells',
+    simonGo: 'YOUR TURN!',
+    wallTitle: 'Firewall',
+    wallPrompt: 'Click the nodes in order: 1 → 2 → 3...',
+    wallHint: '',
+    wallStep: '{n}/{m}',
     bossShield: 'SHIELD: {n} clicks',
     bossShieldHint: 'Hack to break the shield!',
     bossRegen: 'REGENERATION ACTIVE',
@@ -633,14 +653,7 @@ const CONFIG = {
   PRESTIGE_BASE_REQ: 500000,
   PRESTIGE_GLITCH_DELAY_MS: 1600,
   // Boss
-  BOSS_TIME_BASE: 15,
-  BOSS_TIME_MIN: 5,
-  BOSS_TIME_DIVISOR: 5,
-  BOSS_LEVEL_SCALE: 0.15,
-  BOSS_REWARD_FRACTION: 0.5,
-  BOSS_SCHEDULE_BASE_MS: 120000,
-  BOSS_SCHEDULE_RANDOM_MS: 60000,
-  BOSS_DISPLAY_DELAY_MS: 2000,
+  BOSS_METER_REQUIRED: 5,
   // Firewall
   FW_NODE_BASE: 3,
   FW_NODE_DIVISOR: 5,
@@ -681,9 +694,6 @@ const CONFIG = {
   EVENT_DATA_LEAK_DPS: 1.5,
   // Buy mode
   BUY_MAX_THRESHOLD: 999,
-  // Boss scheduling min DPS
-  BOSS_SCHEDULE_MIN_DPS: 1,
-  BOSS_SCHEDULE_RETRY_MS: 10000,
 };
 
 const RARITIES = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
@@ -807,19 +817,16 @@ const ACHIEVEMENT_SKIN_REWARDS = {
 };
 
 const TYPEVENT_DEFS = [
-  { id: 'sql_inject', dur: 8, rewardMult: 10, penaltyMult: 0, descKey: 'sqlInjectWord' },
-  { id: 'brute_force', dur: 5, rewardMult: 8, penaltyMult: 0.1, descKey: 'bruteForceKey' },
-  { id: 'decode', dur: 10, rewardMult: 15, penaltyMult: 0, descKey: 'decodePrompt' },
-  { id: 'command_chain', dur: 8, rewardMult: 12, penaltyMult: 0, descKey: 'commandChainPrompt' },
-  { id: 'captcha', dur: 6, rewardMult: 6, penaltyMult: 0, descKey: 'captchaPrompt' },
+  { id: 'brute_force', dur: 8, rewardMult: 8, penaltyMult: 0.1, descKey: 'bruteForceKey' },
+  { id: 'command_chain', dur: 12, rewardMult: 12, penaltyMult: 0, descKey: 'commandChainPrompt' },
+  { id: 'captcha', dur: 8, rewardMult: 6, penaltyMult: 0, descKey: 'captchaPrompt' },
+  { id: 'seq_num', dur: 10, rewardMult: 10, penaltyMult: 0, descKey: 'seqNumTitle' },
+  { id: 'seq_step', dur: 10, rewardMult: 12, penaltyMult: 0, descKey: 'seqStepTitle' },
+  { id: 'simon', dur: 8, rewardMult: 15, penaltyMult: 0, descKey: 'simonTitle' },
+  { id: 'firewall', dur: 0, rewardMult: 10, penaltyMult: 0, descKey: 'fwTitle' },
 ];
 
 const BOSS_VARIANTS = ['normal', 'shield', 'regen', 'counter'];
-const BOSS_SHIELD_CLICKS_BASE = 3;
-const BOSS_REGEN_INTERVAL_MS = 3000;
-const BOSS_REGEN_PERCENT = 0.1;
-const BOSS_COUNTER_INTERVAL_MS = 4000;
-const BOSS_COUNTER_PENALTY = 0.03;
 
 const TUTORIAL_STEPS = 5;
 

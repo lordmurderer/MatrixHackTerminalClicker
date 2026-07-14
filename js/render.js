@@ -16,6 +16,25 @@ function updateHUD() {
   dom.critDisplay.textContent = state.critChance;
   dom.discountDisplay.textContent = state.discount;
   dom.playerLevel.textContent = t('level', { n: state.level });
+  updateBossMeter();
+}
+
+function updateBossMeter() {
+  var section = dom.bossMeterSection;
+  var text = dom.bossMeterText;
+  var label = dom.bossMeterLabel;
+  if (!section || !text) return;
+  var current = state.bossMeter || 0;
+  var required = CONFIG.BOSS_METER_REQUIRED;
+  if (current >= required) {
+    section.classList.add('ready');
+    if (label) label.textContent = '☠ JEFE LISTO — CLIC PARA PELEAR';
+    text.textContent = '';
+  } else {
+    section.classList.remove('ready');
+    if (label) label.textContent = '☠ EVENTOS PARA JEFE';
+    text.textContent = current + '/' + required;
+  }
 }
 
 function updateEventGlow() {

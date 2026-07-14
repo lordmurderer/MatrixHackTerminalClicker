@@ -298,21 +298,6 @@ function doClick(e, isAuto) {
     addTermLines(['> ./hack.exe — target 0x' + Math.floor(Math.random() * 0xFFFF).toString(16), '[' + '\u2588'.repeat(8) + '\u2592\u2592' + ']  78%', '[' + '\u2588'.repeat(10) + '] 100%', '+ ' + formatData(gained)]);
   }
 
-  // Shield boss: clicks damage shield
-  if (state.bossActive && state.bossType === 'shield' && state.bossShieldHp > 0) {
-    var shieldDmg = Math.ceil(gained / state.clickPower); // each full clickPower = 1 shield dmg
-    state.bossShieldHp = Math.max(0, state.bossShieldHp - shieldDmg);
-    var shieldBar = document.getElementById('bossShieldBar');
-    if (shieldBar) {
-      var maxShield = CONFIG.BOSS_SHIELD_CLICKS_BASE + Math.floor(state.level / 3);
-      shieldBar.style.width = (state.bossShieldHp / maxShield * 100) + '%';
-    }
-    if (state.bossShieldHp <= 0) {
-      var variantHint = document.getElementById('bossVariantHint');
-      if (variantHint) variantHint.textContent = '✓ SHIELD DOWN';
-    }
-  }
-
   addData(gained);
   state.totalClicks++;
   calculateStats();

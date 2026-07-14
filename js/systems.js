@@ -405,32 +405,6 @@ function playSound(type) {
       gain4.connect(audioCtx.destination);
       osc4.start();
       osc4.stop(audioCtx.currentTime + 0.3);
-    } else if (type === 'boss_start') {
-      [220, 330, 440, 550].forEach(function (freq, idx) {
-        var o = audioCtx.createOscillator();
-        var g = audioCtx.createGain();
-        o.type = 'square';
-        o.frequency.value = freq;
-        g.gain.setValueAtTime(0.06, audioCtx.currentTime + idx * 0.12);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.15);
-        o.connect(g);
-        g.connect(audioCtx.destination);
-        o.start(audioCtx.currentTime + idx * 0.12);
-        o.stop(audioCtx.currentTime + idx * 0.12 + 0.15);
-      });
-    } else if (type === 'boss_end') {
-      [550, 440, 330].forEach(function (freq, idx) {
-        var o = audioCtx.createOscillator();
-        var g = audioCtx.createGain();
-        o.type = 'sawtooth';
-        o.frequency.value = freq;
-        g.gain.setValueAtTime(0.05, audioCtx.currentTime + idx * 0.12);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.15);
-        o.connect(g);
-        g.connect(audioCtx.destination);
-        o.start(audioCtx.currentTime + idx * 0.12);
-        o.stop(audioCtx.currentTime + idx * 0.12 + 0.15);
-      });
     }
   } catch (e) { console.error('[Sound]', e); }
 }
@@ -493,7 +467,7 @@ function scheduleEvent() {
 }
 
 function startRandomEvent() {
-  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleEvent(); return; }
+  if (state.typingEventActive) { scheduleEvent(); return; }
   var roll = Math.random();
   var cum = 0;
   for (var i = 0; i < EVENT_DEFS.length; i++) {
@@ -596,145 +570,7 @@ function getEventMultiplier() {
   return m;
 }
 
-/* --- BOSS BATTLES --- */
-var bossScheduleTimeout = null;
-var bossInterval = null;
-
-function scheduleBoss() {
-  if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
-  if (state.dps < CONFIG.BOSS_SCHEDULE_MIN_DPS) { bossScheduleTimeout = setTimeout(scheduleBoss, CONFIG.BOSS_SCHEDULE_RETRY_MS); return; }
-  var delay = CONFIG.BOSS_SCHEDULE_BASE_MS + Math.random() * CONFIG.BOSS_SCHEDULE_RANDOM_MS;
-  bossScheduleTimeout = setTimeout(startBoss, delay);
-}
-
-function startBoss() {
-  if (state.bossActive || state.firewallActive || state.eventActive || state.typingEventActive) { scheduleBoss(); return; }
-  state.bossActive = true;
-  state.bossData = 0;
-  var timeLimit = Math.max(CONFIG.BOSS_TIME_MIN, CONFIG.BOSS_TIME_BASE - Math.floor(state.level / CONFIG.BOSS_TIME_DIVISOR));
-  state.bossThreshold = Math.floor(state.dps * timeLimit * (1 + state.level * CONFIG.BOSS_LEVEL_SCALE));
-
-  // Pick variant
-  var variantRoll = Math.random();
-  if (variantRoll < 0.3 && state.totalClicks > 50) {
-    state.bossType = 'shield';
-    state.bossShieldHp = CONFIG.BOSS_SHIELD_CLICKS_BASE + Math.floor(state.level / 3);
-  } else if (variantRoll < 0.5) {
-    state.bossType = 'regen';
-    state.bossRegenActive = false;
-    state._bossRegenTimer = 0;
-  } else if (variantRoll < 0.65) {
-    state.bossType = 'counter';
-    state._bossCounterTimer = 0;
-  } else {
-    state.bossType = 'normal';
-  }
-
-  playSound('boss_start');
-  var overlay = document.getElementById('bossOverlay');
-  overlay.classList.add('open');
-
-  var variantHint = document.getElementById('bossVariantHint');
-  var shieldContainer = document.getElementById('bossShieldBarContainer');
-  var shieldBar = document.getElementById('bossShieldBar');
-
-  variantHint.style.display = 'block';
-  shieldContainer.style.display = 'none';
-
-  switch (state.bossType) {
-    case 'shield':
-      variantHint.textContent = t('bossShield', { n: state.bossShieldHp }) + ' — ' + t('bossShieldHint');
-      variantHint.style.color = '#ffcc00';
-      shieldContainer.style.display = 'block';
-      shieldBar.style.width = '100%';
-      break;
-    case 'regen':
-      variantHint.textContent = '⚠ ' + t('bossRegen') + ' — ' + t('bossRegenHint');
-      variantHint.style.color = '#ff4400';
-      break;
-    case 'counter':
-      variantHint.textContent = '⚠ ' + t('bossCounter') + ' — ' + t('bossCounterHint');
-      variantHint.style.color = '#ff0044';
-      break;
-    default:
-      variantHint.style.display = 'none';
-      break;
-  }
-
-  document.getElementById('bossInfo').textContent = t('bossInfo', { n: formatData(state.bossThreshold), t: timeLimit + 's' });
-  document.getElementById('bossBarInner').style.width = '0%';
-  document.getElementById('bossReward').textContent = '';
-  addTermLines(['⚠ BOSS INTRUSION — ' + state.bossType + ' — threshold ' + formatData(state.bossThreshold)]);
-  var remaining = timeLimit;
-  document.getElementById('bossTimer').textContent = remaining + 's';
-  if (bossInterval) clearInterval(bossInterval);
-  bossInterval = setInterval(function () {
-    remaining--;
-    if (remaining <= 0) {
-      endBoss(false);
-      return;
-    }
-    document.getElementById('bossTimer').textContent = remaining + 's';
-
-    // Regen tick
-    if (state.bossType === 'regen' && state.bossActive) {
-      state._bossRegenTimer = (state._bossRegenTimer || 0) + 1000;
-      if (state._bossRegenTimer >= CONFIG.BOSS_REGEN_INTERVAL_MS) {
-        state._bossRegenTimer = 0;
-        var dataIncreased = state.bossData > (state._bossLastData || 0);
-        state._bossLastData = state.bossData;
-        if (!dataIncreased) {
-          var regenAmount = Math.floor(state.bossThreshold * CONFIG.BOSS_REGEN_PERCENT);
-          state.bossData = Math.max(0, state.bossData - regenAmount);
-          var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
-          var bar = document.getElementById('bossBarInner');
-          if (bar) bar.style.width = pct + '%';
-          variantHint.textContent = '⚠ ' + t('bossRegen') + ' -' + formatData(regenAmount);
-        }
-      }
-    }
-
-    // Counter tick
-    if (state.bossType === 'counter' && state.bossActive) {
-      state._bossCounterTimer = (state._bossCounterTimer || 0) + 1000;
-      if (state._bossCounterTimer >= CONFIG.BOSS_COUNTER_INTERVAL_MS) {
-        state._bossCounterTimer = 0;
-        var penalty = Math.floor(state.data * CONFIG.BOSS_COUNTER_PENALTY);
-        if (penalty > 0) {
-          state.data = Math.max(0, state.data - penalty);
-          showToast(t('bossCounter') + ' -' + formatData(penalty), 'warn');
-          bus.emit(EVENTS.DATA_CHANGED);
-        }
-      }
-    }
-  }, 1000);
-}
-
-function endBoss(success) {
-  state.bossActive = false;
-  if (bossInterval) { clearInterval(bossInterval); bossInterval = null; }
-  var reward = document.getElementById('bossReward');
-  if (success) {
-    var bonus = Math.floor(state.bossThreshold * CONFIG.BOSS_REWARD_FRACTION);
-    addData(bonus);
-    reward.textContent = t('bossSuccess', { n: formatData(bonus) });
-    reward.style.color = '#00ff00';
-    playSound('levelup');
-    showToast(t('bossSuccess', { n: formatData(bonus) }), 'info');
-    addTermLines(['[✓] Boss neutralized +' + formatData(bonus)]);
-  } else {
-    reward.textContent = t('bossFail');
-    reward.style.color = '#ff0044';
-    addTermLines(['[✗] Boss intrusion — failed']);
-    playSound('boss_end');
-  }
-  calculateStats();
-  bus.emit(EVENTS.DATA_CHANGED);
-  setTimeout(function () {
-    document.getElementById('bossOverlay').classList.remove('open');
-    scheduleBoss();
-  }, CONFIG.BOSS_DISPLAY_DELAY_MS);
-}
+/* --- BOSS GAUNTLET (placeholder for Phase 2) --- */
 
 /* --- PRESTIGE SHOP --- */
 function getShopCost(def) {
@@ -851,7 +687,6 @@ function importSave() {
     if (!state.achievements) state.achievements = {};
     if (!state.ownedSkins) state.ownedSkins = [];
     if (!state.prestigeShop) state.prestigeShop = {};
-    state.bossActive = false;
     state.firewallActive = false;
     state.eventActive = null;
     calculateStats();
@@ -861,138 +696,8 @@ function importSave() {
   } catch (e) { showToast(t('importFail'), 'warn'); }
 }
 
-/* --- FIREWALL MINIGAME --- */
-function scheduleFirewall() {
-  if (firewallTimeout) clearTimeout(firewallTimeout);
-  if (!state.firewallEnabled) return;
-  var delay = CONFIG.FW_SCHEDULE_BASE_MS + Math.random() * CONFIG.FW_SCHEDULE_RANDOM_MS;
-  firewallTimeout = setTimeout(startFirewall, delay);
-}
-
-function startFirewall() {
-  if (!state.firewallEnabled || state.typingEventActive) { scheduleFirewall(); return; }
-  var overlay = document.getElementById('fwOverlay');
-  if (!overlay) return;
-  var nodeCount = CONFIG.FW_NODE_BASE + Math.floor(state.level / CONFIG.FW_NODE_DIVISOR);
-  if (nodeCount > CONFIG.FW_NODE_MAX) nodeCount = CONFIG.FW_NODE_MAX;
-  var timeLimit = Math.max(CONFIG.FW_TIME_MIN, CONFIG.FW_TIME_BASE - Math.floor(state.level / CONFIG.FW_TIME_DIVISOR));
-
-  state.firewallNodes = [];
-  for (var i = 1; i <= nodeCount; i++) {
-    state.firewallNodes.push({
-      num: i,
-      x: 10 + Math.random() * 70,
-      y: 10 + Math.random() * 70,
-    });
-  }
-  state.firewallStep = 0;
-  state.firewallActive = true;
-
-  // Render nodes
-  var container = document.getElementById('fwNodes');
-  container.innerHTML = '';
-  state.firewallNodes.forEach(function (n) {
-    var el = document.createElement('div');
-    el.className = 'fwNode';
-    el.textContent = n.num;
-    el.style.left = n.x + '%';
-    el.style.top = n.y + '%';
-    el.setAttribute('data-num', n.num);
-    el.addEventListener('click', function (e) {
-      e.stopPropagation();
-      clickFirewallNode(parseInt(el.getAttribute('data-num')));
-    });
-    container.appendChild(el);
-  });
-
-  var timerBar = document.getElementById('fwTimerBar');
-  timerBar.style.width = '';
-  timerBar.style.transition = 'none';
-  timerBar.style.background = '#00ff00';
-  timerBar.style.boxShadow = '0 0 6px #00ff00';
-
-  document.getElementById('fwTimeLimit').textContent = timeLimit + 's';
-  document.getElementById('fwStep').textContent = '1/' + nodeCount;
-  document.getElementById('fwResult').style.display = 'none';
-
-  overlay.classList.add('open');
-  addTermLines(['⚠ Firewall detected — ' + nodeCount + ' nodes (' + timeLimit + 's)']);
-
-  timerBar.animate([
-    { width: '100%', background: '#00ff00', boxShadow: '0 0 6px #00ff00' },
-    { background: '#88ff00', offset: 0.3 },
-    { background: '#ffcc00', offset: 0.6 },
-    { width: '50%', background: '#ff8800', offset: 0.7 },
-    { width: '20%', background: '#ff4400', offset: 0.9 },
-    { width: '0%', background: '#ff0000', boxShadow: '0 0 6px #ff0000' }
-  ], { duration: timeLimit * 1000, easing: 'linear', fill: 'forwards' });
-
-  if (firewallTimerInterval) clearInterval(firewallTimerInterval);
-
-  firewallTimerInterval = setTimeout(function () {
-    if (state.firewallActive) {
-      endFirewall(false);
-    }
-  }, timeLimit * 1000);
-}
-
-function clickFirewallNode(num) {
-  if (!state.firewallActive) return;
-  if (num === state.firewallStep + 1) {
-    state.firewallStep++;
-    // Ocultar nodo clickeado
-    var el = document.querySelector('.fwNode[data-num="' + num + '"]');
-    if (el) el.classList.add('fwNode-done');
-    document.getElementById('fwStep').textContent = (state.firewallStep + 1) + '/' + state.firewallNodes.length;
-    playSound('click');
-    if (state.firewallStep >= state.firewallNodes.length) {
-      endFirewall(true);
-    }
-  } else {
-    endFirewall(false);
-  }
-}
-
-function endFirewall(success) {
-  state.firewallActive = false;
-  if (firewallTimerInterval) {
-    clearTimeout(firewallTimerInterval);
-    firewallTimerInterval = null;
-  }
-
-  var result = document.getElementById('fwResult');
-  result.style.display = 'block';
-  if (success) {
-    var bonus = Math.floor(state.dps * CONFIG.FW_REWARD_DPS_MULT * (1 + state.level * CONFIG.FW_REWARD_LEVEL_SCALE));
-    addData(bonus);
-    result.textContent = t('fwSuccess', { n: formatData(bonus) });
-    result.className = 'fwResult success';
-    playSound('levelup');
-    calculateStats();
-    bus.emit(EVENTS.DATA_CHANGED);
-    showToast(t('fwSuccess', { n: formatData(bonus) }), 'info');
-    addTermLines(['[✓] Firewall bypassed +' + formatData(bonus)]);
-  } else {
-    result.textContent = t('fwFail');
-    result.className = 'fwResult fail';
-    showToast(t('fwFail'), 'warn');
-    addTermLines(['[✗] Firewall active — connection failed']);
-  }
-
-  setTimeout(function () {
-    document.getElementById('fwOverlay').classList.remove('open');
-    scheduleFirewall();
-  }, CONFIG.FW_DISPLAY_DELAY_MS);
-}
-
-function skipFirewall() {
-  if (state.firewallActive) {
-    endFirewall(false);
-  } else {
-    document.getElementById('fwOverlay').classList.remove('open');
-    scheduleFirewall();
-  }
-}
+/* --- FIREWALL MINIGAME (moved to typing events) --- */
+// Firewall is now handled as a typing event type in generateTypingEventData/startTypingEvent/handleFirewallClick
 
 /* --- AUTO CLICK --- */
 function setupAutoClick() {
@@ -1058,16 +763,6 @@ function gameLoop() {
   if (state.dps > 0) {
     var gain = state.dps / (1000 / CONFIG.GAME_LOOP_TICK_MS);
     addData(gain);
-    if (state.bossActive) {
-      // Shield boss: DPS does not bypass shield
-      if (state.bossType !== 'shield' || state.bossShieldHp <= 0) {
-        state.bossData += gain;
-      }
-      var pct = Math.min(100, (state.bossData / state.bossThreshold) * 100);
-      var bar = document.getElementById('bossBarInner');
-      if (bar) bar.style.width = pct + '%';
-      if (state.bossData >= state.bossThreshold) endBoss(true);
-    }
     state.playTime += CONFIG.GAME_LOOP_TICK_MS / 1000;
     if (state.combo > 1 && state.lastClickTime) {
       var bar = document.getElementById('comboBarInner');
@@ -1118,12 +813,13 @@ function validateState(saved) {
     lastSaveTime: null, synergy: false, architect: false, architectCount: 0,
     totalCrits: 0, combo: 0, playTime: 0, prestigeProgress: 0,
     prestigeMultiplier: 1, prestigeCount: 0, totalDataEarned: 0,
-    firewallEnabled: true, prestigePoints: 0,
+    prestigePoints: 0,
     soundEnabled: true, autoBuyEnabled: false, buyMode: 1,
     upgrades: {}, achievements: {}, ownedSkins: [],
     prestigeShop: {}, activeSkin: 'default', lang: 'es',
-    bossType: 'normal', bossShieldHp: 0,
-    bossRegenActive: false, bossCounterTimer: 0,
+    bossMeter: 0,
+    bossGauntletActive: false, bossGauntletSteps: [], bossGauntletStep: 0,
+    bossGauntletVariant: 'normal', totalBossGauntletWins: 0, bossVariantsDefeated: {},
     typingEventActive: false, typingEventData: null,
     synergyOverdrive: false, synergyCipher: false,
     synergyCombo: false, synergyMeta: false,
@@ -1155,6 +851,9 @@ function loadGame() {
       if (typeof saved !== 'object' || saved === null) return false;
       validateState(saved);
       state = Object.assign(state, saved);
+      // Clear any stuck typing/blocking state from a previous session
+      state.typingEventActive = false;
+      state.typingEventData = null;
       calculateStats();
 
       var rootkitLevel = state.upgrades['rootkit'] || 0;
@@ -1186,13 +885,8 @@ function resetGame(hard) {
   localStorage.removeItem(SAVE_KEY);
   termLines = [];
   if (autoClickInterval) clearInterval(autoClickInterval);
-  if (firewallTimeout) clearTimeout(firewallTimeout);
-  if (firewallTimerInterval) clearTimeout(firewallTimerInterval);
-  if (bossScheduleTimeout) clearTimeout(bossScheduleTimeout);
   if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
   if (typingScheduleTimeout) clearTimeout(typingScheduleTimeout);
-  state.firewallActive = false;
-  state.bossActive = false;
   state.eventActive = null;
   state = {
     data: 0,
@@ -1218,16 +912,18 @@ function resetGame(hard) {
     ownedSkins: hard ? [] : state.ownedSkins.slice(),
     soundEnabled: hard ? true : state.soundEnabled,
     playTime: 0,
-    firewallEnabled: true,
     prestigePoints: hard ? 0 : (state.prestigePoints || 0),
     prestigeProgress: hard ? 0 : state.prestigeProgress,
     prestigeShop: hard ? {} : Object.assign({}, state.prestigeShop),
     buyMode: 1,
     autoBuyEnabled: hard ? false : state.autoBuyEnabled,
-    bossType: 'normal',
-    bossShieldHp: 0,
-    bossRegenActive: false,
-    bossCounterTimer: 0,
+    bossMeter: 0,
+    bossGauntletActive: false,
+    bossGauntletSteps: [],
+    bossGauntletStep: 0,
+    bossGauntletVariant: 'normal',
+    totalBossGauntletWins: hard ? 0 : (state.totalBossGauntletWins || 0),
+    bossVariantsDefeated: hard ? {} : Object.assign({}, state.bossVariantsDefeated || {}),
     typingEventActive: false,
     typingEventData: null,
     synergyOverdrive: false,
@@ -1240,9 +936,7 @@ function resetGame(hard) {
   bus.emit(EVENTS.GAME_RESET);
   setupAutoClick();
   setupAutoBuy();
-  scheduleFirewall();
   scheduleEvent();
-  scheduleBoss();
   scheduleTypingEvent();
 }
 
@@ -1349,35 +1043,17 @@ function generateTypingEventData(type) {
   var def = TYPEVENT_DEFS.find(function (d) { return d.id === type; });
   if (!def) return null;
   switch (type) {
-    case 'sql_inject': {
-      var target = Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase();
-      var words = ['UNION SELECT * FROM users', 'DROP TABLE logs', 'SELECT password FROM admins', 'INSERT INTO root VALUES(1)', 'UPDATE config SET level=99'];
-      var word = words[Math.floor(Math.random() * words.length)];
-      return { type: type, dur: def.dur, word: word, target: target, display: word, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
-    }
     case 'brute_force': {
-      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      var len = 4 + Math.floor(Math.random() * 3);
+      var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+      var len = 3 + Math.floor(Math.random() * 3);
       var key = '';
       for (var i = 0; i < len; i++) key += chars[Math.floor(Math.random() * chars.length)];
       return { type: type, dur: def.dur, word: key, display: key, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
     }
-    case 'decode': {
-      var decodedWords = ['HACK', 'DATA', 'CODE', 'ROOT', 'SHELL', 'MATRIX', 'CYBER', 'BYTE'];
-      var word = decodedWords[Math.floor(Math.random() * decodedWords.length)];
-      var binary = '';
-      for (var i = 0; i < word.length; i++) {
-        var bin = word.charCodeAt(i).toString(2);
-        while (bin.length < 8) bin = '0' + bin;
-        if (i > 0) binary += ' ';
-        binary += bin;
-      }
-      return { type: type, dur: def.dur, word: word, display: binary, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
-    }
     case 'command_chain': {
       var allCmds = ['ls', 'grep', 'awk', 'sort', 'cat', 'tail', 'find', 'chmod', 'ssh', 'ping', 'curl', 'wget'];
       var count = 3 + Math.floor(state.level / 5);
-      if (count > 6) count = 6;
+      if (count > 5) count = 5;
       var cmds = [];
       var used = {};
       for (var i = 0; i < count; i++) {
@@ -1389,11 +1065,57 @@ function generateTypingEventData(type) {
       return { type: type, dur: def.dur, word: cmds[0], chain: cmds, chainStep: 0, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
     }
     case 'captcha': {
-      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-      var len = 4 + Math.floor(Math.random() * 3);
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      var len = 3 + Math.floor(Math.random() * 3);
       var captcha = '';
       for (var i = 0; i < len; i++) captcha += chars[Math.floor(Math.random() * chars.length)];
       return { type: type, dur: def.dur, word: captcha, display: captcha, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'seq_num': {
+      var start = 1 + Math.floor(Math.random() * 50);
+      var step = 1 + Math.floor(Math.random() * 10);
+      var seq = [];
+      for (var i = 0; i < 4; i++) seq.push(start + i * step);
+      var missingIdx = Math.floor(Math.random() * 4);
+      var correct = seq[missingIdx];
+      seq[missingIdx] = '___';
+      var wrong1 = correct + (Math.random() < 0.5 ? step : -step);
+      var wrong2 = correct + step * 2;
+      var opts = [correct, wrong1, wrong2].sort(function () { return Math.random() - 0.5; });
+      return { type: type, dur: def.dur, word: String(correct), display: seq.join(', '), options: opts, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'seq_step': {
+      var start = 1 + Math.floor(Math.random() * 20);
+      var step = 1 + Math.floor(Math.random() * 5);
+      var seq = [];
+      for (var i = 0; i < 3; i++) seq.push(start + i * step);
+      var correct = start + 3 * step;
+      var wrong1 = correct + step;
+      var wrong2 = correct - (Math.random() < 0.5 ? step : step * 2);
+      var opts = [correct, wrong1, wrong2].sort(function () { return Math.random() - 0.5; });
+      return { type: type, dur: def.dur, word: String(correct), display: seq.join(', ') + ', ?', options: opts, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'simon': {
+      var simonLen = 3 + Math.floor(state.level / 10);
+      if (simonLen > 6) simonLen = 6;
+      var simonSeq = [];
+      for (var i = 0; i < simonLen; i++) simonSeq.push(1 + Math.floor(Math.random() * 4));
+      return { type: type, dur: def.dur, word: simonSeq.join(''), simonSeq: simonSeq, simonStep: 0, rewardMult: def.rewardMult, penaltyMult: def.penaltyMult };
+    }
+    case 'firewall': {
+      var nodeCount = CONFIG.FW_NODE_BASE + Math.floor(state.level / CONFIG.FW_NODE_DIVISOR);
+      if (nodeCount > CONFIG.FW_NODE_MAX) nodeCount = CONFIG.FW_NODE_MAX;
+      var timeLimit = Math.max(5, 15 - Math.floor(state.level / 10));
+      var nodes = [];
+      for (var i = 1; i <= nodeCount; i++) {
+        nodes.push({
+          num: i,
+          x: 10 + Math.random() * 70,
+          y: 10 + Math.random() * 70,
+        });
+      }
+      var bonusMult = def.rewardMult * (1 + state.level * CONFIG.FW_REWARD_LEVEL_SCALE);
+      return { type: type, dur: timeLimit, word: String(nodeCount), nodes: nodes, nodeStep: 0, rewardMult: bonusMult, penaltyMult: def.penaltyMult };
     }
   }
   return null;
@@ -1406,8 +1128,8 @@ function scheduleTypingEvent(urgent) {
 }
 
 function startRandomTypingEvent() {
-  if (state.bossActive || state.firewallActive || state.typingEventActive) { scheduleTypingEvent(true); return; }
-  var types = ['sql_inject', 'brute_force', 'decode', 'command_chain'];
+  if (state.typingEventActive) { scheduleTypingEvent(true); return; }
+  var types = ['brute_force', 'command_chain', 'seq_num', 'seq_step', 'simon', 'firewall'];
   if (Math.random() < 0.15) {
     startTypingEvent('captcha');
   } else {
@@ -1432,27 +1154,30 @@ function startTypingEvent(type) {
   var input = document.getElementById('typingInput');
   var timer = document.getElementById('typingTimer');
   var result = document.getElementById('typingResult');
+  var seqOptions = document.getElementById('seqOptions');
+  var simonGrid = document.getElementById('simonGrid');
 
+  // Hide alternate UIs by default
   result.style.display = 'none';
   input.value = '';
   input.style.display = 'block';
   input.disabled = false;
+  if (seqOptions) seqOptions.style.display = 'none';
+  if (simonGrid) simonGrid.style.display = 'none';
+
+  // Reset simon cells
+  if (simonGrid) {
+    var cells = simonGrid.querySelectorAll('.simonCell');
+    for (var ci = 0; ci < cells.length; ci++) {
+      cells[ci].classList.remove('active', 'lit', 'wrong');
+    }
+  }
 
   switch (type) {
-    case 'sql_inject':
-      prompt.textContent = t('sqlInjectTarget', { target: data.target });
-      hint.textContent = t('sqlInjectWord', { word: data.word }) + ' [Enter]';
-      display.textContent = '> ' + '_'.repeat(data.word.length);
-      break;
     case 'brute_force':
       prompt.textContent = t('bruteForceKey', { key: data.word });
       hint.textContent = t('bruteForceHint') + ' [Enter]';
       display.textContent = data.word;
-      break;
-    case 'decode':
-      prompt.textContent = t('decodePrompt');
-      hint.textContent = t('decodeHint') + ' [Enter]';
-      display.textContent = data.display;
       break;
     case 'command_chain':
       prompt.textContent = t('commandChainPrompt', { n: data.chain.length - data.chainStep });
@@ -1464,13 +1189,80 @@ function startTypingEvent(type) {
       hint.textContent = t('captchaHint') + ' [Enter]';
       display.textContent = data.display;
       break;
+    case 'seq_num':
+      input.style.display = 'none';
+      prompt.textContent = t('seqNumTarget');
+      hint.textContent = t('seqNumHint');
+      display.textContent = data.display;
+      if (seqOptions) {
+        seqOptions.style.display = 'flex';
+        var btns = seqOptions.querySelectorAll('.seqOptionBtn');
+        for (var bi = 0; bi < btns.length && bi < data.options.length; bi++) {
+          btns[bi].textContent = data.options[bi];
+          btns[bi].dataset.value = data.options[bi];
+        }
+      }
+      break;
+    case 'seq_step':
+      input.style.display = 'none';
+      prompt.textContent = t('seqStepTarget');
+      hint.textContent = t('seqStepHint');
+      display.textContent = data.display;
+      if (seqOptions) {
+        seqOptions.style.display = 'flex';
+        var btns2 = seqOptions.querySelectorAll('.seqOptionBtn');
+        for (var bj = 0; bj < btns2.length && bj < data.options.length; bj++) {
+          btns2[bj].textContent = data.options[bj];
+          btns2[bj].dataset.value = data.options[bj];
+        }
+      }
+      break;
+    case 'simon':
+      input.style.display = 'none';
+      prompt.textContent = t('simonPrompt', { n: data.simonSeq.length });
+      hint.textContent = '';
+      display.textContent = '';
+      if (simonGrid) simonGrid.style.display = 'grid';
+      // Show sequence to player
+      data._simonPlaying = true;
+      playSimonSequence(data);
+      break;
+    case 'firewall':
+      input.style.display = 'none';
+      prompt.textContent = t('wallPrompt');
+      hint.textContent = t('wallHint');
+      display.className = 'typingDisplay firewall';
+      display.textContent = '';
+      // Render nodes inside display
+      display.innerHTML = '';
+      data.nodes.forEach(function (n) {
+        var el = document.createElement('div');
+        el.className = 'fwNode';
+        el.textContent = n.num;
+        el.style.left = n.x + '%';
+        el.style.top = n.y + '%';
+        el.setAttribute('data-num', n.num);
+        el.addEventListener('click', function (e) {
+          e.stopPropagation();
+          handleFirewallClick(parseInt(el.getAttribute('data-num')));
+        });
+        display.appendChild(el);
+      });
+      var stepEl = document.createElement('div');
+      stepEl.className = 'wallStep';
+      stepEl.id = 'wallStep';
+      stepEl.textContent = t('wallStep', { n: 1, m: data.nodes.length });
+      display.appendChild(stepEl);
+      break;
   }
 
   timer.textContent = data.dur + 's';
   overlay.classList.add('open');
   addTermLines(['> Typing hack: ' + type]);
 
-  setTimeout(function () { input.focus(); }, 100);
+  if (type !== 'seq_num' && type !== 'seq_step' && type !== 'simon' && type !== 'firewall') {
+    setTimeout(function () { input.focus(); }, 100);
+  }
 
   data._remaining = data.dur;
   if (typingTimerInterval) clearInterval(typingTimerInterval);
@@ -1483,8 +1275,150 @@ function startTypingEvent(type) {
       return;
     }
     timer.textContent = data._remaining + 's';
+    // Simon timer update
+    if (type === 'simon' && data._simonPlaying && data._simonState === 'play') {
+      prompt.textContent = t('simonGo') + ' (' + data._remaining + 's)';
+    }
   }, 1000);
 
+  // Real-time character feedback (only for typing types)
+  if (type !== 'seq_num' && type !== 'seq_step' && type !== 'simon' && type !== 'firewall') {
+    display.dataset.expected = data.word;
+    function onInput() {
+      var val = input.value;
+      var word = display.dataset.expected || '';
+      var html = '';
+      for (var i = 0; i < word.length; i++) {
+        if (i < val.length) {
+          if (val[i].toUpperCase() === word[i].toUpperCase()) {
+            html += '<span style="color:#00ff00;text-shadow:0 0 4px #00ff00">' + word[i] + '</span>';
+          } else {
+            html += '<span style="color:#ff4400;text-shadow:0 0 4px #ff4400">' + word[i] + '</span>';
+          }
+        } else {
+          html += '<span style="color:#666">' + word[i] + '</span>';
+        }
+      }
+      display.innerHTML = html;
+    }
+    data._inputHandler = onInput;
+    input.addEventListener('input', onInput);
+  }
+}
+
+function playSimonSequence(data) {
+  var cells = document.querySelectorAll('.simonCell');
+  data._simonState = 'showing';
+  data._simonIndex = 0;
+  var prompt = document.getElementById('typingPrompt');
+
+  function showNext() {
+    if (data._simonIndex >= data.simonSeq.length) {
+      // Done showing, let player play
+      data._simonState = 'play';
+      data._simonPlaying = false;
+      data._simonStep = 0;
+      prompt.textContent = t('simonGo');
+      return;
+    }
+    var cellNum = data.simonSeq[data._simonIndex];
+    // Turn off all
+    for (var i = 0; i < cells.length; i++) cells[i].classList.remove('lit');
+    // Light up current
+    var cell = cells[cellNum - 1];
+    if (cell) {
+      cell.classList.add('lit');
+      playSound('click');
+    }
+    data._simonIndex++;
+    setTimeout(function () {
+      for (var i = 0; i < cells.length; i++) cells[i].classList.remove('lit');
+      setTimeout(showNext, 250);
+    }, 500);
+  }
+  showNext();
+}
+
+function handleFirewallClick(num) {
+  if (!state.typingEventActive || !state.typingEventData) return;
+  var data = state.typingEventData;
+  if (data.type !== 'firewall') return;
+
+  if (num === data.nodeStep + 1) {
+    data.nodeStep++;
+    // Hide clicked node
+    var el = document.querySelector('.fwNode[data-num="' + num + '"]');
+    if (el) el.classList.add('fwNode-done');
+    var stepEl = document.getElementById('wallStep');
+    if (stepEl) stepEl.textContent = t('wallStep', { n: data.nodeStep + 1, m: data.nodes.length });
+    playSound('click');
+    if (data.nodeStep >= data.nodes.length) {
+      endTypingEvent(true);
+    }
+  } else {
+    // Flash nodes red briefly before failing
+    var allNodes = document.querySelectorAll('.fwNode');
+    for (var i = 0; i < allNodes.length; i++) {
+      allNodes[i].style.borderColor = '#ff0044';
+      allNodes[i].style.color = '#ff0044';
+    }
+    setTimeout(function () {
+      endTypingEvent(false);
+    }, 300);
+  }
+}
+
+function submitSeqAnswer(answer) {
+  if (!state.typingEventActive || !state.typingEventData) return;
+  var data = state.typingEventData;
+  var correct = data.word;
+  if (String(answer) === correct) {
+    endTypingEvent(true);
+  } else {
+    // Flash buttons red briefly before ending
+    var btns = document.querySelectorAll('.seqOptionBtn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].style.borderColor = '#ff0044';
+      btns[i].style.color = '#ff0044';
+    }
+    setTimeout(function () {
+      endTypingEvent(false);
+    }, 300);
+  }
+}
+
+function handleSimonClick(cellNum) {
+  if (!state.typingEventActive || !state.typingEventData) return;
+  var data = state.typingEventData;
+  if (data._simonState !== 'play') return;
+  if (data.type !== 'simon') return;
+
+  var expected = data.simonSeq[data._simonStep];
+  var cells = document.querySelectorAll('.simonCell');
+
+  // Flash cell
+  var cell = cells[cellNum - 1];
+  if (cell) {
+    cell.classList.add('active');
+    setTimeout(function () { cell.classList.remove('active'); }, 200);
+    playSound('click');
+  }
+
+  if (cellNum === expected) {
+    data._simonStep++;
+    if (data._simonStep >= data.simonSeq.length) {
+      endTypingEvent(true);
+    }
+  } else {
+    // Wrong cell
+    if (cell) {
+      cell.classList.add('wrong');
+      playSound('event_bad');
+    }
+    setTimeout(function () {
+      endTypingEvent(false);
+    }, 400);
+  }
 }
 
 function submitTypingInput() {
@@ -1506,11 +1440,13 @@ function submitTypingInput() {
         prompt.textContent = t('commandChainPrompt', { n: data.chain.length - data.chainStep });
         hint.textContent = t('commandChainHint', { cmd: data.word });
         display.textContent = '> ' + data.word;
+        display.dataset.expected = data.word;
         input.value = '';
         input.focus();
       }
     } else {
-      endTypingEvent(false);
+      input.value = '';
+      input.focus();
     }
   } else {
     if (val.toUpperCase() === data.word.toUpperCase()) {
@@ -1523,15 +1459,26 @@ function submitTypingInput() {
 
 function endTypingEvent(success) {
   if (!state.typingEventActive) return;
+  if (state.bossGauntletActive) {
+    endBossAttack(success);
+    return;
+  }
   state.typingEventActive = false;
   var data = state.typingEventData;
   var input = document.getElementById('typingInput');
   var display = document.getElementById('typingDisplay');
   var result = document.getElementById('typingResult');
   var overlay = document.getElementById('typingOverlay');
+  var seqOptions = document.getElementById('seqOptions');
+  var simonGrid = document.getElementById('simonGrid');
 
   input.disabled = true;
+  input.style.display = 'block';
   if (typingTimerInterval) { clearInterval(typingTimerInterval); typingTimerInterval = null; }
+  if (data && data._inputHandler) { input.removeEventListener('input', data._inputHandler); }
+  display.dataset.expected = '';
+  if (seqOptions) seqOptions.style.display = 'none';
+  if (simonGrid) simonGrid.style.display = 'none';
 
   // Show result prominently in the display area
   display.style.fontSize = '1.6rem';
@@ -1552,6 +1499,9 @@ function endTypingEvent(success) {
     addTermLines(['[✓] Typing hack success +' + formatData(bonus)]);
     calculateStats();
     bus.emit(EVENTS.DATA_CHANGED);
+    if (!data || !data._isBossAttack) {
+      incrementBossMeter();
+    }
   } else {
     var penalty = data.penaltyMult > 0 ? Math.floor(state.data * data.penaltyMult) : 0;
     if (penalty > 0) {
@@ -1570,12 +1520,15 @@ function endTypingEvent(success) {
     addTermLines(['[✗] Typing hack — failed']);
   }
 
-  scheduleTypingEvent();
+  if (!state.bossGauntletActive) {
+    scheduleTypingEvent();
+  }
 
   setTimeout(function () {
     overlay.classList.remove('open');
     typingCaptchaActive = false;
     state.typingEventData = null;
+    display.className = 'typingDisplay';
     display.style.fontSize = '';
     display.style.padding = '';
     display.style.color = '';

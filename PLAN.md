@@ -254,25 +254,28 @@ Panel con métricas del jugador.
 
 ---
 
-### 7. Minijuego: "Desactivar Firewall"  ✅
+### 7. Minijuego: "Desactivar Firewall"  ✅ → Migrado a evento de tipeo
 
-Minijuego opcional que aparece cada 60-120s para ganar bonus.
+Firewall era un minijuego aparte con su propio overlay y timer. Se integró al sistema de typing events como un tipo más.
 
-**Mecánica:**
-- Overlay con nodos numerados en posiciones aleatorias
-- Hacer click en orden ascendente (1→2→3...)
-- 3-8 nodos según nivel del jugador
-- Timer: 5-2 segundos según nivel
+**Mecánica actual:**
+- Aparece como evento de tipeo (`'firewall'` en TYPEVENT_DEFS) dentro del pool normal
+- Nodos numerados en posiciones aleatorias dentro de `#typingDisplay` (ahora con clase `.typingDisplay.firewall`)
+- Click en orden ascendente (1→2→3...)
+- 3-8 nodos según nivel
+- Timer dinámico: `max(5, 15 - floor(level/10))` — empieza en 15s, mínimo 5s
 - Bonus: `dps * 10 * (1 + nivel * 0.1)`
-- Se puede ignorar
+- Se puede ignorar con IGNORE como cualquier typing event
+- Misma UI de resultado (✔/✘) que los demás eventos
 
-**Cambios necesarios:**
-- Estado: `state.firewallActive`, `state.firewallNodes[]`, `state.firewallTimer`
-- Función `startFirewallGame()` — generar nodos, mostrar overlay
-- Función `endFirewallGame(success)` — dar bonus o no
-- Overlay HTML + CSS para el minijuego
-- Timer con `setInterval` o `requestAnimationFrame`
-- Llamar `scheduleNextFirewall()` después de cada juego o cada N tiempo
+**Cambios:**
+- [x] `config.js`: entrada `firewall` en TYPEVENT_DEFS, i18n strings (`wallTitle`, `wallPrompt`, `wallStep`)
+- [x] `systems.js`: `generateTypingEventData` genera nodos/timer dinámico, `startTypingEvent` renderiza nodos en display, `handleFirewallClick()` reemplaza `clickFirewallNode()`. Eliminadas funciones viejas `scheduleFirewall()`, `startFirewall()`, `endFirewall()`, `skipFirewall()`
+- [x] `index.html`: eliminado `#fwOverlay` completo
+- [x] `style.css`: eliminadas reglas `#fwOverlay`, `#fwPanel`, `#fwTimerBar`, `#fwResult`, etc. Agregados `.typingDisplay.firewall` y `.wallStep`
+- [x] `boss.js`: ataque `firewall` en pool + caso en `showTypingEventUI()`
+- [x] `main.js`: eliminados `scheduleFirewall()`, listeners de `fwIgnore`/`fwOverlay`
+- [x] `state.js`: eliminados `firewallTimeout`, `firewallTimerInterval`
 
 ---
 
@@ -353,7 +356,7 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 
 ---
 
-### P5 — Eventos de Hackeo Tipeado
+### P5 — Eventos de Hackeo Tipeado ✅
 
 Minijuegos opcionales que aparecen cada 60-120s (alternando con firewall). El jugador debe tipear algo para ganar un bonus de datos.
 
@@ -364,21 +367,10 @@ Minijuegos opcionales que aparecen cada 60-120s (alternando con firewall). El ju
 - Falla/tiempo → nada, posible penalización menor
 - Se puede ignorar (botón "IGNORE" como en firewall)
 
-**Evento 1: `sql_inject` — Inyección SQL**
-- Aparece: `root@matrix:~$ sql_inject --target=0x4D3 > _`
-- El jugador debe tipear una palabra mostrada (ej: `UNION SELECT * FROM users`)
-- La palabra aparece cifrada/glitch y se devela letra por letra (2 letras/s)
-- Timer: 8s. Bonus: `dps * 10`
-
 **Evento 2: `brute_force` — Fuerza Bruta**
 - Aparece una clave de 4-6 caracteres (ej: `A3F9`)
 - El jugador debe reescribirla exactamente
 - Timer: 5s. Bonus: `dps * 8`. Penalización: -10% data actual si falla
-
-**Evento 3: `decode` — Decodificar Binario**
-- Aparece: `01001000 01000001 01000011 01001011` → hay que escribir "HACK"
-- Secuencia de 3-5 letras en binario que el jugador debe decodificar y tipear
-- Timer: 10s. Bonus: `dps * 15`
 
 **Evento 4: `command_chain` — Cadena de Comandos**
 - Aparece una secuencia de comandos que el jugador debe repetir en orden
@@ -390,11 +382,63 @@ Minijuegos opcionales que aparecen cada 60-120s (alternando con firewall). El ju
 - El jugador debe tipear lo que ve
 - Timer: 6s. Bonus: `dps * 6`. Siempre aparece (no compite con otros eventos)
 
-**Cambios necesarios:**
-- Nuevo estado: `state.typingEventActive`, `state.typingEventData` (comandos, timer, bonus)
-- `startTypingEvent(type)` — genera el evento, muestra overlay, inicia timer
-- `handleTypingInput(input)` — verifica si coincide, concede bonus
-- Overlay HTML reutilizable (tipo terminal) con input oculto o `contenteditable`
-- Escucha global de teclado para capturar input sin input field visible
-- `scheduleNextTypingEvent()` — integrado con `scheduleEvent()` o independiente
-- CSS: overlay tipo terminal con prompt parpadeante, texto verde sobre negro
+**Evento 6: `seq_num` — Secuencia Numérica** [NUEVO]
+- Aparece una secuencia de 4 números con uno faltante (`1, 3, 5, ___`)
+- El jugador debe hacer clic en la opción correcta entre 3 botones
+- Sin tipeo, solo clics. Timer: 10s. Bonus: `dps * 10`
+
+**Evento 7: `seq_step` — Secuencia de Pasos** [NUEVO]
+- Aparecen 3 números y se pide el siguiente (`2, 4, 6, ?`)
+- El jugador debe hacer clic en la opción correcta entre 3 botones
+- Sin tipeo, solo clics. Timer: 10s. Bonus: `dps * 12`
+
+**Evento 8: `simon` — Simon Dice** [NUEVO]
+- Aparecen 4 casillas numeradas (1-4)
+- El sistema ilumina una secuencia aleatoria de 3-6 pasos (según nivel)
+- El jugador debe repetir la secuencia haciendo clic en las casillas en el mismo orden
+- Timer: 8s. Bonus: `dps * 15`
+
+**Eventos eliminados:** `sql_inject` (requería tipear SQL largo), `decode` (requería decodificar binario)
+
+**Cambios realizados:**
+- [x] `config.js`: TYPEVENT_DEFS actualizado (6 eventos), i18n strings para EN/ES
+- [x] `systems.js`: `generateTypingEventData()` con nuevos casos, `startTypingEvent()` con UI alternativa, `submitSeqAnswer()`, `handleSimonClick()`, `playSimonSequence()`
+- [x] `index.html`: `#seqOptions` (3 botones), `#simonGrid` (4 casillas) dentro del typing overlay
+- [x] `style.css`: `.seqOptionBtn`, `.simonCell`, `.simonCell.lit/.active/.wrong`
+- [x] `boss.js`: attack types actualizados, nuevos casos en `showTypingEventUI()`, limpieza de UI alternativas en `endBossAttack()`
+- [x] `main.js`: event listeners para `.seqOptionBtn` y `.simonCell`
+
+---
+
+## Boss Gauntlet — Fases de implementación
+
+### Fase 1 ✅ Limpieza boss viejo + Boss meter en HUD
+- Eliminar `scheduleBoss()`, `startBoss()`, `endBoss()` de systems.js
+- Eliminar DPS boss handling de `gameLoop()`
+- Eliminar shield boss click de core.js
+- Eliminar campos viejos de state (bossType, bossShieldHp, bossRegenActive, bossCounterTimer)
+- Añadir `state.bossMeter` (0-5)
+- Añadir `#bossMeterDisplay` en el HUD
+- Eliminar constantes viejas de config.js
+
+### Fase 2 ⌛ Boss gauntlet funcional (solo variante Normal, 3 ataques)
+- Crear `js/boss.js` con: incrementBossMeter, startBossGauntlet, advanceBossGauntlet, failBossGauntlet, completeBossGauntlet
+- Hook en endTypingEvent(): si success → incrementBossMeter(); si bossGauntletActive → redirigir a gauntlet
+- Constantes: BOSS_METER_REQUIRED=5, BOSS_GAUNTLET_STEPS=3, BOSS_BASE_REWARD=50
+
+### Fase 3 ⏳ Música tensa 120 BPM
+- startBossMusic() / stopBossMusic() con Web Audio API
+- Loop de oscilador cuadrado + bajo senoidal
+
+### Fase 4 ⏳ Diseño visual: overlay rojo, skull ASCII, animaciones
+- Rediseñar #bossOverlay con tema rojo/carmesí
+- Skull ASCII en el overlay
+- Efecto glitch en transiciones de ataque
+
+### Fase 5 ⏳ Variantes (8 tipos con penalizaciones y bonuses)
+- Normal, Shield, Regen, Counter, Mirror, Berserker, Echo, Quick
+- Lógica específica en failBossGauntlet y completeBossGauntlet
+
+### Fase 6 ⏳ Logros (9 achievements + skin boss)
+- 1 logro por variante derrotada + 1 maestro (variant_hunter)
+- Skin boss en ACHIEVEMENT_SKIN_REWARDS y VISUAL_SKINS

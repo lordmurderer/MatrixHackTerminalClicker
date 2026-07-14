@@ -34,13 +34,13 @@ let state = {
   maxComboMult: 5,
   eventActive: null,
   eventTimer: null,
-  bossActive: false,
-  bossData: 0,
-  bossThreshold: 0,
-  bossType: 'normal',
-  bossShieldHp: 0,
-  bossRegenActive: false,
-  bossCounterTimer: 0,
+  bossMeter: 0,
+  bossGauntletActive: false,
+  bossGauntletSteps: [],
+  bossGauntletStep: 0,
+  bossGauntletVariant: 'normal',
+  totalBossGauntletWins: 0,
+  bossVariantsDefeated: {},
   typingEventActive: false,
   typingEventData: null,
   synergyOverdrive: false,
@@ -82,8 +82,6 @@ let autoClickInterval = null;
 let gameLoopInterval = null;
 let comboTimeout = null;
 let lastLevel = 1;
-let firewallTimeout = null;
-let firewallTimerInterval = null;
 let audioCtx = null;
 
 /* --- RENDER DIRTY FLAGS --- */
