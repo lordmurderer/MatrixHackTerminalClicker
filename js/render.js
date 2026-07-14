@@ -284,6 +284,10 @@ function renderUpgrades() {
         ownedRow.style.color = '';
       }
 
+      var fill = document.createElement('div');
+      fill.className = 'upgradeFill';
+      card.appendChild(fill);
+
       card.appendChild(headerRow);
       card.appendChild(descRow);
       card.appendChild(costRow);
@@ -365,6 +369,13 @@ function refreshUpgradeState() {
     if (limitInner && def.maxLevel > 0) {
       limitInner.style.width = (owned / def.maxLevel * 100) + '%';
     }
+    // Update fill bar
+    var fillEl = card.querySelector('.upgradeFill');
+    if (fillEl) {
+      var fillPct = isMaxed ? 100 : Math.min(100, (state.data / cost) * 100);
+      fillEl.style.width = fillPct + '%';
+    }
+
     var ownedRow = card.querySelector('.upgradeOwned');
     if (ownedRow) {
       if (isMaxed) {
