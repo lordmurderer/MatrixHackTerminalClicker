@@ -217,7 +217,7 @@ function renderUpgrades() {
 
       var iconSpan = document.createElement('span');
       iconSpan.className = 'upgradeIcon effect-' + u.effect;
-      iconSpan.textContent = u.icon;
+      iconSpan.innerHTML = '<i class="fa-solid ' + u.icon + '"></i>';
 
       var nameSpan = document.createElement('span');
       nameSpan.className = 'upgradeNameText';

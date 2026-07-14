@@ -716,6 +716,9 @@ body {
 .synergyCard .synergyName {
   font-weight: bold; font-size: 0.75rem; display: flex; align-items: center; gap: 5px;
 }
+.synergyCard .synergyName i {
+  width: 1em; text-align: center;
+}
 .synergyCard.unlocked .synergyName { color: #00ff00; }
 .synergyCard.locked .synergyName { color: var(--amber-dark); }
 .synergyReqsRow { display: flex; flex-direction: column; gap: 2px; font-size: 0.6rem; margin-top: 2px; }
@@ -2078,14 +2081,12 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border: 1px solid;
   border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: bold;
+  font-size: 0.7rem;
   flex-shrink: 0;
-  font-family: 'Courier New', monospace;
 }
 
 .upgradeIcon.effect-click {

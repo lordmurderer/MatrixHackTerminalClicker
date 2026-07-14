@@ -139,7 +139,7 @@ function renderSynergies() {
 
     var nameRow = document.createElement('div');
     nameRow.className = 'synergyName';
-    nameRow.textContent = (unlocked ? '\u2713 ' : '\u25CB ') + def.icon + ' ' + t(def.nameKey);
+    nameRow.innerHTML = (unlocked ? '\u2713 ' : '\u25CB ') + '<i class="fa-solid ' + def.icon + '"></i> ' + t(def.nameKey);
     card.appendChild(nameRow);
     card.insertAdjacentHTML('beforeend', getSynergyReqHTML(def));
     card.insertAdjacentHTML('beforeend', getSynergyEffectText(def));
@@ -529,7 +529,7 @@ function applyEvent(evt) {
     addData(bonus);
     playSound('event');
     showToast(t('eventWindfall') + ' +' + formatData(bonus), 'info');
-    document.getElementById('eventIcon').textContent = evt.icon;
+    document.getElementById('eventIcon').innerHTML = '<i class="fa-solid ' + evt.icon + '"></i>';
     document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatData(bonus);
     document.getElementById('eventTimer').textContent = '';
     el.className = 'open event-info';
@@ -552,7 +552,7 @@ function applyEvent(evt) {
     addTermLines(['> Event: ' + evt.id + ' (' + evt.dur + 's)']);
   }
   playSound(evt.id === 'data_leak' ? 'event_bad' : 'event');
-  document.getElementById('eventIcon').textContent = evt.icon;
+  document.getElementById('eventIcon').innerHTML = '<i class="fa-solid ' + evt.icon + '"></i>';
   document.getElementById('eventText').textContent = t(evt.descKey, { dur: evt.dur });
   document.getElementById('eventTimer').textContent = evt.dur + 's';
   el.className = 'open ' + (evt.id === 'data_leak' ? 'event-warn' : 'event-buff');
