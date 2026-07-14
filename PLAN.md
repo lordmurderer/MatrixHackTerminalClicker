@@ -296,9 +296,9 @@ Minijuego opcional que aparece cada 60-120s para ganar bonus.
 ### P2 — Contenido
 
 - [x] **8 nuevas mejoras** — phantom, overmind, evolution, transcend, apocalypse, collective, cipher, keymaker (rellenan huecos de progresión y extienden endgame)
-- [ ] **Eventos de hackeo tipeado** — 4-5 minigames donde el jugador debe escribir comandos, códigos o secuencias para ganar bonus (ver sección abajo)
-- [ ] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
-- [ ] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
+- [x] **Eventos de hackeo tipeado** — 4-5 minigames donde el jugador debe escribir comandos, códigos o secuencias para ganar bonus (ver sección abajo)
+- [x] **Más bosses** — Boss con escudo, boss con regeneración, boss que contraataca
+- [x] **Logros con recompensas cosméticas** — Algunos achievements desbloquean skins
 
 ### P2b — V2 Upgrade Expansion (~20 nuevas mejoras)
 
