@@ -519,6 +519,13 @@ function updateEventDisplay() {
   }
 }
 
+function triggerEventFlash(type) {
+  var flash = document.getElementById('eventFlash');
+  if (!flash) return;
+  flash.className = 'flash-' + type;
+  setTimeout(function () { flash.className = ''; }, 450);
+}
+
 function applyEvent(evt) {
   var el = document.getElementById('eventDisplay');
   if (!el) return;
@@ -533,6 +540,7 @@ function applyEvent(evt) {
     document.getElementById('eventText').textContent = t('eventWindfall') + ' +' + formatData(bonus);
     document.getElementById('eventTimer').textContent = '';
     el.className = 'open event-info';
+    triggerEventFlash('info');
     addTermLines(['[+] Windfall +' + formatData(bonus)]);
     setTimeout(function () { el.classList.remove('open'); }, CONFIG.EVENT_WINDFALL_DISPLAY_MS);
     bus.emit(EVENTS.DATA_CHANGED);
@@ -556,6 +564,7 @@ function applyEvent(evt) {
   document.getElementById('eventText').textContent = t(evt.descKey, { dur: evt.dur });
   document.getElementById('eventTimer').textContent = evt.dur + 's';
   el.className = 'open ' + (evt.id === 'data_leak' ? 'event-warn' : 'event-buff');
+  triggerEventFlash(evt.id === 'data_leak' ? 'warn' : 'buff');
   calculateStats();
   bus.emit(EVENTS.EVENT_CHANGED);
   scheduleEvent();
@@ -1060,6 +1069,14 @@ function gameLoop() {
       if (state.bossData >= state.bossThreshold) endBoss(true);
     }
     state.playTime += CONFIG.GAME_LOOP_TICK_MS / 1000;
+    if (state.combo > 1 && state.lastClickTime) {
+      var bar = document.getElementById('comboBarInner');
+      if (bar) {
+        var elapsed = Date.now() - state.lastClickTime;
+        var pct = Math.max(0, 100 - (elapsed / CONFIG.COMBO_TIMEOUT_MS) * 100);
+        bar.style.width = pct + '%';
+      }
+    }
     calculateStats();
     checkAchievements();
     bus.emit(EVENTS.DATA_CHANGED);

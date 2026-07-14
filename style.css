@@ -150,6 +150,37 @@ body {
   width: 100%;
   height: 100%;
   opacity: 0;
+  pointer-events: none;
+}
+
+.glitch::before {
+  color: #00ffcc;
+  z-index: -1;
+  animation: glitchBefore 4s ease-in-out infinite;
+}
+
+.glitch::after {
+  color: #ff44ff;
+  z-index: -2;
+  animation: glitchAfter 4s ease-in-out infinite;
+}
+
+@keyframes glitchBefore {
+  0%, 92%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+  93% { opacity: 0.8; transform: translate(-2px, 1px); clip-path: inset(20% 0 60% 0); }
+  94% { opacity: 0.6; transform: translate(1px, -1px); clip-path: inset(60% 0 10% 0); }
+  95% { opacity: 0; }
+  96% { opacity: 0.7; transform: translate(-1px, 2px); clip-path: inset(10% 0 70% 0); }
+  97% { opacity: 0; }
+}
+
+@keyframes glitchAfter {
+  0%, 92%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+  93% { opacity: 0.7; transform: translate(2px, -1px); clip-path: inset(50% 0 30% 0); }
+  94% { opacity: 0.4; transform: translate(-2px, 1px); clip-path: inset(5% 0 80% 0); }
+  95% { opacity: 0; }
+  96% { opacity: 0.6; transform: translate(3px, 0); clip-path: inset(70% 0 5% 0); }
+  97% { opacity: 0; }
 }
 
 .prompt {
@@ -225,10 +256,22 @@ body {
   color: var(--amber-bright);
   line-height: 1.2;
   transition: text-shadow 0.15s;
+  position: relative;
+  z-index: 1;
 }
 
 #dataAmount:active {
   text-shadow: 0 0 25px var(--amber-bright), 0 0 50px var(--amber), 0 0 80px var(--amber-glow);
+}
+
+#dataAmount.dataPulse {
+  animation: dataGlow 0.3s ease-out;
+}
+
+@keyframes dataGlow {
+  0% { text-shadow: 0 0 15px var(--amber-bright), 0 0 30px var(--amber-glow); }
+  40% { text-shadow: 0 0 30px var(--amber-bright), 0 0 60px var(--amber), 0 0 90px var(--amber-glow); }
+  100% { text-shadow: 0 0 15px var(--amber-bright), 0 0 30px var(--amber-glow); }
 }
 
 .dataLabel {
@@ -407,6 +450,129 @@ body {
   border-color: #ff0000;
   color: #ff0000;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 0, 0, 0.1);
+}
+
+/* Keyboard shortcut badges */
+.kbdShortcut {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 0.5rem;
+  color: var(--amber-dark);
+  border: 1px solid var(--amber-bg);
+  padding: 0 3px;
+  font-family: 'Courier New', monospace;
+  line-height: 1.2;
+  opacity: 0.6;
+}
+
+.kbdInBtn {
+  font-size: 0.5rem;
+  color: var(--amber-bg);
+  border: 1px solid var(--amber-bg);
+  padding: 0 2px;
+  font-family: 'Courier New', monospace;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+
+#hackBtn {
+  position: relative;
+}
+
+/* Stat icons */
+.statIcon {
+  font-size: 0.65rem;
+  color: var(--amber-dim);
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Effect badge */
+.effectBadge {
+  font-size: 0.5rem;
+  padding: 0 3px;
+  border: 1px solid;
+  border-radius: 2px;
+  line-height: 1.3;
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: 0.7;
+  font-family: 'Courier New', monospace;
+}
+
+.effectBadge.effect-click { border-color: var(--amber); color: var(--amber-bright); background: rgba(255, 136, 0, 0.1); }
+.effectBadge.effect-dps { border-color: #00ccff; color: #00ccff; background: rgba(0, 204, 255, 0.1); }
+.effectBadge.effect-crit { border-color: #ffcc00; color: #ffcc00; background: rgba(255, 204, 0, 0.1); }
+.effectBadge.effect-discount { border-color: #cc66ff; color: #cc66ff; background: rgba(204, 102, 255, 0.1); }
+.effectBadge.effect-autoclick { border-color: #00dd88; color: #00dd88; background: rgba(0, 221, 136, 0.1); }
+.effectBadge.effect-offline { border-color: #ff4466; color: #ff4466; background: rgba(255, 68, 102, 0.1); }
+.effectBadge.effect-mult_click { border-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.1); }
+.effectBadge.effect-mult_dps { border-color: #00ddff; color: #00ddff; background: rgba(0, 221, 255, 0.1); }
+.effectBadge.effect-clickDps { border-color: #ffaa00; color: #ffcc44; background: rgba(255, 170, 0, 0.1); }
+.effectBadge.effect-critDmg { border-color: #ff44ff; color: #ff66ff; background: rgba(255, 68, 255, 0.1); }
+.effectBadge.effect-autoSpeed { border-color: #44aaff; color: #66ccff; background: rgba(68, 170, 255, 0.1); }
+.effectBadge.effect-comboBoost { border-color: #ff8800; color: #ffaa33; background: rgba(255, 136, 0, 0.1); }
+
+/* Mini progress bar for limited upgrades */
+.upgradeLimitBar {
+  height: 2px;
+  border-radius: 1px;
+  margin-top: 1px;
+  background: rgba(255, 136, 0, 0.08);
+  overflow: hidden;
+}
+
+.upgradeLimitBarInner {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.15s;
+}
+
+.upgradeLimitBarInner.upgradeLimitRarity-uncommon { background: rgb(0, 200, 80); }
+.upgradeLimitBarInner.upgradeLimitRarity-rare { background: rgb(60, 120, 255); }
+.upgradeLimitBarInner.upgradeLimitRarity-epic { background: rgb(160, 60, 255); }
+.upgradeLimitBarInner.upgradeLimitRarity-legendary { background: #ff8800; }
+.upgradeLimitBarInner.upgradeLimitRarity-common { background: var(--amber); }
+
+/* Event flash overlay */
+#eventFlash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5000;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#eventFlash.flash-warn {
+  animation: flashWarn 0.4s ease-out;
+}
+
+#eventFlash.flash-buff {
+  animation: flashBuff 0.4s ease-out;
+}
+
+#eventFlash.flash-info {
+  animation: flashInfo 0.4s ease-out;
+}
+
+@keyframes flashWarn {
+  0% { opacity: 0.35; background: rgba(255, 0, 0, 0.5); }
+  100% { opacity: 0; }
+}
+
+@keyframes flashBuff {
+  0% { opacity: 0.25; background: rgba(0, 255, 0, 0.4); }
+  100% { opacity: 0; }
+}
+
+@keyframes flashInfo {
+  0% { opacity: 0.2; background: rgba(0, 150, 255, 0.3); }
+  100% { opacity: 0; }
 }
 
 @keyframes prestigeBarPulse {
@@ -666,6 +832,32 @@ body {
   display: none;
   text-align: center;
   animation: pulseText 0.5s ease-in-out infinite;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+#comboText {
+  animation: pulseText 0.5s ease-in-out infinite;
+}
+
+#comboBarOuter {
+  width: 100%;
+  max-width: 200px;
+  height: 3px;
+  background: rgba(255, 136, 0, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 2px auto 0;
+}
+
+#comboBarInner {
+  height: 100%;
+  width: 100%;
+  background: #00ff66;
+  border-radius: 2px;
+  transition: width 0.05s linear;
+  box-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
 }
 
 #statsOverlay {
@@ -1245,9 +1437,22 @@ body {
 /* FLOATING DAMAGE */
 #floatingDamage {
   position: absolute;
+  top: 0;
+  left: 0;
   pointer-events: none;
   width: 0;
   height: 0;
+  z-index: 50;
+}
+
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9997;
+  pointer-events: none;
 }
 
 .floatingText {

@@ -71,6 +71,8 @@ const dom = {};
 const floatingContainer = document.getElementById('floatingDamage');
 const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
+const particleCanvas = document.getElementById('particleCanvas');
+const pCtx = particleCanvas ? particleCanvas.getContext('2d') : null;
 
 let animId = null;
 const TERM_MAX_LINES = 30;
@@ -122,6 +124,9 @@ function setupBusUI() {
 var textPool = [];
 var textPoolMax = 20;
 
+// Click particles
+var particles = [];
+
 /* --- TERMINAL --- */
 function initTerminal() {
   resizeCanvas();
@@ -141,6 +146,10 @@ function initTerminal() {
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  if (particleCanvas) {
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+  }
 }
 
 function getSkin() {
@@ -172,8 +181,30 @@ function drawTerminal() {
   ctx.fillText('root@matrix:~$ ' + blink, 10, bottomY);
 }
 
+function updateParticles() {
+  if (!pCtx || particles.length === 0) return;
+  pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+  for (var p = particles.length - 1; p >= 0; p--) {
+    var pt = particles[p];
+    pt.x += pt.vx;
+    pt.y += pt.vy;
+    pt.vy += 0.08;
+    pt.life--;
+    if (pt.life <= 0) { particles.splice(p, 1); continue; }
+    var alpha = pt.life / pt.maxLife;
+    pCtx.globalAlpha = alpha;
+    pCtx.shadowBlur = 4;
+    pCtx.shadowColor = pt.color;
+    pCtx.fillStyle = pt.color;
+    pCtx.fillRect(pt.x - pt.size / 2, pt.y - pt.size / 2, pt.size, pt.size);
+  }
+  pCtx.globalAlpha = 1;
+  pCtx.shadowBlur = 0;
+}
+
 function terminalLoop() {
   drawTerminal();
+  updateParticles();
   animId = requestAnimationFrame(terminalLoop);
 }
 

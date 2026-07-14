@@ -38,10 +38,41 @@ function cacheDom() {
 
 /* --- HANDLE SHORTCUT KEY --- */
 function handleKeydown(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === ' ' || e.key === 'Enter') {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     e.preventDefault();
     handleClick(null);
+    return;
+  }
+  if (e.key === '1') {
+    var btns = document.querySelectorAll('.buyModeBtn');
+    if (btns[0]) btns[0].click();
+    return;
+  }
+  if (e.key === '2') {
+    var btns = document.querySelectorAll('.buyModeBtn');
+    if (btns[1]) btns[1].click();
+    return;
+  }
+  if (e.key === '3') {
+    var btns = document.querySelectorAll('.buyModeBtn');
+    if (btns[2]) btns[2].click();
+    return;
+  }
+  if (e.key === 'b' || e.key === 'B') {
+    var autoBtn = document.getElementById('autoBuyToggle');
+    if (autoBtn && autoBtn.style.display !== 'none') autoBtn.click();
+    return;
+  }
+  if (e.key === 'a' || e.key === 'A') {
+    var achBtn = document.getElementById('achBtn');
+    if (achBtn) achBtn.click();
+    return;
+  }
+  if (e.key === 's' || e.key === 'S') {
+    var statsBtn = document.getElementById('statsBtn');
+    if (statsBtn) statsBtn.click();
+    return;
   }
 }
 

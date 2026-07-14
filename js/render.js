@@ -2,7 +2,15 @@
 
 /* --- RENDER SECTIONS --- */
 function updateHUD() {
-  dom.dataAmount.textContent = formatData(Math.floor(state.data));
+  var prev = state._lastDisplayedData;
+  var curr = Math.floor(state.data);
+  dom.dataAmount.textContent = formatData(curr);
+  if (curr > (prev || 0)) {
+    dom.dataAmount.classList.remove('dataPulse');
+    void dom.dataAmount.offsetWidth;
+    dom.dataAmount.classList.add('dataPulse');
+  }
+  state._lastDisplayedData = curr;
   dom.clickPower.textContent = formatData(state.clickPower);
   dom.dpsValue.textContent = formatData(state.dps) + '/s';
   dom.critDisplay.textContent = state.critChance;
@@ -95,8 +103,15 @@ function updatePrestige() {
 function updateCombo() {
   if (dom.comboDisplay) {
     if (state.combo > 1) {
-      dom.comboDisplay.textContent = t('comboLabel', { n: state.combo, m: Number(1 + state.combo * CONFIG.COMBO_MULT_PER_STACK).toFixed(1) });
-      dom.comboDisplay.style.display = 'block';
+      dom.comboDisplay.style.display = 'flex';
+      var textEl = document.getElementById('comboText');
+      if (textEl) textEl.textContent = t('comboLabel', { n: state.combo, m: Number(1 + state.combo * CONFIG.COMBO_MULT_PER_STACK).toFixed(1) });
+      var bar = document.getElementById('comboBarInner');
+      if (bar) {
+        var elapsed = Date.now() - (state.lastClickTime || Date.now());
+        var pct = Math.max(0, 100 - (elapsed / CONFIG.COMBO_TIMEOUT_MS) * 100);
+        bar.style.width = pct + '%';
+      }
     } else {
       dom.comboDisplay.style.display = 'none';
     }
@@ -226,6 +241,11 @@ function renderUpgrades() {
       headerRow.appendChild(iconSpan);
       headerRow.appendChild(nameSpan);
 
+      var badge = document.createElement('span');
+      badge.className = 'effectBadge effect-' + u.effect;
+      badge.textContent = u.effect.toUpperCase();
+      headerRow.appendChild(badge);
+
       var descRow = document.createElement('div');
       descRow.className = 'upgradeDesc';
       descRow.textContent = t('upgrade.' + u.id + '.desc');
@@ -249,6 +269,16 @@ function renderUpgrades() {
       card.appendChild(descRow);
       card.appendChild(costRow);
       card.appendChild(ownedRow);
+
+      if (u.maxLevel > 0) {
+        var limitBar = document.createElement('div');
+        limitBar.className = 'upgradeLimitBar';
+        var limitInner = document.createElement('div');
+        limitInner.className = 'upgradeLimitBarInner upgradeLimitRarity-' + (u.rarity || 'common');
+        limitInner.style.width = (owned / u.maxLevel * 100) + '%';
+        limitBar.appendChild(limitInner);
+        card.appendChild(limitBar);
+      }
 
       card.addEventListener('click', function () {
         buyUpgrade(u.id);
@@ -312,6 +342,10 @@ function refreshUpgradeState() {
     card.classList.toggle('bought', owned > 0);
     card.classList.toggle('unowned', owned === 0);
     card.classList.toggle('maxed', isMaxed);
+    var limitInner = card.querySelector('.upgradeLimitBarInner');
+    if (limitInner && def.maxLevel > 0) {
+      limitInner.style.width = (owned / def.maxLevel * 100) + '%';
+    }
     var ownedRow = card.querySelector('.upgradeOwned');
     if (ownedRow) {
       if (isMaxed) {

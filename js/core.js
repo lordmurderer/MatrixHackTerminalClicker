@@ -233,6 +233,7 @@ function trackCombo() {
   if (comboTimeout) clearTimeout(comboTimeout);
   comboTimeout = setTimeout(function () {
     state.combo = 0;
+    state.lastClickTime = null;
     if (dom.comboDisplay) {
       dom.comboDisplay.classList.add('comboBreak');
       setTimeout(function () {
@@ -248,7 +249,7 @@ function applyClickFx(x, y, isCrit) {
   if (isCrit) {
     state.totalCrits++;
     playSound('crit');
-    spawnFloatingCrit(x, y - 30, t('critText'));
+    spawnFloatingCrit(x, y, t('critText'));
     dom.hackBtn.animate([
       { opacity: 1, boxShadow: '0 0 8px rgba(0,255,0,0.2)' },
       { opacity: 0.2, boxShadow: '0 0 30px rgba(0,255,0,0.6)', offset: 0.25 },
@@ -270,8 +271,10 @@ function applyClickFx(x, y, isCrit) {
 
 function doClick(e, isAuto) {
   var rect = dom.hackBtn.getBoundingClientRect();
-  var x = e ? e.clientX - rect.left : rect.width / 2;
-  var y = e ? e.clientY - rect.top : (rect.height / 2);
+  var gameRect = document.getElementById('gameArea').getBoundingClientRect();
+  var cx = (e ? e.clientX : rect.left + rect.width / 2) - gameRect.left;
+  var cy = (e ? e.clientY : rect.top + rect.height / 2) - gameRect.top;
+  if (!isAuto) spawnClickParticles(rect.left + (e ? e.clientX - rect.left : rect.width / 2), rect.top + (e ? e.clientY - rect.top : rect.height / 2));
   var gained = state.clickPower;
   var isCrit = false;
 
@@ -285,7 +288,7 @@ function doClick(e, isAuto) {
     isCrit = true;
   }
 
-  applyClickFx(x, y, isCrit);
+  applyClickFx(cx, cy, isCrit);
 
   if (isAuto) {
     addTermLines(['[AUTO] exploit 0x' + Math.floor(Math.random() * 0xFFFF).toString(16), '+ ' + formatData(gained) + '  OK']);
@@ -317,7 +320,7 @@ function doClick(e, isAuto) {
   if (!isAuto) bus.emit(EVENTS.COMBO_CHANGED);
 
   var prefix = isAuto ? t('autoPrefix') + ' ' : '';
-  spawnFloatingText(x, y, prefix + '+' + formatData(gained));
+  spawnFloatingText(cx, cy, prefix + '+' + formatData(gained));
 }
 
 function handleClick(e) {
@@ -348,8 +351,8 @@ function spawnFloatingText(x, y, text) {
   }
   el.className = 'floatingText';
   el.textContent = text;
-  el.style.left = (x - 30) + 'px';
-  el.style.top = (y - 10) + 'px';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
   el.classList.remove('floatingCrit');
   floatingContainer.appendChild(el);
   el.addEventListener('animationend', function () { el.remove(); });
@@ -362,10 +365,32 @@ function spawnFloatingCrit(x, y, text) {
   }
   el.className = 'floatingCrit';
   el.textContent = text;
-  el.style.left = (x - 50) + 'px';
-  el.style.top = (y - 20) + 'px';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
   floatingContainer.appendChild(el);
   el.addEventListener('animationend', function () { el.remove(); });
+}
+
+/* --- PARTICLES --- */
+function spawnClickParticles(cx, cy) {
+  var count = 12;
+  var skin = getSkin();
+  var colors = [skin.colors.body || '#00ff66', skin.colors.shadow || '#00ff00', '#ff8800'];
+  for (var i = 0; i < count; i++) {
+    var angle = Math.random() * Math.PI * 2;
+    var speed = 1 + Math.random() * 3;
+    particles.push({
+      x: cx + (Math.random() - 0.5) * 10,
+      y: cy + (Math.random() - 0.5) * 10,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1,
+      life: 25 + Math.floor(Math.random() * 15),
+      maxLife: 40,
+      size: 2 + Math.random() * 3,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+  if (particles.length > 200) particles.splice(0, particles.length - 200);
 }
 
 /* --- TOAST --- */
