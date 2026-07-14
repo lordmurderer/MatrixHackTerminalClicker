@@ -242,7 +242,6 @@ function renderUpgrades() {
       card.dataset.upgradeId = u.id;
       if (owned === 0) card.classList.add('unowned');
       if (owned > 0) card.classList.add('bought');
-      if (state.data < cost) card.classList.add('locked');
       if (isMaxed) card.classList.add('maxed');
       if (u.rarity && u.rarity !== 'common') card.classList.add('rarity-' + u.rarity);
 
@@ -286,6 +285,8 @@ function renderUpgrades() {
 
       var fill = document.createElement('div');
       fill.className = 'upgradeFill';
+      var fillPct = isMaxed ? 100 : Math.min(100, (state.data / cost) * 100);
+      fill.style.width = fillPct + '%';
       card.appendChild(fill);
 
       card.appendChild(headerRow);
@@ -346,7 +347,10 @@ function renderUpgrades() {
     hint.textContent = '🔒 ' + t('upgrade.' + nextLocked.id + '.name') + ' — ' + formatData(remaining);
     dom.upgradesGrid.appendChild(hint);
   }
+
 }
+
+var _cardLockState = {};
 
 function refreshUpgradeState() {
   var cards = dom.upgradesGrid.querySelectorAll('.upgradeCard');
@@ -376,6 +380,20 @@ function refreshUpgradeState() {
       fillEl.style.width = fillPct + '%';
     }
 
+    // Shake+glow when card transitions from locked to unlocked
+    var isLocked = card.classList.contains('locked');
+    var wasLocked = _cardLockState[id] === true;
+    if (wasLocked && !isLocked && !card.classList.contains('maxed')) {
+      card.classList.add('unlock-anim');
+      card.classList.add('unlocked-flash');
+      card.addEventListener('animationend', function handler(e) {
+        e.currentTarget.classList.remove('unlock-anim');
+        e.currentTarget.classList.remove('unlocked-flash');
+        e.currentTarget.removeEventListener('animationend', handler);
+      });
+    }
+    _cardLockState[id] = isLocked;
+
     var ownedRow = card.querySelector('.upgradeOwned');
     if (ownedRow) {
       if (isMaxed) {
@@ -388,5 +406,7 @@ function refreshUpgradeState() {
       }
     }
   }
+
+  state._preRebuildData = null;
 }
 

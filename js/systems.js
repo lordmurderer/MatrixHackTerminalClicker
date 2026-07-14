@@ -883,6 +883,7 @@ function loadGame() {
 
 function resetGame(hard) {
   localStorage.removeItem(SAVE_KEY);
+  _cardLockState = {};
   termLines = [];
   if (autoClickInterval) clearInterval(autoClickInterval);
   if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);

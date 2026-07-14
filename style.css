@@ -1616,15 +1616,21 @@ body {
   border: 1px solid var(--amber-dark);
   padding: 3px 5px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 .upgradeFill {
   position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-  pointer-events: none; transition: width 0.3s ease; z-index: 0;
+  pointer-events: none; z-index: 0;
   background: rgba(255,136,0,0.12);
+}
+.upgradeCard.locked .upgradeFill {
+  transition: width 0.3s ease;
+}
+.upgradeCard:not(.locked) .upgradeFill {
+  transition: none;
 }
 .rarity-uncommon .upgradeFill { background: rgba(0,170,0,0.12); }
 .rarity-rare .upgradeFill { background: rgba(0,136,255,0.12); }
@@ -1632,6 +1638,25 @@ body {
 .rarity-legendary .upgradeFill { background: rgba(255,102,0,0.12); }
 .upgradeCard.maxed .upgradeFill { background: rgba(255,204,0,0.12); }
 .upgradeCard > :not(.upgradeFill) { position: relative; z-index: 1; }
+
+@keyframes unlockShakeGlow {
+  0%   { transform: translateX(0); box-shadow: 0 0 0px var(--amber); }
+  15%  { transform: translateX(-3px); box-shadow: 0 0 10px var(--amber); }
+  30%  { transform: translateX(3px); box-shadow: 0 0 14px var(--amber); }
+  45%  { transform: translateX(-2px); box-shadow: 0 0 14px var(--amber); }
+  60%  { transform: translateX(2px); box-shadow: 0 0 10px var(--amber); }
+  80%  { transform: translateX(-1px); box-shadow: 0 0 6px var(--amber); }
+  100% { transform: translateX(0); box-shadow: 0 0 0px var(--amber); }
+}
+.upgradeCard.unlock-anim {
+  animation: unlockShakeGlow 0.5s ease-out;
+}
+.upgradeCard.unlocked-flash {
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 30px rgba(0,255,0,0.5), inset 0 0 30px rgba(0,255,0,0.08);
+  opacity: 1 !important;
+  filter: none !important;
+}
 
 .upgradeCard:hover {
   border-color: var(--amber);
@@ -2101,6 +2126,8 @@ body {
 .upgradeCard.bought.locked {
   border-color: var(--amber-bg);
   background: rgba(10, 5, 0, 0.4);
+  opacity: 0.55;
+  filter: grayscale(0.5);
   cursor: default;
 }
 
@@ -2126,6 +2153,8 @@ body {
 .upgradeCard.unowned.locked {
   border-color: #1a0000;
   background: rgba(10, 0, 0, 0.35);
+  opacity: 0.4;
+  filter: grayscale(0.7);
   cursor: not-allowed;
 }
 
