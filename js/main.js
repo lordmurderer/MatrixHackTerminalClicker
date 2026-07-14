@@ -25,6 +25,7 @@ function cacheDom() {
   dom.achClose = document.getElementById('achClose');
   dom.comboDisplay = document.getElementById('comboDisplay');
   dom.skinBtn = document.getElementById('skinBtn');
+  dom.synergyBtn = document.getElementById('synergyBtn');
   dom.soundBtn = document.getElementById('soundBtn');
   dom.statsBtn = document.getElementById('statsBtn');
   dom.headerPrestige = document.getElementById('headerPrestige');
@@ -100,6 +101,16 @@ function init() {
   if (dom.skinBtn) {
     dom.skinBtn.addEventListener('click', toggleSkins);
   }
+  if (dom.synergyBtn) {
+    dom.synergyBtn.addEventListener('click', toggleSynergies);
+  }
+  var synergyClose = document.getElementById('synergyClose');
+  if (synergyClose) {
+    synergyClose.addEventListener('click', toggleSynergies);
+  }
+  document.getElementById('synergyOverlay').addEventListener('click', function (e) {
+    if (e.target === this) toggleSynergies();
+  });
   var skinClose = document.getElementById('skinClose');
   if (skinClose) {
     skinClose.addEventListener('click', toggleSkins);

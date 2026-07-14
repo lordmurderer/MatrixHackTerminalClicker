@@ -685,6 +685,52 @@ body {
   display: flex;
 }
 
+#synergyOverlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85); z-index: 100;
+  display: none; justify-content: center; align-items: center;
+}
+#synergyOverlay.open { display: flex; }
+#synergyPanel {
+  background: #000; border: 2px solid var(--amber); border-style: double;
+  padding: 15px; width: 90%; max-width: 420px; max-height: 70vh; overflow-y: auto;
+  box-shadow: 0 0 30px rgba(255, 136, 0, 0.2);
+}
+#synergyHeader {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; color: var(--amber-bright); text-shadow: 0 0 6px rgba(255, 136, 0, 0.3);
+  border-bottom: 1px solid var(--amber-bg); padding-bottom: 6px; margin-bottom: 8px;
+}
+#synergyGrid { display: flex; flex-direction: column; gap: 6px; }
+.synergyCard {
+  display: flex; flex-direction: column; gap: 3px;
+  background: rgba(20, 10, 0, 0.5); border: 1px solid var(--amber-bg);
+  padding: 8px 10px; font-size: 0.65rem; cursor: default;
+}
+.synergyCard.unlocked {
+  border-color: rgb(0, 200, 80); background: rgba(0, 30, 10, 0.35);
+}
+.synergyCard.locked {
+  border-color: #330000; background: rgba(20, 0, 0, 0.3);
+}
+.synergyCard .synergyName {
+  font-weight: bold; font-size: 0.75rem; display: flex; align-items: center; gap: 5px;
+}
+.synergyCard.unlocked .synergyName { color: #00ff00; }
+.synergyCard.locked .synergyName { color: var(--amber-dark); }
+.synergyReqsRow { display: flex; flex-direction: column; gap: 2px; font-size: 0.6rem; margin-top: 2px; }
+.synergyReqsLabel { color: var(--amber-dim); font-size: 0.6rem; }
+.synergyReqItem { color: var(--amber-dim); }
+.synergyReqItem.met { color: rgb(0, 200, 80); }
+.synergyReqItem.unmet { color: #660000; }
+.synergyReqItem.unknown { color: var(--amber-bg); font-style: italic; }
+.synergyEffectRow {
+  font-size: 0.6rem; margin-top: 2px; padding-top: 3px;
+  border-top: 1px solid rgba(255, 136, 0, 0.08);
+}
+.synergyCard.unlocked .synergyEffectRow { color: rgb(0, 200, 80); }
+.synergyCard.locked .synergyEffectRow { color: var(--amber-bg); }
+
 #settingsOverlay {
   position: fixed;
   top: 0;

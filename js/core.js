@@ -123,6 +123,22 @@ function calculateStats() {
   state.architect = archCount > 0;
   if (state.architect) upg.multDps *= (1 + archCount * CONFIG.ARCHITECT_BONUS);
 
+  // Overdrive+Grid synergy
+  state.synergyOverdrive = (state.upgrades['overdrive'] || 0) >= 1 && (state.upgrades['grid'] || 0) >= 1;
+  if (state.synergyOverdrive) upg.multClick *= 1.5;
+
+  // Cipher+Keymaker synergy
+  state.synergyCipher = (state.upgrades['cipher'] || 0) >= 1 && (state.upgrades['keymaker'] || 0) >= 1;
+  if (state.synergyCipher) upg.multDps *= 2;
+
+  // Combo Master synergy
+  state.synergyCombo = (state.upgrades['rhythm'] || 0) >= 5 && (state.upgrades['flow'] || 0) >= 5 && (state.upgrades['momentum'] || 0) >= 5 && (state.upgrades['adrenaline'] || 0) >= 5;
+  if (state.synergyCombo) state.maxComboMult = Math.min(CONFIG.COMBO_BOOST_LIMIT, state.maxComboMult + 10);
+
+  // Meta Stack synergy
+  state.synergyMeta = (state.upgrades['backdoor'] || 0) >= 3 && (state.upgrades['wormhole'] || 0) >= 3 && (state.upgrades['turbo'] || 0) >= 3 && (state.upgrades['nexus'] || 0) >= 3;
+  if (state.synergyMeta) upg.disc += 5;
+
   state.clickPower = Math.floor(upg.click * upg.multClick * state.prestigeMultiplier);
   state.dps = Math.floor(upg.dps * upg.multDps * state.prestigeMultiplier * 10) / 10;
 

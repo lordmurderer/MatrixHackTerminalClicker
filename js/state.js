@@ -43,6 +43,10 @@ let state = {
   bossCounterTimer: 0,
   typingEventActive: false,
   typingEventData: null,
+  synergyOverdrive: false,
+  synergyCipher: false,
+  synergyCombo: false,
+  synergyMeta: false,
 };
 
 function formatNum(n) {

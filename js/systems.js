@@ -74,6 +74,83 @@ function toggleAchievements() {
   if (isOpen) renderAchievements();
 }
 
+/* --- SYNERGIES --- */
+function isSynergyUnlocked(def) {
+  if (def.id === 'scanner_cpu') return state.synergy;
+  if (def.id === 'architect') return state.architect;
+  if (def.id === 'overdrive_grid') return state.synergyOverdrive;
+  if (def.id === 'cipher_keymaker') return state.synergyCipher;
+  if (def.id === 'combo_master') return state.synergyCombo;
+  if (def.id === 'meta_stack') return state.synergyMeta;
+  return false;
+}
+
+function getSynergyReqHTML(def) {
+  var html = '<div class="synergyReqsRow"><span class="synergyReqsLabel">' + t('synergyReqs') + '</span>';
+  if (def.id === 'architect') {
+    var archCount = state.architectCount;
+    var met = archCount >= 1;
+    var cls = met ? 'synergyReqItem met' : 'synergyReqItem unmet';
+    html += '<span class="' + cls + '">' + t('synergyArchLabel') + ' (' + archCount + ')</span>';
+  } else {
+    def.reqs.forEach(function (r) {
+      var lvl = state.upgrades[r.id] || 0;
+      var met = lvl >= r.lvl;
+      var cls = met ? 'synergyReqItem met' : 'synergyReqItem unmet';
+      html += '<span class="' + cls + '">' + t('upgrade.' + r.id + '.name') + ' ' + lvl + '/' + r.lvl + '</span>';
+    });
+  }
+  html += '</div>';
+  return html;
+}
+
+function getSynergyEffectText(def) {
+  if (!isSynergyUnlocked(def)) return '<span class="synergyEffectRow">' + t('synergyEffect') + ' <span style="color:var(--amber-bg)">' + t('synergyUnknown') + '</span></span>';
+  if (def.id === 'scanner_cpu') {
+    var n = state.upgrades['cpu'] || 0;
+    return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyScannerEffect', { n: n }) + '</span>';
+  }
+  if (def.id === 'architect') {
+    var mult = Number(1 + state.architectCount * CONFIG.ARCHITECT_BONUS).toFixed(2);
+    return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyArchEffect', { n: mult }) + '</span>';
+  }
+  if (def.id === 'overdrive_grid') return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyOverdriveEffect') + '</span>';
+  if (def.id === 'cipher_keymaker') return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyCipherEffect') + '</span>';
+  if (def.id === 'combo_master') return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyComboEffect') + '</span>';
+  if (def.id === 'meta_stack') return '<span class="synergyEffectRow">' + t('synergyEffect') + ' ' + t('synergyMetaEffect') + '</span>';
+  return '';
+}
+
+function toggleSynergies() {
+  var overlay = document.getElementById('synergyOverlay');
+  if (!overlay) return;
+  var isOpen = overlay.classList.toggle('open');
+  if (isOpen) renderSynergies();
+}
+
+function renderSynergies() {
+  var grid = document.getElementById('synergyGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  SYNERGY_DEFS.forEach(function (def) {
+    var unlocked = isSynergyUnlocked(def);
+    var card = document.createElement('div');
+    card.className = 'synergyCard' + (unlocked ? ' unlocked' : ' locked');
+
+    var nameRow = document.createElement('div');
+    nameRow.className = 'synergyName';
+    nameRow.textContent = (unlocked ? '\u2713 ' : '\u25CB ') + def.icon + ' ' + t(def.nameKey);
+    card.appendChild(nameRow);
+    card.insertAdjacentHTML('beforeend', getSynergyReqHTML(def));
+    card.insertAdjacentHTML('beforeend', getSynergyEffectText(def));
+    grid.appendChild(card);
+  });
+}
+
+function achKey(id) {
+  return 'ach' + id.split('_').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join('');
+}
+
 function renderAchievements() {
   var grid = document.getElementById('achGrid');
   if (!grid) return;
@@ -82,7 +159,7 @@ function renderAchievements() {
   ACHIEVEMENT_DEFS.forEach(function (ach) {
     var unlocked = state.achievements[ach.id];
     if (unlocked) count++;
-    var nameKey = 'ach' + ach.id.charAt(0).toUpperCase() + ach.id.slice(1);
+    var nameKey = achKey(ach.id);
     var card = document.createElement('div');
     card.className = 'achCard' + (unlocked ? ' unlocked' : ' locked');
 
@@ -149,13 +226,14 @@ function checkAchievements() {
     'auto_pilot': (state.upgrades['trojan'] || 0) >= 5,
     'completionist': isAllUpgradesOwned(),
     'prestige_master': state.prestigeCount >= 5,
+    'synergy_master': state.synergy && state.architect && state.synergyOverdrive && state.synergyCipher && state.synergyCombo && state.synergyMeta,
   };
   var newUnlock = false;
   ACHIEVEMENT_DEFS.forEach(function (ach) {
     if (!state.achievements[ach.id] && checks[ach.id]) {
       state.achievements[ach.id] = true;
       newUnlock = true;
-      var nameKey = 'ach' + ach.id.charAt(0).toUpperCase() + ach.id.slice(1);
+      var nameKey = achKey(ach.id);
       showToast(t('achUnlocked', { name: t(nameKey) }), 'ach');
       // Cosmetic skin reward
       unlockAchievementSkin(ach.id);
@@ -1030,6 +1108,8 @@ function validateState(saved) {
     bossType: 'normal', bossShieldHp: 0,
     bossRegenActive: false, bossCounterTimer: 0,
     typingEventActive: false, typingEventData: null,
+    synergyOverdrive: false, synergyCipher: false,
+    synergyCombo: false, synergyMeta: false,
   };
   Object.keys(fields).forEach(function (k) {
     var v = saved[k];
@@ -1133,6 +1213,10 @@ function resetGame(hard) {
     bossCounterTimer: 0,
     typingEventActive: false,
     typingEventData: null,
+    synergyOverdrive: false,
+    synergyCipher: false,
+    synergyCombo: false,
+    synergyMeta: false,
   };
   initUpgrades();
   calculateStats();
