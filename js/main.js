@@ -17,6 +17,7 @@ function cacheDom() {
   dom.critDisplay = document.getElementById('critDisplay');
   dom.discountDisplay = document.getElementById('discountDisplay');
   dom.synergyDisplay = document.getElementById('synergyDisplay');
+  dom.synergyBtn = document.getElementById('synergyBtn');
   dom.langToggle = document.getElementById('langToggle');
   dom.prestigeInfo = document.getElementById('prestigeInfo');
   dom.prestigeReq = document.getElementById('prestigeReq');
@@ -75,6 +76,32 @@ function handleKeydown(e) {
     var statsBtn = document.getElementById('statsBtn');
     if (statsBtn) statsBtn.click();
     return;
+  }
+  if (e.key === 'Escape') {
+    if (state.typingEventActive) { skipTypingEvent(); return; }
+    closeTopOverlay();
+    return;
+  }
+}
+
+function closeTopOverlay() {
+  var overlays = [
+    { id: 'bossOverlay', close: function(el) { el.classList.remove('open'); } },
+    { id: 'prestigePreviewOverlay', close: function(el) { el.classList.remove('open'); } },
+    { id: 'settingsOverlay', close: toggleSettings },
+    { id: 'synergyOverlay', close: toggleSynergies },
+    { id: 'skinOverlay', close: toggleSkins },
+    { id: 'achOverlay', close: toggleAchievements },
+    { id: 'statsOverlay', close: toggleStats },
+    { id: 'prestigeShopOverlay', close: togglePrestigeShop },
+    { id: 'offlineOverlay', close: closeOfflineSummary },
+  ];
+  for (var i = 0; i < overlays.length; i++) {
+    var el = document.getElementById(overlays[i].id);
+    if (el && el.classList.contains('open')) {
+      overlays[i].close(el);
+      return;
+    }
   }
 }
 

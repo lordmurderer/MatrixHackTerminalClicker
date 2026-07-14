@@ -939,6 +939,11 @@ body {
   font-size: 0.8rem; color: var(--amber-bright); text-shadow: 0 0 6px rgba(255, 136, 0, 0.3);
   border-bottom: 1px solid var(--amber-bg); padding-bottom: 6px; margin-bottom: 8px;
 }
+#synergyClose {
+  background: transparent; border: 1px solid var(--amber-dark); color: var(--amber-dim);
+  font-family: 'Courier New', monospace; font-size: 0.75rem; padding: 1px 8px; cursor: pointer;
+}
+#synergyClose:hover { border-color: #ff0000; color: #ff0000; }
 #synergyGrid { display: flex; flex-direction: column; gap: 6px; }
 .synergyCard {
   display: flex; flex-direction: column; gap: 3px;
