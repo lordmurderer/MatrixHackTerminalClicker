@@ -1900,6 +1900,12 @@ body {
 #bossBarContainer { height: 6px; background: #1a0000; border: 1px solid #440000; overflow: hidden; width: 100%; max-width: 300px; }
 #bossBarInner { height: 100%; width: 0%; background: #ff0044; box-shadow: 0 0 10px #ff0044, 0 0 20px rgba(255, 0, 68, 0.3); transition: width 0.2s; }
 #bossReward { font-size: 0.7rem; font-weight: bold; min-height: 1.2em; }
+#bossCloseBtn {
+  cursor: pointer; color: var(--amber-dim); font-size: 0.75rem;
+  border: 1px solid var(--amber-dark); padding: 1px 8px;
+  font-family: 'Courier New', monospace; background: transparent;
+}
+#bossCloseBtn:hover { color: #ff0000; border-color: #ff0000; }
 
 /* PRESTIGE PREVIEW */
 #prestigePreviewOverlay {

@@ -117,7 +117,7 @@ function showBossOverlay() {
   overlay.classList.add('open');
 
   if (bossGauntletTimeout) clearTimeout(bossGauntletTimeout);
-  bossGauntletTimeout = setTimeout(startNextBossAttack, 1200);
+  bossGauntletTimeout = setTimeout(startNextBossAttack, 500);
 }
 
 function startNextBossAttack() {
@@ -164,8 +164,8 @@ function showTypingEventUI(data, type) {
   if (seqOptions) seqOptions.style.display = 'none';
   if (simonGrid) simonGrid.style.display = 'none';
 
-  var t = document.getElementById('typingFooter');
-  if (t) t.style.display = 'flex';
+  var footEl = document.getElementById('typingFooter');
+  if (footEl) footEl.style.display = 'flex';
 
   switch (type) {
     case 'brute_force':
@@ -371,10 +371,13 @@ function advanceBossGauntlet() {
 
 function failBossGauntlet() {
   state.bossGauntletActive = false;
+  state.typingEventActive = false;
   state.bossMeter = 0;
   state.bossGauntletSteps = [];
   state.bossGauntletStep = 0;
   stopBossMusic();
+  document.getElementById('typingOverlay').classList.remove('open');
+  if (typingTimerInterval) { clearInterval(typingTimerInterval); typingTimerInterval = null; }
 
   var overlay = document.getElementById('bossOverlay');
   var skull = document.getElementById('bossSkull');
@@ -387,16 +390,18 @@ function failBossGauntlet() {
   reward.textContent = '';
   overlay.classList.add('open');
 
+  var penalty = Math.floor(state.data * 0.2);
+  state.data -= penalty;
+  if (state.data < 0) state.data = 0;
+  reward.textContent = '-' + formatData(penalty);
+  reward.style.color = '#ff4444';
+
   if (dom.bossMeterLabel) dom.bossMeterLabel.textContent = '☠ EVENTOS PARA JEFE';
   if (dom.bossMeterText) dom.bossMeterText.textContent = '0/' + CONFIG.BOSS_METER_REQUIRED;
 
   addTermLines(['[✗] Boss gauntlet — defeated']);
-
-  if (bossGauntletTimeout) clearTimeout(bossGauntletTimeout);
-  bossGauntletTimeout = setTimeout(function () {
-    overlay.classList.remove('open');
-    info.style.color = '';
-  }, 2500);
+  calculateStats();
+  bus.emit(EVENTS.DATA_CHANGED);
 }
 
 function completeBossGauntlet() {
@@ -436,13 +441,6 @@ function completeBossGauntlet() {
 
   if (dom.bossMeterLabel) dom.bossMeterLabel.textContent = '☠ EVENTOS PARA JEFE';
   if (dom.bossMeterText) dom.bossMeterText.textContent = '0/' + CONFIG.BOSS_METER_REQUIRED;
-
-  if (bossGauntletTimeout) clearTimeout(bossGauntletTimeout);
-  bossGauntletTimeout = setTimeout(function () {
-    overlay.classList.remove('open');
-    info.style.color = '';
-    rewardEl.style.color = '';
-  }, 3000);
 }
 
 function getBossSkull() {

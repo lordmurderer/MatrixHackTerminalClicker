@@ -851,9 +851,12 @@ function loadGame() {
       if (typeof saved !== 'object' || saved === null) return false;
       validateState(saved);
       state = Object.assign(state, saved);
-      // Clear any stuck typing/blocking state from a previous session
+      // Clear any stuck typing/blocking/boss state from a previous session
       state.typingEventActive = false;
       state.typingEventData = null;
+      state.bossGauntletActive = false;
+      stopBossMusic();
+      if (typeof bossGauntletTimeout !== 'undefined') { clearTimeout(bossGauntletTimeout); bossGauntletTimeout = null; }
       calculateStats();
 
       var rootkitLevel = state.upgrades['rootkit'] || 0;
@@ -884,6 +887,8 @@ function loadGame() {
 function resetGame(hard) {
   localStorage.removeItem(SAVE_KEY);
   _cardLockState = {};
+  stopBossMusic();
+  if (bossGauntletTimeout) { clearTimeout(bossGauntletTimeout); bossGauntletTimeout = null; }
   termLines = [];
   if (autoClickInterval) clearInterval(autoClickInterval);
   if (eventScheduleTimeout) clearTimeout(eventScheduleTimeout);
@@ -1540,6 +1545,10 @@ function endTypingEvent(success) {
 }
 
 function skipTypingEvent() {
+  if (state.bossGauntletActive) {
+    failBossGauntlet();
+    return;
+  }
   if (state.typingEventActive) {
     endTypingEvent(false);
   } else {

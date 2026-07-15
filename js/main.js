@@ -86,7 +86,7 @@ function handleKeydown(e) {
 
 function closeTopOverlay() {
   var overlays = [
-    { id: 'bossOverlay', close: function(el) { el.classList.remove('open'); } },
+    { id: 'bossOverlay', close: function(el) { el.classList.remove('open'); if (state.bossGauntletActive) failBossGauntlet(); } },
     { id: 'prestigePreviewOverlay', close: function(el) { el.classList.remove('open'); } },
     { id: 'settingsOverlay', close: toggleSettings },
     { id: 'synergyOverlay', close: toggleSynergies },
@@ -217,6 +217,11 @@ function init() {
     }
   });
 
+  window.addEventListener('beforeunload', function () {
+    stopBossMusic();
+    if (bossGauntletTimeout) clearTimeout(bossGauntletTimeout);
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey && e.shiftKey && e.key === 'R') {
       e.preventDefault();
@@ -242,6 +247,9 @@ function init() {
   document.getElementById('prestigePreviewConfirm').addEventListener('click', executePrestige);
   document.getElementById('prestigePreviewCancel').addEventListener('click', function () {
     document.getElementById('prestigePreviewOverlay').classList.remove('open');
+  });
+  document.getElementById('bossCloseBtn').addEventListener('click', function () {
+    document.getElementById('bossOverlay').classList.remove('open');
   });
   document.getElementById('prestigePreviewClose').addEventListener('click', function () {
     document.getElementById('prestigePreviewOverlay').classList.remove('open');
@@ -290,6 +298,7 @@ function init() {
       submitTypingInput();
     }
     if (e.key === 'Escape') {
+      e.stopPropagation();
       skipTypingEvent();
     }
   });

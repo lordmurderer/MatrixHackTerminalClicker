@@ -221,7 +221,16 @@ function applySkin() {
   }
   var bodyRGB = skin.colors.body;
   var shadowHex = skin.colors.shadow;
+  var ui = skin.colors.ui;
   style.textContent =
+    ':root {' +
+    '--amber: ' + ui.accent + ';' +
+    '--amber-bright: ' + ui.bright + ';' +
+    '--amber-glow: ' + ui.glow + ';' +
+    '--amber-dim: ' + ui.dim + ';' +
+    '--amber-dark: ' + ui.dark + ';' +
+    '--amber-bg: ' + ui.bg + ';' +
+    '}' +
     '.floatingText { color: rgb(' + bodyRGB + '); text-shadow: 0 0 10px ' + shadowHex + ', 0 0 20px rgba(' + bodyRGB + ', 0.5); }' +
     '.blink, .btnCursor { color: ' + shadowHex + '; }';
 }
